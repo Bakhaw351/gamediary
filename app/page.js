@@ -387,10 +387,32 @@ export default function GameDiary() {
     setUserRatings({});
   };
 
-  const filtered = GAMES.filter(g =>
-    (plat === "Tous" || g.platform === plat) &&
-    (g.title.toLowerCase().includes(q.toLowerCase()) || g.genre.toLowerCase().includes(q.toLowerCase()))
-  );
+  const [igdbResults, setIgdbResults] = useState([]);
+  const [searching, setSearching] = useState(false);
+
+  useEffect(() => {
+    if (!q || q.length < 2) { setIgdbResults([]); return; }
+    const timer = setTimeout(async () => {
+      setSearching(true);
+      const res = await fetch(`/api/games?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      setIgdbResults(data);
+      setSearching(false);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [q]);
+
+  const filtered = q.length >= 2 ? igdbResults.map(g => ({
+    id: g.id,
+    title: g.name,
+    platform: g.platforms?.[0]?.name || "Multi",
+    year: g.first_release_date ? new Date(g.first_release_date * 1000).getFullYear() : "—",
+    genre: g.genres?.[0]?.name || "Jeu",
+    cover: g.cover?.url ? `https:${g.cover.url.replace("t_thumb","t_cover_big")}` : null,
+    rating: g.rating ? Math.round(g.rating / 10) / 1 : "—",
+    reviews: g.total_rating_count || 0,
+    tags: g.genres?.map(x => x.name) || [],
+  })) : GAMES.filter(g => plat === "Tous" || g.platform === plat);
   const ratedG = GAMES.filter(g => userRatings[g.id]);
   const disco = dtags.length > 0 ? GAMES.filter(g => !userRatings[g.id] && g.tags.some(t => dtags.includes(t))) : [];
 
