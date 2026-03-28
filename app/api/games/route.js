@@ -17,8 +17,7 @@ export async function GET(request) {
       'Authorization': `Bearer ${access_token}`,
       'Content-Type': 'text/plain',
     },
-    body: `search "${query}"; fields name,cover.url,first_release_date,genres.name,rating,total_rating_count,platforms.name,summary; limit 20;`,
-  });
+    body: `search "${query}"; fields name,cover.url,first_release_date,genres.name,rating,total_rating_count,platforms.name,summary,videos.video_id; limit 20;`,
 
   const games = await igdbRes.json();
   return Response.json(games);
