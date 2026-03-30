@@ -669,7 +669,7 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
 };
 
 /* ── CINEMATIC GAME PAGE ──────────────────────────────────── */
-const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired, t }) => {
+const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired, t }) => {
   const [myR, setMyR] = useState(userRatings[game.id]?.rating || 0);
   const [hovR, setHovR] = useState(0);
   const [txt, setTxt] = useState(userRatings[game.id]?.comment || "");
@@ -685,12 +685,16 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
   const [reactions, setReactions] = useState({});
   const [myReactions, setMyReactions] = useState({});
   const [dlcs, setDlcs] = useState([]);
+  const [series, setSeries] = useState([]);
 
   const DLC_LABELS = { 1:t("dlcDLC"), 2:t("dlcExpansion"), 4:t("dlcStandalone") };
 
   useEffect(() => {
     fetch(`/api/games/dlcs?id=${game.id}`).then(r=>r.json()).then(data => {
-      if (Array.isArray(data)) setDlcs(data);
+      if (data && !Array.isArray(data)) {
+        setDlcs(data.dlcs || []);
+        setSeries(data.series || []);
+      }
     });
   }, [game.id]);
 
@@ -1087,6 +1091,41 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
                 {game.tags.map(t => (
                   <span key={t} style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", color:"rgba(255,255,255,.38)", borderRadius:8, padding:"6px 14px", fontSize:12, fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, letterSpacing:.3 }}>#{t}</span>
                 ))}
+              </div>
+            )}
+
+            {/* ── SÉRIE ── */}
+            {series.length > 0 && (
+              <div style={{ background:"rgba(255,255,255,.022)", border:"1px solid rgba(255,255,255,.07)", borderRadius:20, overflow:"hidden" }}>
+                <div style={{ height:2, background:"linear-gradient(90deg,#ffd166,#ff9a3c 55%,transparent)" }} />
+                <div style={{ padding:"22px 26px 26px" }}>
+                  <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:18 }}>
+                    <div className="sect-h">
+                      <span style={{ fontSize:10, color:"rgba(255,209,102,.8)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:3, textTransform:"uppercase" }}>Série</span>
+                    </div>
+                    <span style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>{series.length} jeu{series.length>1?"x":""}</span>
+                  </div>
+                  <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(90px,1fr))", gap:10 }}>
+                    {series.map(g => {
+                      const cover = g.cover?.url ? `https:${g.cover.url.replace("t_thumb","t_cover_big")}` : null;
+                      const year = g.first_release_date ? new Date(g.first_release_date*1000).getFullYear() : null;
+                      return (
+                        <div key={g.id} onClick={()=>{ if(onNavigate) onNavigate(g); }} style={{ cursor:"pointer", transition:"transform .2s" }}
+                          onMouseEnter={e=>e.currentTarget.style.transform="translateY(-4px)"}
+                          onMouseLeave={e=>e.currentTarget.style.transform="translateY(0)"}>
+                          <div style={{ borderRadius:10, overflow:"hidden", border:"1px solid rgba(255,255,255,.08)", marginBottom:6, paddingBottom:"140%", position:"relative", background:"#0d0b09" }}>
+                            {cover
+                              ? <img src={cover} alt={g.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }} />
+                              : <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}>🎮</div>
+                            }
+                          </div>
+                          <div style={{ fontSize:11, fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, color:"rgba(255,255,255,.7)", lineHeight:1.2, marginBottom:2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{g.name}</div>
+                          {year && <div style={{ fontSize:10, color:"rgba(255,255,255,.25)", fontFamily:"'DM Sans',sans-serif" }}>{year}</div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             )}
 
@@ -1788,6 +1827,7 @@ export default function GameDiary() {
         <GamePage
           game={selected}
           onClose={()=>setSelected(null)}
+          onNavigate={g=>setSelected(formatGame(g))}
           user={user}
           userRatings={userRatings}
           setUserRatings={setUserRatings}

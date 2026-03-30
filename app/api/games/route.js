@@ -15,9 +15,9 @@ export async function GET(request) {
 
   let body;
   if (query.length >= 2) {
-    body = `search "${query}"; ${fields} where cover != null${platClause}; limit 20; offset ${offset};`;
+    body = `search "${query}"; ${fields} where cover != null & category = 0${platClause}; limit 20; offset ${offset};`;
   } else {
-    body = `${fields} where rating > 0 & cover != null & total_rating_count > 5${platClause}; sort total_rating_count desc; limit 20; offset ${offset};`;
+    body = `${fields} where rating > 0 & cover != null & total_rating_count > 5 & category = 0${platClause}; sort total_rating_count desc; limit 20; offset ${offset};`;
   }
 
   const igdbRes = await fetch('https://api.igdb.com/v4/games', {
