@@ -447,6 +447,67 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
   const [scrolled, setScrolled] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [muted, setMuted] = useState(true);
+  const [communityReviews, setCommunityReviews] = useState([]);
+  const [reactions, setReactions] = useState({});
+  const [myReactions, setMyReactions] = useState({});
+  const [dlcs, setDlcs] = useState([]);
+
+  const DLC_LABELS = { 1:"DLC", 2:"Extension", 4:"Extension standalone" };
+
+  useEffect(() => {
+    fetch(`/api/games/dlcs?id=${game.id}`).then(r=>r.json()).then(data => {
+      if (Array.isArray(data)) setDlcs(data);
+    });
+  }, [game.id]);
+
+  const EMOJIS = ["❤️","🔥","💯","😂","👏","😮"];
+
+  const fetchCommunity = async () => {
+    const { data } = await supabase.from("ratings")
+      .select("*").eq("game_id", game.id)
+      .not("comment", "is", null).neq("comment", "")
+      .order("created_at", { ascending: false });
+    if (data) setCommunityReviews(data);
+
+    const { data: rxData } = await supabase.from("reactions").select("*").eq("game_id", game.id);
+    if (rxData) {
+      const r = {};
+      rxData.forEach(rx => {
+        if (!r[rx.reviewer_id]) r[rx.reviewer_id] = {};
+        r[rx.reviewer_id][rx.emoji] = (r[rx.reviewer_id][rx.emoji] || 0) + 1;
+      });
+      setReactions(r);
+      if (user) {
+        const mine = {};
+        rxData.filter(rx => rx.user_id === user.id).forEach(rx => {
+          if (!mine[rx.reviewer_id]) mine[rx.reviewer_id] = [];
+          mine[rx.reviewer_id].push(rx.emoji);
+        });
+        setMyReactions(mine);
+      }
+    }
+  };
+
+  useEffect(() => { fetchCommunity(); }, [game.id]);
+
+  const toggleReaction = async (reviewerUserId, emoji) => {
+    if (!user) { onAuthRequired(); return; }
+    const already = myReactions[reviewerUserId]?.includes(emoji);
+    if (already) {
+      await supabase.from("reactions").delete()
+        .eq("user_id", user.id).eq("game_id", game.id)
+        .eq("reviewer_id", reviewerUserId).eq("emoji", emoji);
+      setMyReactions(p => ({ ...p, [reviewerUserId]: (p[reviewerUserId]||[]).filter(e=>e!==emoji) }));
+      setReactions(p => ({ ...p, [reviewerUserId]: { ...p[reviewerUserId], [emoji]: Math.max(0,(p[reviewerUserId]?.[emoji]||1)-1) } }));
+    } else {
+      await supabase.from("reactions").upsert(
+        { user_id:user.id, game_id:game.id, reviewer_id:reviewerUserId, emoji },
+        { onConflict:"user_id,game_id,reviewer_id,emoji" }
+      );
+      setMyReactions(p => ({ ...p, [reviewerUserId]: [...(p[reviewerUserId]||[]), emoji] }));
+      setReactions(p => ({ ...p, [reviewerUserId]: { ...p[reviewerUserId], [emoji]: (p[reviewerUserId]?.[emoji]||0)+1 } }));
+    }
+  };
 
   useEffect(() => {
     const esc = e => e.key === "Escape" && onClose();
@@ -485,10 +546,14 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
     if (!myR) return;
     setLoading(true);
     const { error } = await supabase.from("ratings").upsert(
-      { user_id:user.id, game_id:game.id, rating:myR, comment:txt },
+      { user_id:user.id, game_id:game.id, rating:myR, comment:txt, user_display: user.email?.split("@")[0] },
       { onConflict:"user_id,game_id" }
     );
-    if (!error) { setUserRatings(p => ({...p, [game.id]:{rating:myR, comment:txt}})); setSaved(true); }
+    if (!error) {
+      setUserRatings(p => ({...p, [game.id]:{rating:myR, comment:txt}}));
+      setSaved(true);
+      fetchCommunity();
+    }
     setLoading(false);
   };
 
@@ -569,19 +634,21 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
 
           {/* Stats row */}
           <div style={{ display:"flex", gap:28, marginBottom:32, flexWrap:"wrap", alignItems:"center" }}>
-            <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-              <Ring value={game.rating} size={52} />
-              <div>
-                <div style={{ fontSize:12, color:"rgba(255,255,255,.3)", fontFamily:"'DM Sans',sans-serif" }}>Score global</div>
-                <div style={{ fontSize:13, color:"rgba(255,255,255,.55)", fontFamily:"'DM Sans',sans-serif" }}>{game.reviews > 0 ? game.reviews.toLocaleString()+" évals" : "Non noté"}</div>
-              </div>
-            </div>
             {userRatings[game.id] && (
               <div style={{ display:"flex", alignItems:"center", gap:10 }}>
                 <Ring value={userRatings[game.id].rating} size={52} />
                 <div>
                   <div style={{ fontSize:12, color:"rgba(255,255,255,.3)", fontFamily:"'DM Sans',sans-serif" }}>Ma note</div>
                   <div style={{ fontSize:13, color:"rgba(255,255,255,.55)", fontFamily:"'DM Sans',sans-serif" }}>Publiée</div>
+                </div>
+              </div>
+            )}
+            {communityReviews.length > 0 && (
+              <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                <div style={{ width:52, height:52, borderRadius:"50%", background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"#ffd166" }}>{communityReviews.length}</div>
+                <div>
+                  <div style={{ fontSize:12, color:"rgba(255,255,255,.3)", fontFamily:"'DM Sans',sans-serif" }}>Avis</div>
+                  <div style={{ fontSize:13, color:"rgba(255,255,255,.55)", fontFamily:"'DM Sans',sans-serif" }}>de la communauté</div>
                 </div>
               </div>
             )}
@@ -619,21 +686,12 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
               </div>
             )}
 
-            {/* Score duo */}
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:18 }}>
-              <div style={{ background:"rgba(255,255,255,.025)", border:"1px solid rgba(255,255,255,.06)", borderRadius:14, padding:"14px 10px", textAlign:"center" }}>
-                <div style={{ fontSize:9, color:"rgba(255,255,255,.22)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:2, textTransform:"uppercase", marginBottom:10 }}>Communauté</div>
-                <Ring value={game.rating} size={52} />
-                <div style={{ fontSize:10, color:"rgba(255,255,255,.22)", fontFamily:"'DM Sans',sans-serif", marginTop:8 }}>
-                  {game.reviews > 0 ? game.reviews.toLocaleString() : "Non noté"}
-                </div>
-              </div>
-              <div style={{ background: myR ? "rgba(255,107,53,.06)" : "rgba(255,255,255,.025)", border:`1px solid ${myR ? "rgba(255,107,53,.22)" : "rgba(255,255,255,.06)"}`, borderRadius:14, padding:"14px 10px", textAlign:"center", transition:"all .3s" }}>
-                <div style={{ fontSize:9, color: myR ? "rgba(255,107,53,.7)" : "rgba(255,255,255,.22)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:2, textTransform:"uppercase", marginBottom:10 }}>Ma note</div>
-                <Ring value={myR || null} size={52} />
-                <div style={{ fontSize:10, color:"rgba(255,255,255,.22)", fontFamily:"'DM Sans',sans-serif", marginTop:8 }}>
-                  {myR ? RATING_LABELS[myR] : "—"}
-                </div>
+            {/* Ma note sidebar */}
+            <div style={{ background: myR ? "rgba(255,107,53,.06)" : "rgba(255,255,255,.025)", border:`1px solid ${myR ? "rgba(255,107,53,.22)" : "rgba(255,255,255,.06)"}`, borderRadius:14, padding:"14px 10px", textAlign:"center", transition:"all .3s", marginBottom:18 }}>
+              <div style={{ fontSize:9, color: myR ? "rgba(255,107,53,.7)" : "rgba(255,255,255,.22)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:2, textTransform:"uppercase", marginBottom:10 }}>Ma note</div>
+              <Ring value={myR || null} size={52} />
+              <div style={{ fontSize:10, color:"rgba(255,255,255,.22)", fontFamily:"'DM Sans',sans-serif", marginTop:8 }}>
+                {myR ? RATING_LABELS[myR] : "—"}
               </div>
             </div>
 
@@ -777,7 +835,7 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
                 { icon:"🖥", label:"Plateforme", value:game.platform.split("(")[0].trim() },
                 { icon:"📅", label:"Année de sortie", value:game.year },
                 { icon:"🎭", label:"Genre principal", value:game.genre },
-                { icon:"👥", label:"Évaluations IGDB", value:game.reviews > 0 ? game.reviews.toLocaleString() : "—" },
+                { icon:"💬", label:"Avis communauté", value:communityReviews.length > 0 ? `${communityReviews.length} avis` : "Soyez le premier" },
               ].map(({ icon, label, value }) => (
                 <div key={label} className="stat-card" style={{ display:"flex", alignItems:"center", gap:14 }}>
                   <div style={{ width:40, height:40, borderRadius:11, background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.07)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>{icon}</div>
@@ -797,6 +855,110 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
                 ))}
               </div>
             )}
+
+            {/* ── DÉRIVÉS (DLC / Extensions) ── */}
+            {dlcs.length > 0 && (
+              <div style={{ background:"rgba(255,255,255,.022)", border:"1px solid rgba(255,255,255,.07)", borderRadius:20, overflow:"hidden" }}>
+                <div style={{ height:2, background:"linear-gradient(90deg,#a78bfa,#ff6b35 55%,transparent)" }} />
+                <div style={{ padding:"22px 26px 26px" }}>
+                  <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:18 }}>
+                    <div className="sect-h">
+                      <span style={{ fontSize:10, color:"rgba(167,139,250,.8)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:3, textTransform:"uppercase" }}>DLC & Extensions</span>
+                    </div>
+                    <span style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>{dlcs.length} contenu{dlcs.length>1?"s":""}</span>
+                  </div>
+                  <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                    {dlcs.map(dlc => {
+                      const cover = dlc.cover?.url ? `https:${dlc.cover.url.replace("t_thumb","t_cover_big")}` : null;
+                      const year = dlc.first_release_date ? new Date(dlc.first_release_date*1000).getFullYear() : null;
+                      const typeLabel = DLC_LABELS[dlc.category] || "Contenu";
+                      return (
+                        <div key={dlc.id} style={{ display:"flex", alignItems:"center", gap:14, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.05)", borderRadius:14, padding:"12px 14px", transition:"all .2s", cursor:"default" }}
+                          onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(167,139,250,.22)"; e.currentTarget.style.background="rgba(167,139,250,.04)"; }}
+                          onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(255,255,255,.05)"; e.currentTarget.style.background="rgba(255,255,255,.02)"; }}>
+                          {cover
+                            ? <img src={cover} alt={dlc.name} style={{ width:42, height:56, borderRadius:8, objectFit:"cover", flexShrink:0, border:"1px solid rgba(255,255,255,.08)" }} />
+                            : <div style={{ width:42, height:56, borderRadius:8, background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>🎮</div>
+                          }
+                          <div style={{ flex:1, minWidth:0 }}>
+                            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.82)", marginBottom:4, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{dlc.name}</div>
+                            <div style={{ display:"flex", gap:7, alignItems:"center", flexWrap:"wrap" }}>
+                              <span style={{ background:"rgba(167,139,250,.12)", border:"1px solid rgba(167,139,250,.25)", borderRadius:5, padding:"1px 8px", fontSize:10, color:"rgba(167,139,250,.85)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>{typeLabel}</span>
+                              {year && <span style={{ fontSize:11, color:"rgba(255,255,255,.22)", fontFamily:"'DM Sans',sans-serif" }}>{year}</span>}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── AVIS COMMUNAUTÉ ── */}
+            <div style={{ background:"rgba(255,255,255,.022)", border:"1px solid rgba(255,255,255,.07)", borderRadius:20, overflow:"hidden" }}>
+              <div style={{ height:2, background:"linear-gradient(90deg,#ffd166,#ff6b35 55%,transparent)" }} />
+              <div style={{ padding:"22px 26px 26px" }}>
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20 }}>
+                  <div className="sect-h">
+                    <span style={{ fontSize:10, color:"rgba(255,209,102,.75)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:3, textTransform:"uppercase" }}>Avis de la communauté</span>
+                  </div>
+                  {communityReviews.length > 0 && (
+                    <span style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>{communityReviews.length} avis</span>
+                  )}
+                </div>
+
+                {communityReviews.length === 0 ? (
+                  <div style={{ textAlign:"center", padding:"28px 0", color:"rgba(255,255,255,.15)", fontFamily:"'DM Sans',sans-serif" }}>
+                    <div style={{ fontSize:32, marginBottom:10 }}>✍️</div>
+                    <div style={{ fontSize:13 }}>Aucun avis pour l'instant.<br/>Soyez le premier à en laisser un !</div>
+                  </div>
+                ) : (
+                  <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+                    {communityReviews.map(rv => {
+                      const col = rc(rv.rating);
+                      const initials = rv.user_display ? rv.user_display.slice(0,2).toUpperCase() : "??";
+                      const rxCounts = reactions[rv.user_id] || {};
+                      const myRx = myReactions[rv.user_id] || [];
+                      return (
+                        <div key={rv.user_id} style={{ background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.055)", borderRadius:16, padding:"16px 18px", transition:"border-color .2s" }}>
+                          {/* Header */}
+                          <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:rv.comment?12:10 }}>
+                            <div style={{ width:38, height:38, borderRadius:11, background:`linear-gradient(135deg,${col},${col}88)`, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:13, color:"#0a0600", flexShrink:0 }}>{initials}</div>
+                            <div style={{ flex:1, minWidth:0 }}>
+                              <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
+                                <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.72)" }}>{rv.user_display || "Membre"}</span>
+                                <span style={{ background:`${col}18`, border:`1px solid ${col}40`, borderRadius:6, padding:"1px 9px", fontSize:11, color:col, fontFamily:"'Syne',sans-serif", fontWeight:800 }}>{rv.rating}/10</span>
+                                <span style={{ fontSize:11, color:"rgba(255,255,255,.18)", fontFamily:"'DM Sans',sans-serif" }}>{RATING_LABELS[rv.rating]}</span>
+                              </div>
+                            </div>
+                          </div>
+                          {/* Comment */}
+                          {rv.comment && (
+                            <p style={{ color:"rgba(255,255,255,.48)", fontSize:13, lineHeight:1.75, fontFamily:"'DM Sans',sans-serif", fontStyle:"italic", margin:"0 0 12px", paddingLeft:50 }}>"{rv.comment}"</p>
+                          )}
+                          {/* Emoji reactions */}
+                          <div style={{ display:"flex", gap:6, flexWrap:"wrap", paddingLeft:50 }}>
+                            {EMOJIS.map(emoji => {
+                              const count = rxCounts[emoji] || 0;
+                              const active = myRx.includes(emoji);
+                              return (
+                                <button key={emoji} onClick={() => toggleReaction(rv.user_id, emoji)}
+                                  style={{ background: active ? "rgba(255,107,53,.14)" : "rgba(255,255,255,.03)", border:`1px solid ${active ? "rgba(255,107,53,.35)" : "rgba(255,255,255,.07)"}`, borderRadius:20, padding:"4px 10px", cursor:"pointer", fontSize:14, display:"flex", alignItems:"center", gap:5, transition:"all .18s", lineHeight:1 }}>
+                                  {emoji}
+                                  {count > 0 && <span style={{ fontSize:11, fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, color: active ? "#ff6b35" : "rgba(255,255,255,.35)" }}>{count}</span>}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
