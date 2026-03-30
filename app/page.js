@@ -46,6 +46,240 @@ const RATING_LABELS = {
   9:"Chef-d'œuvre", 10:"Parfait ✦",
 };
 
+/* ── TRANSLATIONS ─────────────────────────────────────────── */
+const TRANSLATIONS = {
+  fr: {
+    s_wishlist:"Envie de jouer", s_playing:"En cours", s_completed:"Terminé", s_dropped:"Abandonné",
+    r1:"Nul", r2:"Mauvais", r3:"Médiocre", r4:"Décevant", r5:"Correct", r6:"Bien", r7:"Très bien", r8:"Excellent", r9:"Chef-d'œuvre", r10:"Parfait ✦",
+    all:"Tous", unknown:"Inconnu", videogame:"Jeu vidéo",
+    home:"Accueil", explore:"Explorer", discover:"Découvrir", profile:"Profil",
+    logout:"Déco", loginBtn:"Connexion",
+    badge:"Votre journal gaming",
+    heroRate:"Notez", heroCritic:"Critiquez", heroShare:"Partagez",
+    heroDesc:"Des millions de jeux, une seule app pour cataloguer ton histoire gaming. De la Game Boy à la PS5.",
+    startFree:"Commencer gratuitement →", exploreGames:"Explorer les jeux",
+    igdbGames:"Jeux IGDB", free:"Gratuit", myRatings:"Mes notes", myList:"Ma liste",
+    topRated:"Les mieux notés", topGames:"Top jeux", exploreAll:"Tout explorer →", loadError:"Chargement impossible.",
+    scrollHint:"Défiler",
+    igdbTag:"IGDB · Millions de jeux", exploreTitle:"Explorer", searchPlaceholder:"Titre, série, genre…",
+    noResults:'Aucun résultat pour "{q}"', endResults:"— Fin des résultats —", searching:"Recherche…",
+    discoverTag:"Recommandations", discoverTitle:"Découvrir",
+    discoverDesc:"Sélectionne tes univers — on trouve ton prochain jeu parmi des millions de titres.",
+    yourTastes:"Tes goûts", noDiscoResults:"Aucun résultat. Essaie d'autres préférences !", pickTastes:"Choisis tes goûts pour commencer",
+    profileWaiting:"Ton profil t'attend",
+    profileLoginDesc:"Connecte-toi pour suivre ta progression, noter tes jeux et construire ta collection.",
+    loginArrow:"Se connecter →", player:"Joueur",
+    gamesRated:"Jeux notés", inMyList:"Dans ma liste", wantToPlay:"Envie de jouer", avgRating:"Note moyenne",
+    wishlistSection:"Envie de jouer", collection:"Collection",
+    noRated:"Aucun jeu noté", startExplore:"Commence à explorer et noter des jeux", exploreArrow:"Explorer les jeux →",
+    welcomeBack:"Bon retour 👋", joinGameDiary:"Rejoindre GameDiary",
+    accessCollection:"Accède à ta collection", freeForever:"Gratuit, pour toujours",
+    loginTab:"Connexion", signupTab:"Inscription",
+    usernamePlaceholder:"Nom d'utilisateur", passwordPlaceholder:"Mot de passe (6 min)",
+    loginSubmit:"Se connecter", signupSubmit:"Créer mon compte",
+    fillFields:"Remplis tous les champs.", pwShort:"Mot de passe trop court (6 min).",
+    accountCreated:"Compte créé ! Vérifie ton email.", badCreds:"Email ou mot de passe incorrect.",
+    myRating:"Ma note", savedLabel:"Publiée", communityReviews:"Avis", ofCommunity:"de la communauté",
+    reviewPublished:"Critique publiée", myReview:"Ma critique", rateGame:"Notez ce jeu",
+    editBtn:"Modifier", choose:"Choisissez",
+    reviewPlaceholder:"Partagez votre ressenti, vos points forts, ce qui vous a marqué…",
+    loginToReview:"Connectez-vous pour écrire une critique",
+    publishing:"Publication…", publishBtn:"Publier", loginBtn2:"Se connecter",
+    readLess:"Réduire ↑", readMore:"Lire la suite ↓", synopsis:"Synopsis",
+    platform:"Plateforme", releaseYear:"Année de sortie", mainGenre:"Genre principal",
+    communityCount:"Avis communauté", beFirst:"Soyez le premier",
+    dlcSection:"DLC & Extensions", content:"contenu", contents:"contenus",
+    dlcDLC:"DLC", dlcExpansion:"Extension", dlcStandalone:"Extension standalone",
+    communitySection:"Avis de la communauté", avisCount:"avis",
+    noReviews:"Aucun avis pour l'instant.\nSoyez le premier à en laisser un !", member:"Membre",
+    enableSound:"Activer le son", muteSound:"Couper le son",
+  },
+  en: {
+    s_wishlist:"Want to play", s_playing:"Playing", s_completed:"Completed", s_dropped:"Dropped",
+    r1:"Terrible", r2:"Bad", r3:"Poor", r4:"Disappointing", r5:"OK", r6:"Good", r7:"Very good", r8:"Excellent", r9:"Masterpiece", r10:"Perfect ✦",
+    all:"All", unknown:"Unknown", videogame:"Video game",
+    home:"Home", explore:"Explore", discover:"Discover", profile:"Profile",
+    logout:"Logout", loginBtn:"Login",
+    badge:"Your gaming journal",
+    heroRate:"Rate", heroCritic:"Review", heroShare:"Share",
+    heroDesc:"Millions of games, one app to catalog your gaming history. From Game Boy to PS5.",
+    startFree:"Get started for free →", exploreGames:"Explore games",
+    igdbGames:"IGDB Games", free:"Free", myRatings:"My ratings", myList:"My list",
+    topRated:"Top rated", topGames:"Top games", exploreAll:"Explore all →", loadError:"Failed to load.",
+    scrollHint:"Scroll",
+    igdbTag:"IGDB · Millions of games", exploreTitle:"Explore", searchPlaceholder:"Title, series, genre…",
+    noResults:'No results for "{q}"', endResults:"— End of results —", searching:"Searching…",
+    discoverTag:"Recommendations", discoverTitle:"Discover",
+    discoverDesc:"Pick your favourite universes — we find your next game among millions of titles.",
+    yourTastes:"Your tastes", noDiscoResults:"No results. Try different preferences!", pickTastes:"Pick your tastes to get started",
+    profileWaiting:"Your profile awaits",
+    profileLoginDesc:"Log in to track your progress, rate your games and build your collection.",
+    loginArrow:"Log in →", player:"Player",
+    gamesRated:"Games rated", inMyList:"In my list", wantToPlay:"Want to play", avgRating:"Avg rating",
+    wishlistSection:"Want to play", collection:"Collection",
+    noRated:"No games rated yet", startExplore:"Start exploring and rating games", exploreArrow:"Explore games →",
+    welcomeBack:"Welcome back 👋", joinGameDiary:"Join GameDiary",
+    accessCollection:"Access your collection", freeForever:"Free, forever",
+    loginTab:"Login", signupTab:"Sign up",
+    usernamePlaceholder:"Username", passwordPlaceholder:"Password (6 min)",
+    loginSubmit:"Log in", signupSubmit:"Create my account",
+    fillFields:"Please fill in all fields.", pwShort:"Password too short (6 min).",
+    accountCreated:"Account created! Check your email.", badCreds:"Incorrect email or password.",
+    myRating:"My rating", savedLabel:"Saved", communityReviews:"Reviews", ofCommunity:"from the community",
+    reviewPublished:"Review published", myReview:"My review", rateGame:"Rate this game",
+    editBtn:"Edit", choose:"Choose",
+    reviewPlaceholder:"Share your thoughts, highlights, what stood out…",
+    loginToReview:"Log in to write a review",
+    publishing:"Publishing…", publishBtn:"Publish", loginBtn2:"Log in",
+    readLess:"Show less ↑", readMore:"Read more ↓", synopsis:"Synopsis",
+    platform:"Platform", releaseYear:"Release year", mainGenre:"Main genre",
+    communityCount:"Community reviews", beFirst:"Be the first",
+    dlcSection:"DLC & Extensions", content:"content", contents:"contents",
+    dlcDLC:"DLC", dlcExpansion:"Expansion", dlcStandalone:"Standalone expansion",
+    communitySection:"Community reviews", avisCount:"reviews",
+    noReviews:"No reviews yet.\nBe the first to leave one!", member:"Member",
+    enableSound:"Enable sound", muteSound:"Mute",
+  },
+  de: {
+    s_wishlist:"Möchte spielen", s_playing:"Spiele gerade", s_completed:"Abgeschlossen", s_dropped:"Abgebrochen",
+    r1:"Schrecklich", r2:"Schlecht", r3:"Schwach", r4:"Enttäuschend", r5:"OK", r6:"Gut", r7:"Sehr gut", r8:"Hervorragend", r9:"Meisterwerk", r10:"Perfekt ✦",
+    all:"Alle", unknown:"Unbekannt", videogame:"Videospiel",
+    home:"Startseite", explore:"Entdecken", discover:"Empfehlungen", profile:"Profil",
+    logout:"Abmelden", loginBtn:"Anmelden",
+    badge:"Dein Gaming-Tagebuch",
+    heroRate:"Bewerten", heroCritic:"Rezensieren", heroShare:"Teilen",
+    heroDesc:"Millionen Spiele, eine App für deine Gaming-Geschichte. Von Game Boy bis PS5.",
+    startFree:"Kostenlos starten →", exploreGames:"Spiele entdecken",
+    igdbGames:"IGDB-Spiele", free:"Kostenlos", myRatings:"Meine Bewertungen", myList:"Meine Liste",
+    topRated:"Am besten bewertet", topGames:"Top Spiele", exploreAll:"Alle anzeigen →", loadError:"Laden fehlgeschlagen.",
+    scrollHint:"Scrollen",
+    igdbTag:"IGDB · Millionen Spiele", exploreTitle:"Entdecken", searchPlaceholder:"Titel, Serie, Genre…",
+    noResults:'Keine Ergebnisse für "{q}"', endResults:"— Ende der Ergebnisse —", searching:"Suche…",
+    discoverTag:"Empfehlungen", discoverTitle:"Entdecken",
+    discoverDesc:"Wähle deine Lieblingsuniversen — wir finden dein nächstes Spiel.",
+    yourTastes:"Deine Vorlieben", noDiscoResults:"Keine Ergebnisse. Andere Vorlieben ausprobieren!", pickTastes:"Wähle deine Vorlieben",
+    profileWaiting:"Dein Profil wartet", profileLoginDesc:"Melde dich an, um deinen Fortschritt zu verfolgen.",
+    loginArrow:"Anmelden →", player:"Spieler",
+    gamesRated:"Bewertete Spiele", inMyList:"In meiner Liste", wantToPlay:"Möchte spielen", avgRating:"Durchschnitt",
+    wishlistSection:"Möchte spielen", collection:"Sammlung",
+    noRated:"Noch keine Spiele bewertet", startExplore:"Entdecke und bewerte Spiele", exploreArrow:"Spiele entdecken →",
+    welcomeBack:"Willkommen zurück 👋", joinGameDiary:"GameDiary beitreten",
+    accessCollection:"Zugriff auf deine Sammlung", freeForever:"Kostenlos, für immer",
+    loginTab:"Anmelden", signupTab:"Registrieren",
+    usernamePlaceholder:"Benutzername", passwordPlaceholder:"Passwort (min. 6)",
+    loginSubmit:"Anmelden", signupSubmit:"Konto erstellen",
+    fillFields:"Bitte alle Felder ausfüllen.", pwShort:"Passwort zu kurz (min. 6).",
+    accountCreated:"Konto erstellt! E-Mail überprüfen.", badCreds:"Falsche E-Mail oder Passwort.",
+    myRating:"Meine Bewertung", savedLabel:"Gespeichert", communityReviews:"Bewertungen", ofCommunity:"der Community",
+    reviewPublished:"Rezension veröffentlicht", myReview:"Meine Rezension", rateGame:"Spiel bewerten",
+    editBtn:"Bearbeiten", choose:"Wählen",
+    reviewPlaceholder:"Teile deine Gedanken…", loginToReview:"Anmelden um zu rezensieren",
+    publishing:"Veröffentliche…", publishBtn:"Veröffentlichen", loginBtn2:"Anmelden",
+    readLess:"Weniger ↑", readMore:"Mehr lesen ↓", synopsis:"Synopsis",
+    platform:"Plattform", releaseYear:"Erscheinungsjahr", mainGenre:"Hauptgenre",
+    communityCount:"Community-Bewertungen", beFirst:"Sei der Erste",
+    dlcSection:"DLC & Erweiterungen", content:"Inhalt", contents:"Inhalte",
+    dlcDLC:"DLC", dlcExpansion:"Erweiterung", dlcStandalone:"Eigenständige Erweiterung",
+    communitySection:"Community-Bewertungen", avisCount:"Bewertungen",
+    noReviews:"Noch keine Bewertungen.\nSei der Erste!", member:"Mitglied",
+    enableSound:"Ton aktivieren", muteSound:"Stummschalten",
+  },
+  es: {
+    s_wishlist:"Quiero jugar", s_playing:"Jugando", s_completed:"Completado", s_dropped:"Abandonado",
+    r1:"Pésimo", r2:"Malo", r3:"Mediocre", r4:"Decepcionante", r5:"Regular", r6:"Bueno", r7:"Muy bueno", r8:"Excelente", r9:"Obra maestra", r10:"Perfecto ✦",
+    all:"Todos", unknown:"Desconocido", videogame:"Videojuego",
+    home:"Inicio", explore:"Explorar", discover:"Descubrir", profile:"Perfil",
+    logout:"Salir", loginBtn:"Iniciar sesión",
+    badge:"Tu diario gamer",
+    heroRate:"Valora", heroCritic:"Critica", heroShare:"Comparte",
+    heroDesc:"Millones de juegos, una app para catalogar tu historia gamer. De Game Boy a PS5.",
+    startFree:"Empezar gratis →", exploreGames:"Explorar juegos",
+    igdbGames:"Juegos IGDB", free:"Gratis", myRatings:"Mis valoraciones", myList:"Mi lista",
+    topRated:"Mejor valorados", topGames:"Top juegos", exploreAll:"Explorar todo →", loadError:"Error al cargar.",
+    scrollHint:"Desplazar",
+    igdbTag:"IGDB · Millones de juegos", exploreTitle:"Explorar", searchPlaceholder:"Título, saga, género…",
+    noResults:'Sin resultados para "{q}"', endResults:"— Fin de resultados —", searching:"Buscando…",
+    discoverTag:"Recomendaciones", discoverTitle:"Descubrir",
+    discoverDesc:"Elige tus universos favoritos — encontramos tu próximo juego entre millones.",
+    yourTastes:"Tus gustos", noDiscoResults:"Sin resultados. ¡Prueba otras preferencias!", pickTastes:"Elige tus gustos para empezar",
+    profileWaiting:"Tu perfil te espera", profileLoginDesc:"Inicia sesión para seguir tu progreso.",
+    loginArrow:"Iniciar sesión →", player:"Jugador",
+    gamesRated:"Juegos valorados", inMyList:"En mi lista", wantToPlay:"Quiero jugar", avgRating:"Nota media",
+    wishlistSection:"Quiero jugar", collection:"Colección",
+    noRated:"Sin juegos valorados", startExplore:"Empieza a explorar y valorar juegos", exploreArrow:"Explorar juegos →",
+    welcomeBack:"Bienvenido de vuelta 👋", joinGameDiary:"Unirse a GameDiary",
+    accessCollection:"Accede a tu colección", freeForever:"Gratis, para siempre",
+    loginTab:"Iniciar sesión", signupTab:"Registrarse",
+    usernamePlaceholder:"Nombre de usuario", passwordPlaceholder:"Contraseña (mín. 6)",
+    loginSubmit:"Iniciar sesión", signupSubmit:"Crear mi cuenta",
+    fillFields:"Rellena todos los campos.", pwShort:"Contraseña demasiado corta (mín. 6).",
+    accountCreated:"¡Cuenta creada! Revisa tu email.", badCreds:"Email o contraseña incorrectos.",
+    myRating:"Mi valoración", savedLabel:"Guardado", communityReviews:"Reseñas", ofCommunity:"de la comunidad",
+    reviewPublished:"Reseña publicada", myReview:"Mi reseña", rateGame:"Valorar este juego",
+    editBtn:"Editar", choose:"Elige",
+    reviewPlaceholder:"Comparte tus impresiones…", loginToReview:"Inicia sesión para escribir una reseña",
+    publishing:"Publicando…", publishBtn:"Publicar", loginBtn2:"Iniciar sesión",
+    readLess:"Mostrar menos ↑", readMore:"Leer más ↓", synopsis:"Sinopsis",
+    platform:"Plataforma", releaseYear:"Año de lanzamiento", mainGenre:"Género principal",
+    communityCount:"Reseñas comunidad", beFirst:"Sé el primero",
+    dlcSection:"DLC & Expansiones", content:"contenido", contents:"contenidos",
+    dlcDLC:"DLC", dlcExpansion:"Expansión", dlcStandalone:"Expansión independiente",
+    communitySection:"Reseñas de la comunidad", avisCount:"reseñas",
+    noReviews:"Aún no hay reseñas.\n¡Sé el primero!", member:"Miembro",
+    enableSound:"Activar sonido", muteSound:"Silenciar",
+  },
+  pt: {
+    s_wishlist:"Quero jogar", s_playing:"Jogando", s_completed:"Completado", s_dropped:"Abandonado",
+    r1:"Péssimo", r2:"Mau", r3:"Medíocre", r4:"Decepcionante", r5:"OK", r6:"Bom", r7:"Muito bom", r8:"Excelente", r9:"Obra-prima", r10:"Perfeito ✦",
+    all:"Todos", unknown:"Desconhecido", videogame:"Jogo",
+    home:"Início", explore:"Explorar", discover:"Descobrir", profile:"Perfil",
+    logout:"Sair", loginBtn:"Entrar",
+    badge:"Seu diário gamer",
+    heroRate:"Avalie", heroCritic:"Critique", heroShare:"Compartilhe",
+    heroDesc:"Milhões de jogos, um app para catalogar sua história gamer. Do Game Boy ao PS5.",
+    startFree:"Começar gratuitamente →", exploreGames:"Explorar jogos",
+    igdbGames:"Jogos IGDB", free:"Grátis", myRatings:"Minhas notas", myList:"Minha lista",
+    topRated:"Mais bem avaliados", topGames:"Top jogos", exploreAll:"Explorar tudo →", loadError:"Falha ao carregar.",
+    scrollHint:"Rolar",
+    igdbTag:"IGDB · Milhões de jogos", exploreTitle:"Explorar", searchPlaceholder:"Título, série, género…",
+    noResults:'Sem resultados para "{q}"', endResults:"— Fim dos resultados —", searching:"Buscando…",
+    discoverTag:"Recomendações", discoverTitle:"Descobrir",
+    discoverDesc:"Escolha seus universos favoritos — encontramos seu próximo jogo.",
+    yourTastes:"Seus gostos", noDiscoResults:"Sem resultados. Tente outras preferências!", pickTastes:"Escolha seus gostos para começar",
+    profileWaiting:"Seu perfil espera por você", profileLoginDesc:"Entre para acompanhar seu progresso.",
+    loginArrow:"Entrar →", player:"Jogador",
+    gamesRated:"Jogos avaliados", inMyList:"Na minha lista", wantToPlay:"Quero jogar", avgRating:"Nota média",
+    wishlistSection:"Quero jogar", collection:"Coleção",
+    noRated:"Nenhum jogo avaliado", startExplore:"Comece a explorar e avaliar jogos", exploreArrow:"Explorar jogos →",
+    welcomeBack:"Bem-vindo de volta 👋", joinGameDiary:"Entrar no GameDiary",
+    accessCollection:"Acesse sua coleção", freeForever:"Grátis, para sempre",
+    loginTab:"Entrar", signupTab:"Cadastrar",
+    usernamePlaceholder:"Nome de usuário", passwordPlaceholder:"Senha (mín. 6)",
+    loginSubmit:"Entrar", signupSubmit:"Criar minha conta",
+    fillFields:"Preencha todos os campos.", pwShort:"Senha muito curta (mín. 6).",
+    accountCreated:"Conta criada! Verifique seu email.", badCreds:"Email ou senha incorretos.",
+    myRating:"Minha nota", savedLabel:"Salvo", communityReviews:"Avaliações", ofCommunity:"da comunidade",
+    reviewPublished:"Avaliação publicada", myReview:"Minha avaliação", rateGame:"Avaliar este jogo",
+    editBtn:"Editar", choose:"Escolher",
+    reviewPlaceholder:"Compartilhe suas impressões…", loginToReview:"Entre para escrever uma avaliação",
+    publishing:"Publicando…", publishBtn:"Publicar", loginBtn2:"Entrar",
+    readLess:"Mostrar menos ↑", readMore:"Ler mais ↓", synopsis:"Sinopse",
+    platform:"Plataforma", releaseYear:"Ano de lançamento", mainGenre:"Gênero principal",
+    communityCount:"Avaliações comunidade", beFirst:"Seja o primeiro",
+    dlcSection:"DLC & Expansões", content:"conteúdo", contents:"conteúdos",
+    dlcDLC:"DLC", dlcExpansion:"Expansão", dlcStandalone:"Expansão standalone",
+    communitySection:"Avaliações da comunidade", avisCount:"avaliações",
+    noReviews:"Ainda sem avaliações.\nSeja o primeiro!", member:"Membro",
+    enableSound:"Ativar som", muteSound:"Silenciar",
+  },
+};
+
+const detectLang = () => {
+  if (typeof navigator === "undefined") return "fr";
+  const code = (navigator.language || "fr").slice(0,2).toLowerCase();
+  return TRANSLATIONS[code] ? code : "en";
+};
+
 const formatRating = r => r ? Math.min(10, Math.round(r / 10)) : null;
 const formatCover  = url => url ? `https:${url.replace("t_thumb","t_cover_big_2x")}` : null;
 const formatYear   = ts  => ts  ? new Date(ts * 1000).getFullYear() : "—";
@@ -361,7 +595,7 @@ const FeaturedCard = ({ game, onClick }) => {
 };
 
 /* ── AUTH MODAL ───────────────────────────────────────────── */
-const AuthModal = ({ onClose, onSuccess }) => {
+const AuthModal = ({ onClose, onSuccess, t }) => {
   const [mode, setMode] = useState("login");
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
@@ -371,8 +605,8 @@ const AuthModal = ({ onClose, onSuccess }) => {
   const [ok, setOk] = useState("");
 
   const submit = async () => {
-    if (!email || !pw) { setErr("Remplis tous les champs."); return; }
-    if (pw.length < 6) { setErr("Mot de passe trop court (6 min)."); return; }
+    if (!email || !pw) { setErr(t("fillFields")); return; }
+    if (pw.length < 6) { setErr(t("pwShort")); return; }
     setLoading(true); setErr(""); setOk("");
     try {
       if (mode === "login") {
@@ -383,10 +617,10 @@ const AuthModal = ({ onClose, onSuccess }) => {
         const { data, error } = await supabase.auth.signUp({ email, password: pw });
         if (error) throw error;
         if (data.user) await supabase.from("profiles").upsert({ id: data.user.id, username: username || email.split("@")[0] });
-        setOk("Compte créé ! Vérifie ton email.");
+        setOk(t("accountCreated"));
       }
     } catch (e) {
-      setErr(e.message === "Invalid login credentials" ? "Email ou mot de passe incorrect." : e.message);
+      setErr(e.message === "Invalid login credentials" ? t("badCreds") : e.message);
     }
     setLoading(false);
   };
@@ -399,26 +633,26 @@ const AuthModal = ({ onClose, onSuccess }) => {
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:22 }}>
             <div>
               <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:21, color:"#fff", marginBottom:3 }}>
-                {mode === "login" ? "Bon retour 👋" : "Rejoindre GameDiary"}
+                {mode === "login" ? t("welcomeBack") : t("joinGameDiary")}
               </h2>
               <p style={{ color:"rgba(255,255,255,.28)", fontSize:13 }}>
-                {mode === "login" ? "Accède à ta collection" : "Gratuit, pour toujours"}
+                {mode === "login" ? t("accessCollection") : t("freeForever")}
               </p>
             </div>
             <button onClick={onClose} style={{ background:"rgba(255,255,255,.06)", border:"none", borderRadius:8, width:32, height:32, display:"flex", alignItems:"center", justifyContent:"center", color:"rgba(255,255,255,.4)", cursor:"pointer" }}>✕</button>
           </div>
 
           <div style={{ display:"flex", gap:5, marginBottom:18, background:"rgba(255,255,255,.04)", borderRadius:10, padding:4 }}>
-            {[["login","Connexion"],["signup","Inscription"]].map(([m,l]) => (
+            {[["login",t("loginTab")],["signup",t("signupTab")]].map(([m,l]) => (
               <button key={m} onClick={() => { setMode(m); setErr(""); setOk(""); }}
                 style={{ flex:1, background:mode===m?"rgba(255,107,53,.13)":"transparent", color:mode===m?"#ffd166":"rgba(255,255,255,.32)", border:mode===m?"1px solid rgba(255,107,53,.28)":"1px solid transparent", borderRadius:7, padding:"8px", fontSize:13, fontFamily:"'Syne',sans-serif", fontWeight:700, cursor:"pointer", transition:"all .15s" }}>{l}</button>
             ))}
           </div>
 
           <div style={{ display:"flex", flexDirection:"column", gap:9 }}>
-            {mode === "signup" && <input className="inp" placeholder="Nom d'utilisateur" value={username} onChange={e => setUsername(e.target.value)} />}
+            {mode === "signup" && <input className="inp" placeholder={t("usernamePlaceholder")} value={username} onChange={e => setUsername(e.target.value)} />}
             <input className="inp" type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} onKeyDown={e => e.key==="Enter" && submit()} />
-            <input className="inp" type="password" placeholder="Mot de passe (6 min)" value={pw} onChange={e => setPw(e.target.value)} onKeyDown={e => e.key==="Enter" && submit()} />
+            <input className="inp" type="password" placeholder={t("passwordPlaceholder")} value={pw} onChange={e => setPw(e.target.value)} onKeyDown={e => e.key==="Enter" && submit()} />
           </div>
 
           {err && <div style={{ color:"#ff6b6b", fontSize:13, marginTop:10, padding:"9px 12px", background:"rgba(255,77,77,.07)", borderRadius:8, border:"1px solid rgba(255,77,77,.14)" }}>{err}</div>}
@@ -426,7 +660,7 @@ const AuthModal = ({ onClose, onSuccess }) => {
 
           {!ok && <button className="btn" onClick={submit} disabled={loading} style={{ marginTop:16, width:"100%", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
             {loading && <div className="spin" style={{ width:15, height:15, borderWidth:2 }} />}
-            {loading ? "..." : mode === "login" ? "Se connecter" : "Créer mon compte"}
+            {loading ? "..." : mode === "login" ? t("loginSubmit") : t("signupSubmit")}
           </button>}
         </div>
       </div>
@@ -435,7 +669,7 @@ const AuthModal = ({ onClose, onSuccess }) => {
 };
 
 /* ── CINEMATIC GAME PAGE ──────────────────────────────────── */
-const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired }) => {
+const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired, t }) => {
   const [myR, setMyR] = useState(userRatings[game.id]?.rating || 0);
   const [hovR, setHovR] = useState(0);
   const [txt, setTxt] = useState(userRatings[game.id]?.comment || "");
@@ -452,7 +686,7 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
   const [myReactions, setMyReactions] = useState({});
   const [dlcs, setDlcs] = useState([]);
 
-  const DLC_LABELS = { 1:"DLC", 2:"Extension", 4:"Extension standalone" };
+  const DLC_LABELS = { 1:t("dlcDLC"), 2:t("dlcExpansion"), 4:t("dlcStandalone") };
 
   useEffect(() => {
     fetch(`/api/games/dlcs?id=${game.id}`).then(r=>r.json()).then(data => {
@@ -593,7 +827,7 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
             </div>
             {/* Mute toggle */}
             <button onClick={()=>setMuted(m=>!m)} style={{ position:"absolute", bottom:28, right:28, zIndex:10, width:38, height:38, borderRadius:"50%", background:"rgba(0,0,0,.45)", backdropFilter:"blur(12px)", border:"1px solid rgba(255,255,255,.12)", color:"rgba(255,255,255,.75)", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, transition:"all .2s" }}
-              title={muted?"Activer le son":"Couper le son"}
+              title={muted?t("enableSound"):t("muteSound")}
               onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,107,53,.25)";e.currentTarget.style.borderColor="rgba(255,107,53,.5)";e.currentTarget.style.color="#fff";}}
               onMouseLeave={e=>{e.currentTarget.style.background="rgba(0,0,0,.45)";e.currentTarget.style.borderColor="rgba(255,255,255,.12)";e.currentTarget.style.color="rgba(255,255,255,.75)";}}>
               {muted ? "🔇" : "🔊"}
@@ -638,8 +872,8 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
               <div style={{ display:"flex", alignItems:"center", gap:10 }}>
                 <Ring value={userRatings[game.id].rating} size={52} />
                 <div>
-                  <div style={{ fontSize:12, color:"rgba(255,255,255,.3)", fontFamily:"'DM Sans',sans-serif" }}>Ma note</div>
-                  <div style={{ fontSize:13, color:"rgba(255,255,255,.55)", fontFamily:"'DM Sans',sans-serif" }}>Publiée</div>
+                  <div style={{ fontSize:12, color:"rgba(255,255,255,.3)", fontFamily:"'DM Sans',sans-serif" }}>{t("myRating")}</div>
+                  <div style={{ fontSize:13, color:"rgba(255,255,255,.55)", fontFamily:"'DM Sans',sans-serif" }}>{t("savedLabel")}</div>
                 </div>
               </div>
             )}
@@ -647,8 +881,8 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
               <div style={{ display:"flex", alignItems:"center", gap:10 }}>
                 <div style={{ width:52, height:52, borderRadius:"50%", background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"#ffd166" }}>{communityReviews.length}</div>
                 <div>
-                  <div style={{ fontSize:12, color:"rgba(255,255,255,.3)", fontFamily:"'DM Sans',sans-serif" }}>Avis</div>
-                  <div style={{ fontSize:13, color:"rgba(255,255,255,.55)", fontFamily:"'DM Sans',sans-serif" }}>de la communauté</div>
+                  <div style={{ fontSize:12, color:"rgba(255,255,255,.3)", fontFamily:"'DM Sans',sans-serif" }}>{t("communityReviews")}</div>
+                  <div style={{ fontSize:13, color:"rgba(255,255,255,.55)", fontFamily:"'DM Sans',sans-serif" }}>{t("ofCommunity")}</div>
                 </div>
               </div>
             )}
@@ -662,7 +896,7 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
                 <button key={key} className="status-btn" onClick={() => setStatus(key)}
                   style={{ background: on ? `${cfg.color}22` : "rgba(255,255,255,.07)", color: on ? cfg.color : "rgba(255,255,255,.5)", border:`1px solid ${on ? cfg.color+"55" : "rgba(255,255,255,.12)"}`, boxShadow: on ? `0 0 14px ${cfg.color}33` : "none" }}>
                   <span>{cfg.icon}</span>
-                  <span style={{ fontFamily:"'Syne',sans-serif" }}>{cfg.label}</span>
+                  <span style={{ fontFamily:"'Syne',sans-serif" }}>{t(`s_${key}`)}</span>
                   {statusLoading && on && <div className="spin" style={{ width:12, height:12, borderWidth:2 }} />}
                 </button>
               );
@@ -688,7 +922,7 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
 
             {/* Ma note sidebar */}
             <div style={{ background: myR ? "rgba(255,107,53,.06)" : "rgba(255,255,255,.025)", border:`1px solid ${myR ? "rgba(255,107,53,.22)" : "rgba(255,255,255,.06)"}`, borderRadius:14, padding:"14px 10px", textAlign:"center", transition:"all .3s", marginBottom:18 }}>
-              <div style={{ fontSize:9, color: myR ? "rgba(255,107,53,.7)" : "rgba(255,255,255,.22)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:2, textTransform:"uppercase", marginBottom:10 }}>Ma note</div>
+              <div style={{ fontSize:9, color: myR ? "rgba(255,107,53,.7)" : "rgba(255,255,255,.22)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:2, textTransform:"uppercase", marginBottom:10 }}>{t("myRating")}</div>
               <Ring value={myR || null} size={52} />
               <div style={{ fontSize:10, color:"rgba(255,255,255,.22)", fontFamily:"'DM Sans',sans-serif", marginTop:8 }}>
                 {myR ? RATING_LABELS[myR] : "—"}
@@ -703,7 +937,7 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
                   <button key={key} className="status-btn" onClick={() => setStatus(key)}
                     style={{ width:"100%", justifyContent:"flex-start", background: on ? `${cfg.color}18` : "rgba(255,255,255,.04)", color: on ? cfg.color : "rgba(255,255,255,.38)", border:`1px solid ${on ? cfg.color+"44" : "rgba(255,255,255,.07)"}`, boxShadow: on ? `0 0 18px ${cfg.color}22` : "none", padding:"10px 14px", borderRadius:12, fontSize:13 }}>
                     <span style={{ fontSize:15, marginRight:8 }}>{cfg.icon}</span>
-                    <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:600 }}>{cfg.label}</span>
+                    <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:600 }}>{t(`s_${key}`)}</span>
                     {statusLoading && on && <div className="spin" style={{ width:12, height:12, borderWidth:2, marginLeft:"auto" }} />}
                     {on && !statusLoading && <span style={{ marginLeft:"auto", fontSize:10, opacity:.6 }}>✓</span>}
                   </button>
@@ -722,13 +956,13 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
               <div style={{ padding:"24px 26px 26px" }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
                   <div style={{ fontSize:10, color:"rgba(255,107,53,.65)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:3, textTransform:"uppercase" }}>
-                    {saved ? "Critique publiée" : user ? "Ma critique" : "Notez ce jeu"}
+                    {saved ? t("reviewPublished") : user ? t("myReview") : t("rateGame")}
                   </div>
                   {saved && (
                     <button onClick={() => setSaved(false)} style={{ background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.09)", borderRadius:8, color:"rgba(255,255,255,.35)", cursor:"pointer", fontSize:11, padding:"5px 12px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, transition:"all .15s" }}
                       onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(255,107,53,.35)";e.currentTarget.style.color="#ff6b35";}}
                       onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.09)";e.currentTarget.style.color="rgba(255,255,255,.35)";}}>
-                      Modifier
+                      {t("editBtn")}
                     </button>
                   )}
                 </div>
@@ -743,7 +977,7 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
                       <div style={{ paddingBottom:12 }}>
                         <div style={{ fontSize:18, color:"rgba(255,255,255,.12)", fontFamily:"'Syne',sans-serif", fontWeight:700, lineHeight:1, marginBottom:5 }}>/10</div>
                         <div style={{ fontSize:14, color:(hovR||myR) ? rc(hovR||myR) : "rgba(255,255,255,.18)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, transition:"color .12s", minWidth:120 }}>
-                          {RATING_LABELS[hovR||myR] || "Choisissez"}
+                          {(hovR||myR) ? t(`r${hovR||myR}`) : t("choose")}
                         </div>
                       </div>
                     </div>
@@ -775,7 +1009,7 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
 
                     {/* Textarea */}
                     <textarea value={txt} onChange={e => setTxt(e.target.value.slice(0,500))}
-                      placeholder={user ? "Partagez votre ressenti, vos points forts, ce qui vous a marqué…" : "Connectez-vous pour écrire une critique"}
+                      placeholder={user ? t("reviewPlaceholder") : t("loginToReview")}
                       disabled={!user}
                       rows={4}
                       style={{ width:"100%", background:"rgba(255,255,255,.03)", border:"1px solid rgba(255,255,255,.07)", borderRadius:12, color:"rgba(255,255,255,.8)", padding:"14px 16px", fontSize:14, resize:"none", outline:"none", transition:"border-color .18s, background .18s", lineHeight:1.65, fontFamily:"'DM Sans',sans-serif", opacity:user?1:.45 }}
@@ -786,7 +1020,7 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
                       <span style={{ fontSize:11, color:"rgba(255,255,255,.16)", fontFamily:"'Space Grotesk',sans-serif" }}>{txt.length}/500</span>
                       <button className="btn" onClick={publish} disabled={loading||(!myR&&!!user)} style={{ display:"flex", alignItems:"center", gap:8, padding:"11px 28px" }}>
                         {loading && <div className="spin" style={{ width:14, height:14, borderWidth:2 }} />}
-                        {loading ? "Publication…" : user ? `Publier${myR ? ` · ${myR}/10` : ""}` : "Se connecter"}
+                        {loading ? t("publishing") : user ? `${t("publishBtn")}${myR ? ` · ${myR}/10` : ""}` : t("loginBtn2")}
                       </button>
                     </div>
                   </>
@@ -817,13 +1051,13 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
             {/* ── SYNOPSIS ── */}
             {game.summary && (
               <div style={{ background:"rgba(255,255,255,.022)", border:"1px solid rgba(255,255,255,.07)", borderRadius:20, padding:"22px 26px" }}>
-                <div style={{ fontSize:10, color:"rgba(255,107,53,.65)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:3, textTransform:"uppercase", marginBottom:14 }}>Synopsis</div>
+                <div style={{ fontSize:10, color:"rgba(255,107,53,.65)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:3, textTransform:"uppercase", marginBottom:14 }}>{t("synopsis")}</div>
                 <p style={{ color:"rgba(255,255,255,.52)", fontSize:14, lineHeight:1.85, fontFamily:"'DM Sans',sans-serif", margin:0 }}>
                   {expanded || game.summary.length <= 300 ? game.summary : game.summary.slice(0,300)+"…"}
                 </p>
                 {game.summary.length > 300 && (
                   <button onClick={() => setExpanded(!expanded)} style={{ background:"none", border:"none", color:"rgba(255,107,53,.7)", cursor:"pointer", fontSize:13, padding:"10px 0 0", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600 }}>
-                    {expanded ? "Réduire ↑" : "Lire la suite ↓"}
+                    {expanded ? t("readLess") : t("readMore")}
                   </button>
                 )}
               </div>
@@ -832,10 +1066,10 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
             {/* ── INFO GRID ── */}
             <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:10 }}>
               {[
-                { icon:"🖥", label:"Plateforme", value:game.platform.split("(")[0].trim() },
-                { icon:"📅", label:"Année de sortie", value:game.year },
-                { icon:"🎭", label:"Genre principal", value:game.genre },
-                { icon:"💬", label:"Avis communauté", value:communityReviews.length > 0 ? `${communityReviews.length} avis` : "Soyez le premier" },
+                { icon:"🖥", label:t("platform"), value:game.platform.split("(")[0].trim() },
+                { icon:"📅", label:t("releaseYear"), value:game.year },
+                { icon:"🎭", label:t("mainGenre"), value:game.genre },
+                { icon:"💬", label:t("communityCount"), value:communityReviews.length > 0 ? `${communityReviews.length} ${t("avisCount")}` : t("beFirst") },
               ].map(({ icon, label, value }) => (
                 <div key={label} className="stat-card" style={{ display:"flex", alignItems:"center", gap:14 }}>
                   <div style={{ width:40, height:40, borderRadius:11, background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.07)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>{icon}</div>
@@ -863,15 +1097,15 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
                 <div style={{ padding:"22px 26px 26px" }}>
                   <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:18 }}>
                     <div className="sect-h">
-                      <span style={{ fontSize:10, color:"rgba(167,139,250,.8)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:3, textTransform:"uppercase" }}>DLC & Extensions</span>
+                      <span style={{ fontSize:10, color:"rgba(167,139,250,.8)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:3, textTransform:"uppercase" }}>{t("dlcSection")}</span>
                     </div>
-                    <span style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>{dlcs.length} contenu{dlcs.length>1?"s":""}</span>
+                    <span style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>{dlcs.length} {dlcs.length>1?t("contents"):t("content")}</span>
                   </div>
                   <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
                     {dlcs.map(dlc => {
                       const cover = dlc.cover?.url ? `https:${dlc.cover.url.replace("t_thumb","t_cover_big")}` : null;
                       const year = dlc.first_release_date ? new Date(dlc.first_release_date*1000).getFullYear() : null;
-                      const typeLabel = DLC_LABELS[dlc.category] || "Contenu";
+                      const typeLabel = DLC_LABELS[dlc.category] || t("dlcDLC");
                       return (
                         <div key={dlc.id} style={{ display:"flex", alignItems:"center", gap:14, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.05)", borderRadius:14, padding:"12px 14px", transition:"all .2s", cursor:"default" }}
                           onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(167,139,250,.22)"; e.currentTarget.style.background="rgba(167,139,250,.04)"; }}
@@ -901,17 +1135,17 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
               <div style={{ padding:"22px 26px 26px" }}>
                 <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20 }}>
                   <div className="sect-h">
-                    <span style={{ fontSize:10, color:"rgba(255,209,102,.75)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:3, textTransform:"uppercase" }}>Avis de la communauté</span>
+                    <span style={{ fontSize:10, color:"rgba(255,209,102,.75)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:3, textTransform:"uppercase" }}>{t("communitySection")}</span>
                   </div>
                   {communityReviews.length > 0 && (
-                    <span style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>{communityReviews.length} avis</span>
+                    <span style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>{communityReviews.length} {t("avisCount")}</span>
                   )}
                 </div>
 
                 {communityReviews.length === 0 ? (
                   <div style={{ textAlign:"center", padding:"28px 0", color:"rgba(255,255,255,.15)", fontFamily:"'DM Sans',sans-serif" }}>
                     <div style={{ fontSize:32, marginBottom:10 }}>✍️</div>
-                    <div style={{ fontSize:13 }}>Aucun avis pour l'instant.<br/>Soyez le premier à en laisser un !</div>
+                    <div style={{ fontSize:13 }}>{t("noReviews").split("\n").map((l,i)=><span key={i}>{l}{i===0&&<br/>}</span>)}</div>
                   </div>
                 ) : (
                   <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
@@ -927,7 +1161,7 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
                             <div style={{ width:38, height:38, borderRadius:11, background:`linear-gradient(135deg,${col},${col}88)`, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:13, color:"#0a0600", flexShrink:0 }}>{initials}</div>
                             <div style={{ flex:1, minWidth:0 }}>
                               <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
-                                <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.72)" }}>{rv.user_display || "Membre"}</span>
+                                <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.72)" }}>{rv.user_display || t("member")}</span>
                                 <span style={{ background:`${col}18`, border:`1px solid ${col}40`, borderRadius:6, padding:"1px 9px", fontSize:11, color:col, fontFamily:"'Syne',sans-serif", fontWeight:800 }}>{rv.rating}/10</span>
                                 <span style={{ fontSize:11, color:"rgba(255,255,255,.18)", fontFamily:"'DM Sans',sans-serif" }}>{RATING_LABELS[rv.rating]}</span>
                               </div>
@@ -971,6 +1205,10 @@ const GamePage = ({ game, onClose, user, userRatings, setUserRatings, userStatus
    MAIN
 ═══════════════════════════════════════════════════════════ */
 export default function GameDiary() {
+  const [lang, setLang] = useState("fr");
+  useEffect(() => { setLang(detectLang()); }, []);
+  const t = key => (TRANSLATIONS[lang]?.[key] ?? TRANSLATIONS.fr[key] ?? key);
+
   const [tab, setTab]           = useState("home");
   const [selected, setSelected] = useState(null);
   const [user, setUser]         = useState(null);
@@ -1118,7 +1356,7 @@ export default function GameDiary() {
 
         {/* Center nav */}
         <div className="nav-center" style={{ display:"flex", gap:0, borderBottom:"1px solid rgba(255,255,255,.07)", paddingBottom:2 }}>
-          {[["home","Accueil"],["explore","Explorer"],["discover","Découvrir"],["profile","Profil"]].map(([id,label]) => (
+          {[["home",t("home")],["explore",t("explore")],["discover",t("discover")],["profile",t("profile")]].map(([id,label]) => (
             <button key={id} className={`nav-btn ${tab===id?"active":""}`} onClick={()=>setTab(id)}>{label}</button>
           ))}
         </div>
@@ -1135,11 +1373,11 @@ export default function GameDiary() {
               <button onClick={logout} className="hide-m" style={{ background:"none", border:"1px solid rgba(255,255,255,.08)", borderRadius:9, color:"rgba(255,255,255,.3)", cursor:"pointer", fontSize:12, padding:"7px 13px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, transition:"all .15s", letterSpacing:.2 }}
                 onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(248,113,113,.35)";e.currentTarget.style.color="#f87171";}}
                 onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.08)";e.currentTarget.style.color="rgba(255,255,255,.3)";}}>
-                Déco
+                {t("logout")}
               </button>
             </>
           ) : (
-            <button className="btn" onClick={()=>setShowAuth(true)} style={{ padding:"8px 20px", fontSize:13 }}>Connexion</button>
+            <button className="btn" onClick={()=>setShowAuth(true)} style={{ padding:"8px 20px", fontSize:13 }}>{t("loginBtn")}</button>
           )}
         </div>
       </nav>
@@ -1158,34 +1396,34 @@ export default function GameDiary() {
           <div style={{ position:"relative", zIndex:2, flex:1, display:"flex", flexDirection:"column", justifyContent:"center", padding:"80px 6% 100px", maxWidth:680 }}>
             <div className="fu" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,107,53,.08)", border:"1px solid rgba(255,107,53,.22)", borderRadius:99, padding:"6px 16px", marginBottom:30, width:"fit-content" }}>
               <div style={{ width:6, height:6, borderRadius:"50%", background:"#ff6b35", animation:"pulse 2s infinite" }} />
-              <span style={{ fontSize:11, color:"rgba(255,107,53,.85)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:1.5, textTransform:"uppercase" }}>Votre journal gaming</span>
+              <span style={{ fontSize:11, color:"rgba(255,107,53,.85)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:1.5, textTransform:"uppercase" }}>{t("badge")}</span>
             </div>
 
             <h1 className="fu2" style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:"clamp(52px,6.8vw,96px)", lineHeight:.87, letterSpacing:"-3.5px", marginBottom:26 }}>
-              <span className="grad-text">Notez</span><span style={{ color:"rgba(255,107,53,.5)" }}>.</span><br/>
-              <span style={{ color:"rgba(255,255,255,.9)" }}>Critiquez</span><span style={{ color:"rgba(255,255,255,.1)" }}>.</span><br/>
-              <span style={{ color:"rgba(255,255,255,.42)" }}>Partagez</span><span style={{ color:"rgba(255,255,255,.06)" }}>.</span>
+              <span className="grad-text">{t("heroRate")}</span><span style={{ color:"rgba(255,107,53,.5)" }}>.</span><br/>
+              <span style={{ color:"rgba(255,255,255,.9)" }}>{t("heroCritic")}</span><span style={{ color:"rgba(255,255,255,.1)" }}>.</span><br/>
+              <span style={{ color:"rgba(255,255,255,.42)" }}>{t("heroShare")}</span><span style={{ color:"rgba(255,255,255,.06)" }}>.</span>
             </h1>
 
             <p className="fu3" style={{ fontSize:16, color:"rgba(255,255,255,.32)", maxWidth:420, lineHeight:1.9, fontFamily:"'DM Sans',sans-serif", marginBottom:40 }}>
-              Des millions de jeux, une seule app pour cataloguer ton histoire gaming. De la Game Boy à la PS5.
+              {t("heroDesc")}
             </p>
 
             <div className="fu4" style={{ display:"flex", alignItems:"center", gap:14, flexWrap:"wrap" }}>
-              {!user && <button className="btn" onClick={()=>setShowAuth(true)} style={{ padding:"14px 34px", fontSize:15 }}>Commencer gratuitement →</button>}
+              {!user && <button className="btn" onClick={()=>setShowAuth(true)} style={{ padding:"14px 34px", fontSize:15 }}>{t("startFree")}</button>}
               <button onClick={()=>setTab("explore")} style={{ background:"none", border:"1px solid rgba(255,255,255,.11)", borderRadius:11, color:"rgba(255,255,255,.38)", cursor:"pointer", fontSize:14, padding:"13px 22px", fontFamily:"'Syne',sans-serif", fontWeight:600, transition:"all .2s" }}
                 onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.28)";e.currentTarget.style.color="rgba(255,255,255,.75)";}}
                 onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.11)";e.currentTarget.style.color="rgba(255,255,255,.38)";}}>
-                Explorer les jeux
+                {t("exploreGames")}
               </button>
             </div>
 
             <div style={{ display:"flex", gap:10, marginTop:52, flexWrap:"wrap" }}>
               {[
-                {n:"∞", l:"Jeux IGDB", hot:true},
-                {n:"100%", l:"Gratuit", hot:true},
-                {n:user?Object.keys(userRatings).length:"—", l:"Mes notes", hot:false},
-                {n:user?Object.keys(userStatus).length:"—", l:"Ma liste", hot:false},
+                {n:"∞", l:t("igdbGames"), hot:true},
+                {n:"100%", l:t("free"), hot:true},
+                {n:user?Object.keys(userRatings).length:"—", l:t("myRatings"), hot:false},
+                {n:user?Object.keys(userStatus).length:"—", l:t("myList"), hot:false},
               ].map((s,i)=>(
                 <div key={i} className="stat-mini">
                   <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:26, color: s.hot ? "#ff6b35" : "rgba(255,255,255,.8)", lineHeight:1, marginBottom:5, textShadow: s.hot ? "0 0 28px rgba(255,107,53,.5)" : "none" }}>{s.n}</div>
@@ -1257,7 +1495,7 @@ export default function GameDiary() {
             <div style={{ width:28, height:44, border:"1.5px solid rgba(255,255,255,.12)", borderRadius:14, display:"flex", justifyContent:"center", padding:"6px 0" }}>
               <div style={{ width:3, height:10, background:"linear-gradient(to bottom,#ff6b35,#ffd166)", borderRadius:99 }} />
             </div>
-            <span style={{ fontSize:9, color:"rgba(255,255,255,.15)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:2.5, textTransform:"uppercase" }}>Défiler</span>
+            <span style={{ fontSize:9, color:"rgba(255,255,255,.15)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:2.5, textTransform:"uppercase" }}>{t("scrollHint")}</span>
           </div>
         </div>
       )}
@@ -1298,14 +1536,14 @@ export default function GameDiary() {
             <div className="fu" style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
               <div className="sect-h">
                 <div>
-                  <div style={{ fontSize:10, color:"rgba(255,107,53,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>Les mieux notés</div>
-                  <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:"#fff", letterSpacing:-.5, lineHeight:1 }}>Top jeux</h2>
+                  <div style={{ fontSize:10, color:"rgba(255,107,53,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>{t("topRated")}</div>
+                  <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:"#fff", letterSpacing:-.5, lineHeight:1 }}>{t("topGames")}</h2>
                 </div>
               </div>
               <button onClick={()=>setTab("explore")} style={{ background:"rgba(255,107,53,.07)", border:"1px solid rgba(255,107,53,.2)", borderRadius:99, color:"rgba(255,107,53,.85)", cursor:"pointer", fontSize:12, padding:"7px 18px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, transition:"all .18s", letterSpacing:.2 }}
                 onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,107,53,.14)";e.currentTarget.style.color="#ff6b35";}}
                 onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,107,53,.07)";e.currentTarget.style.color="rgba(255,107,53,.85)";}}>
-                Tout explorer →
+                {t("exploreAll")}
               </button>
             </div>
             {loadingTop ? (
@@ -1317,7 +1555,7 @@ export default function GameDiary() {
               <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr 1fr", gap:11 }}>
                 {topGames.slice(0,3).map((g,i)=> i===0 ? <FeaturedCard key={g.id} game={g} onClick={setSelected}/> : <GameCard key={g.id} game={g} onClick={setSelected} rank={i+1}/>)}
               </div>
-            ) : <div style={{ textAlign:"center", padding:"50px 0", color:"rgba(255,255,255,.2)", fontFamily:"'Syne',sans-serif" }}>Chargement impossible.</div>}
+            ) : <div style={{ textAlign:"center", padding:"50px 0", color:"rgba(255,255,255,.2)", fontFamily:"'Syne',sans-serif" }}>{t("loadError")}</div>}
 
             {topGames.length>3 && (
               <div className="fu2" style={{ marginTop:11 }}>
@@ -1337,14 +1575,14 @@ export default function GameDiary() {
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:20, marginBottom:20 }}>
                 <div className="sect-h">
                   <div>
-                    <div style={{ fontSize:10, color:"rgba(255,107,53,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>IGDB · Millions de jeux</div>
-                    <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:30, color:"#fff", letterSpacing:"-1px", lineHeight:1 }}>Explorer</h2>
+                    <div style={{ fontSize:10, color:"rgba(255,107,53,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>{t("igdbTag")}</div>
+                    <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:30, color:"#fff", letterSpacing:"-1px", lineHeight:1 }}>{t("exploreTitle")}</h2>
                   </div>
                 </div>
                 {/* Search bar */}
                 <div style={{ position:"relative", flexShrink:0 }}>
                   <input value={searchQ} onChange={e=>setSearchQ(e.target.value)}
-                    placeholder="Titre, série, genre…"
+                    placeholder={t("searchPlaceholder")}
                     style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.09)", borderRadius:14, color:"rgba(255,255,255,.88)", padding:"12px 46px 12px 46px", fontSize:14, width:320, outline:"none", transition:"all .22s" }}
                     onFocus={e=>{e.target.style.borderColor="rgba(255,107,53,.48)";e.target.style.background="rgba(255,255,255,.06)";e.target.style.boxShadow="0 0 0 3px rgba(255,107,53,.09)";}}
                     onBlur={e=>{e.target.style.borderColor="rgba(255,255,255,.09)";e.target.style.background="rgba(255,255,255,.04)";e.target.style.boxShadow="none";}}
@@ -1377,7 +1615,7 @@ export default function GameDiary() {
             ) : exploreGames.length===0 ? (
               <div style={{ textAlign:"center", padding:"70px 0", color:"rgba(255,255,255,.2)", fontFamily:"'Syne',sans-serif" }}>
                 <div style={{ fontSize:44, marginBottom:12 }}>🔍</div>
-                Aucun résultat pour "{searchQ}"
+                {t("noResults").replace("{q}", searchQ)}
               </div>
             ) : (
               <>
@@ -1386,7 +1624,7 @@ export default function GameDiary() {
                 </div>
                 <div ref={sentinelRef} style={{ height:60, display:"flex", alignItems:"center", justifyContent:"center", marginTop:8 }}>
                   {loadingMoreEx && <div className="spin" />}
-                  {!hasMoreEx && exploreGames.length>0 && <span style={{ color:"rgba(255,255,255,.15)", fontSize:12, fontFamily:"'Syne',sans-serif" }}>— Fin des résultats —</span>}
+                  {!hasMoreEx && exploreGames.length>0 && <span style={{ color:"rgba(255,255,255,.15)", fontSize:12, fontFamily:"'Syne',sans-serif" }}>{t("endResults")}</span>}
                 </div>
               </>
             )}
@@ -1397,13 +1635,13 @@ export default function GameDiary() {
         {tab==="discover" && (
           <div className="fu" style={{ paddingTop:42 }}>
             <div style={{ paddingBottom:28, borderBottom:"1px solid rgba(255,255,255,.04)", marginBottom:38 }}>
-              <div className="section-label">Recommandations</div>
-              <h2 className="section-title" style={{ marginBottom:10 }}>Découvrir</h2>
-              <p style={{ color:"rgba(255,255,255,.24)", fontSize:14, fontFamily:"'DM Sans',sans-serif", lineHeight:1.7 }}>Sélectionne tes univers — on trouve ton prochain jeu parmi des millions de titres.</p>
+              <div className="section-label">{t("discoverTag")}</div>
+              <h2 className="section-title" style={{ marginBottom:10 }}>{t("discoverTitle")}</h2>
+              <p style={{ color:"rgba(255,255,255,.24)", fontSize:14, fontFamily:"'DM Sans',sans-serif", lineHeight:1.7 }}>{t("discoverDesc")}</p>
             </div>
 
             <div style={{ marginBottom:38 }}>
-              <div style={{ fontSize:11, color:"rgba(255,255,255,.18)", fontFamily:"'Syne',sans-serif", fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", marginBottom:13 }}>Tes goûts</div>
+              <div style={{ fontSize:11, color:"rgba(255,255,255,.18)", fontFamily:"'Syne',sans-serif", fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", marginBottom:13 }}>{t("yourTastes")}</div>
               <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
                 {ALL_TAGS.map(t=>{
                   const on=activeTags.includes(t);
@@ -1416,7 +1654,7 @@ export default function GameDiary() {
               <div>
                 <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:18 }}>
                   <div style={{ fontSize:11, color:"rgba(255,255,255,.18)", fontFamily:"'Syne',sans-serif", fontWeight:700, letterSpacing:2.5, textTransform:"uppercase" }}>
-                    {loadingDisco?"Recherche…":`${discoGames.length} jeux`}
+                    {loadingDisco?t("searching"):`${discoGames.length} jeux`}
                   </div>
                   {loadingDisco && <div className="spin"/>}
                 </div>
@@ -1425,14 +1663,14 @@ export default function GameDiary() {
                     {discoGames.map(g=><GameCard key={g.id} game={g} onClick={setSelected}/>)}
                   </div>
                 ) : !loadingDisco ? (
-                  <div style={{ color:"rgba(255,255,255,.25)", fontSize:14, borderLeft:"2px solid rgba(255,107,53,.3)", paddingLeft:16 }}>Aucun résultat. Essaie d'autres préférences !</div>
+                  <div style={{ color:"rgba(255,255,255,.25)", fontSize:14, borderLeft:"2px solid rgba(255,107,53,.3)", paddingLeft:16 }}>{t("noDiscoResults")}</div>
                 ) : null}
               </div>
             )}
             {activeTags.length===0 && (
               <div style={{ textAlign:"center", padding:"60px 0", color:"rgba(255,255,255,.14)" }}>
                 <div style={{ width:64, height:64, borderRadius:16, background:"rgba(255,107,53,.05)", border:"1px solid rgba(255,107,53,.1)", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 16px", fontSize:26 }}>◎</div>
-                <div style={{ fontFamily:"'Syne',sans-serif", fontSize:14, fontWeight:600 }}>Choisis tes goûts pour commencer</div>
+                <div style={{ fontFamily:"'Syne',sans-serif", fontSize:14, fontWeight:600 }}>{t("pickTastes")}</div>
               </div>
             )}
           </div>
@@ -1444,9 +1682,9 @@ export default function GameDiary() {
             {!user ? (
               <div style={{ textAlign:"center", padding:"100px 0" }}>
                 <div style={{ width:80, height:80, borderRadius:20, background:"linear-gradient(135deg,rgba(255,107,53,.1),rgba(255,209,102,.05))", border:"1px solid rgba(255,107,53,.18)", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 24px", fontSize:36, boxShadow:"0 0 40px rgba(255,107,53,.08)" }}>🎮</div>
-                <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:28, color:"#fff", marginBottom:10, letterSpacing:"-.5px" }}>Ton profil t'attend</h2>
-                <p style={{ color:"rgba(255,255,255,.28)", marginBottom:28, fontSize:15, fontFamily:"'DM Sans',sans-serif", lineHeight:1.7 }}>Connecte-toi pour suivre ta progression,<br/>noter tes jeux et construire ta collection.</p>
-                <button className="btn" onClick={()=>setShowAuth(true)} style={{ padding:"13px 36px", fontSize:15 }}>Se connecter →</button>
+                <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:28, color:"#fff", marginBottom:10, letterSpacing:"-.5px" }}>{t("profileWaiting")}</h2>
+                <p style={{ color:"rgba(255,255,255,.28)", marginBottom:28, fontSize:15, fontFamily:"'DM Sans',sans-serif", lineHeight:1.7 }}>{t("profileLoginDesc")}</p>
+                <button className="btn" onClick={()=>setShowAuth(true)} style={{ padding:"13px 36px", fontSize:15 }}>{t("loginArrow")}</button>
               </div>
             ) : (
               <>
@@ -1459,15 +1697,15 @@ export default function GameDiary() {
                       {user.email?.slice(0,2).toUpperCase()}
                     </div>
                     <div style={{ flex:1 }}>
-                      <div style={{ fontSize:10, color:"rgba(255,107,53,.6)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:5 }}>Joueur</div>
+                      <div style={{ fontSize:10, color:"rgba(255,107,53,.6)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:5 }}>{t("player")}</div>
                       <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:20, color:"#fff", marginBottom:18, letterSpacing:-.2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth:400 }}>{user.email}</h2>
                       {/* Stat cards in row */}
                       <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
                         {[
-                          { v:Object.keys(userRatings).length, l:"Jeux notés", icon:"⭐" },
-                          { v:Object.keys(userStatus).length, l:"Dans ma liste", icon:"📋" },
-                          { v:wishlistGames.length, l:"Envie de jouer", icon:"🔖" },
-                          { v:Object.keys(userRatings).length>0?(Object.values(userRatings).reduce((a,b)=>a+b.rating,0)/Object.keys(userRatings).length).toFixed(1):"—", l:"Note moyenne", icon:"📊" },
+                          { v:Object.keys(userRatings).length, l:t("gamesRated"), icon:"⭐" },
+                          { v:Object.keys(userStatus).length, l:t("inMyList"), icon:"📋" },
+                          { v:wishlistGames.length, l:t("wantToPlay"), icon:"🔖" },
+                          { v:Object.keys(userRatings).length>0?(Object.values(userRatings).reduce((a,b)=>a+b.rating,0)/Object.keys(userRatings).length).toFixed(1):"—", l:t("avgRating"), icon:"📊" },
                         ].map(s=>(
                           <div key={s.l} style={{ background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", borderRadius:12, padding:"10px 16px", display:"flex", alignItems:"center", gap:10 }}>
                             <span style={{ fontSize:16 }}>{s.icon}</span>
@@ -1487,7 +1725,7 @@ export default function GameDiary() {
                   <div style={{ marginBottom:40 }}>
                     <div className="sect-h" style={{ marginBottom:18 }}>
                       <h3 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"rgba(255,255,255,.7)", letterSpacing:-.3 }}>
-                        Envie de jouer <span style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {wishlistGames.length}</span>
+                        {t("wishlistSection")} <span style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {wishlistGames.length}</span>
                       </h3>
                     </div>
                     <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))", gap:11 }}>
@@ -1499,16 +1737,16 @@ export default function GameDiary() {
                 {/* Collection */}
                 <div className="sect-h" style={{ marginBottom:18 }}>
                   <h3 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"rgba(255,255,255,.7)", letterSpacing:-.3 }}>
-                    Collection <span style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {Object.keys(userRatings).length}</span>
+                    {t("collection")} <span style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {Object.keys(userRatings).length}</span>
                   </h3>
                 </div>
 
                 {Object.keys(userRatings).length===0 ? (
                   <div style={{ textAlign:"center", padding:"60px 0", color:"rgba(255,255,255,.15)", borderRadius:18, background:"rgba(255,255,255,.015)", border:"1px dashed rgba(255,255,255,.06)" }}>
                     <div style={{ fontSize:48, marginBottom:14 }}>🎮</div>
-                    <div style={{ fontFamily:"'Syne',sans-serif", fontSize:15, fontWeight:700, marginBottom:6 }}>Aucun jeu noté</div>
-                    <div style={{ fontSize:13, color:"rgba(255,255,255,.1)", marginBottom:20 }}>Commence à explorer et noter des jeux</div>
-                    <button onClick={()=>setTab("explore")} style={{ background:"rgba(255,107,53,.08)", border:"1px solid rgba(255,107,53,.25)", borderRadius:10, color:"#ff6b35", cursor:"pointer", fontSize:13, padding:"9px 22px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>Explorer les jeux →</button>
+                    <div style={{ fontFamily:"'Syne',sans-serif", fontSize:15, fontWeight:700, marginBottom:6 }}>{t("noRated")}</div>
+                    <div style={{ fontSize:13, color:"rgba(255,255,255,.1)", marginBottom:20 }}>{t("startExplore")}</div>
+                    <button onClick={()=>setTab("explore")} style={{ background:"rgba(255,107,53,.08)", border:"1px solid rgba(255,107,53,.25)", borderRadius:10, color:"#ff6b35", cursor:"pointer", fontSize:13, padding:"9px 22px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>{t("exploreArrow")}</button>
                   </div>
                 ) : (
                   <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
@@ -1525,7 +1763,7 @@ export default function GameDiary() {
                             <div style={{ color:"rgba(255,255,255,.85)", fontWeight:700, fontSize:14, fontFamily:"'Syne',sans-serif", marginBottom:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{g.title}</div>
                             <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
                               <span style={{ color:"rgba(255,255,255,.22)", fontSize:11, fontFamily:"'DM Sans',sans-serif" }}>{g.platform?.split("(")[0].trim()} · {g.year}</span>
-                              {st && <span style={{ color:STATUS_CONFIG[st]?.color, fontSize:11, background:`${STATUS_CONFIG[st]?.color}15`, border:`1px solid ${STATUS_CONFIG[st]?.color}30`, borderRadius:5, padding:"1px 8px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600 }}>{STATUS_CONFIG[st]?.icon} {STATUS_CONFIG[st]?.label}</span>}
+                              {st && <span style={{ color:STATUS_CONFIG[st]?.color, fontSize:11, background:`${STATUS_CONFIG[st]?.color}15`, border:`1px solid ${STATUS_CONFIG[st]?.color}30`, borderRadius:5, padding:"1px 8px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600 }}>{STATUS_CONFIG[st]?.icon} {t(`s_${st}`)}</span>}
                             </div>
                             {rv.comment && <div style={{ color:"rgba(255,255,255,.22)", fontSize:12, marginTop:5, fontStyle:"italic", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>"{rv.comment.length>65?rv.comment.slice(0,65)+"…":rv.comment}"</div>}
                           </div>
@@ -1556,9 +1794,10 @@ export default function GameDiary() {
           userStatus={userStatus}
           setUserStatus={setUserStatus}
           onAuthRequired={()=>{ setSelected(null); setShowAuth(true); }}
+          t={t}
         />
       )}
-      {showAuth && <AuthModal onClose={()=>setShowAuth(false)} onSuccess={u=>{ setUser(u); setShowAuth(false); }}/>}
+      {showAuth && <AuthModal onClose={()=>setShowAuth(false)} onSuccess={u=>{ setUser(u); setShowAuth(false); }} t={t}/>}
     </div>
   );
 }
