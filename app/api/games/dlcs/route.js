@@ -9,17 +9,41 @@ export async function GET(request) {
   );
   const { access_token } = await tokenRes.json();
 
-  // category 1 = DLC/addon, 2 = expansion, 4 = standalone expansion
-  const igdbRes = await fetch('https://api.igdb.com/v4/games', {
-    method: 'POST',
-    headers: {
-      'Client-ID': process.env.TWITCH_CLIENT_ID,
-      'Authorization': `Bearer ${access_token}`,
-      'Content-Type': 'text/plain',
-    },
-    body: `fields name,cover.url,first_release_date,category,summary; where parent_game = ${gameId} & category = (1,2,4) & cover != null; limit 20;`,
-  });
+  const headers = {
+    'Client-ID': process.env.TWITCH_CLIENT_ID,
+    'Authorization': `Bearer ${access_token}`,
+    'Content-Type': 'text/plain',
+  };
 
-  const data = await igdbRes.json();
+  // Step 1: fetch the game's dlcs + expansions IDs
+  const gameRes = await fetch('https://api.igdb.com/v4/games', {
+    method: 'POST',
+    headers,
+    body: `fields dlcs,expansions; where id = ${gameId};`,
+  });
+  const [gameData] = await gameRes.json();
+  const ids = [
+    ...(gameData?.dlcs || []),
+    ...(gameData?.expansions || []),
+  ];
+
+  if (ids.length === 0) {
+    // fallback: query by parent_game without cover requirement
+    const fallbackRes = await fetch('https://api.igdb.com/v4/games', {
+      method: 'POST',
+      headers,
+      body: `fields name,cover.url,first_release_date,category; where parent_game = ${gameId} & category = (1,2,4); sort first_release_date asc; limit 20;`,
+    });
+    const fallback = await fallbackRes.json();
+    return Response.json(Array.isArray(fallback) ? fallback : []);
+  }
+
+  // Step 2: fetch details for those IDs
+  const detailRes = await fetch('https://api.igdb.com/v4/games', {
+    method: 'POST',
+    headers,
+    body: `fields name,cover.url,first_release_date,category; where id = (${ids.join(',')}); sort first_release_date asc; limit 20;`,
+  });
+  const data = await detailRes.json();
   return Response.json(Array.isArray(data) ? data : []);
 }
