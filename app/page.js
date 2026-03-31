@@ -93,6 +93,10 @@ const TRANSLATIONS = {
     communitySection:"Avis de la communauté", avisCount:"avis",
     noReviews:"Aucun avis pour l'instant.\nSoyez le premier à en laisser un !", member:"Membre",
     enableSound:"Activer le son", muteSound:"Couper le son",
+    trendingTag:"Sorties récentes", trendingTitle:"Tendances",
+    upcomingTag:"Prochainement", upcomingTitle:"Bientôt disponible",
+    gemsTag:"Jeux sous-estimés", gemsTitle:"Pépites cachées",
+    communityRatings:"Notes publiées", communityTracked:"Jeux suivis",
   },
   en: {
     s_wishlist:"Want to play", s_playing:"Playing", s_completed:"Completed", s_dropped:"Dropped",
@@ -139,6 +143,10 @@ const TRANSLATIONS = {
     communitySection:"Community reviews", avisCount:"reviews",
     noReviews:"No reviews yet.\nBe the first to leave one!", member:"Member",
     enableSound:"Enable sound", muteSound:"Mute",
+    trendingTag:"Recent releases", trendingTitle:"Trending",
+    upcomingTag:"Coming soon", upcomingTitle:"Upcoming",
+    gemsTag:"Underrated", gemsTitle:"Hidden gems",
+    communityRatings:"Ratings", communityTracked:"Games tracked",
   },
   de: {
     s_wishlist:"Möchte spielen", s_playing:"Spiele gerade", s_completed:"Abgeschlossen", s_dropped:"Abgebrochen",
@@ -183,6 +191,10 @@ const TRANSLATIONS = {
     communitySection:"Community-Bewertungen", avisCount:"Bewertungen",
     noReviews:"Noch keine Bewertungen.\nSei der Erste!", member:"Mitglied",
     enableSound:"Ton aktivieren", muteSound:"Stummschalten",
+    trendingTag:"Neue Releases", trendingTitle:"Angesagt",
+    upcomingTag:"Demnächst", upcomingTitle:"Demnächst verfügbar",
+    gemsTag:"Unterschätzt", gemsTitle:"Versteckte Perlen",
+    communityRatings:"Bewertungen", communityTracked:"Verfolgte Spiele",
   },
   es: {
     s_wishlist:"Quiero jugar", s_playing:"Jugando", s_completed:"Completado", s_dropped:"Abandonado",
@@ -227,6 +239,10 @@ const TRANSLATIONS = {
     communitySection:"Reseñas de la comunidad", avisCount:"reseñas",
     noReviews:"Aún no hay reseñas.\n¡Sé el primero!", member:"Miembro",
     enableSound:"Activar sonido", muteSound:"Silenciar",
+    trendingTag:"Lanzamientos recientes", trendingTitle:"Tendencias",
+    upcomingTag:"Próximamente", upcomingTitle:"Próximos lanzamientos",
+    gemsTag:"Infravalorados", gemsTitle:"Joyas ocultas",
+    communityRatings:"Valoraciones", communityTracked:"Juegos seguidos",
   },
   pt: {
     s_wishlist:"Quero jogar", s_playing:"Jogando", s_completed:"Completado", s_dropped:"Abandonado",
@@ -271,6 +287,10 @@ const TRANSLATIONS = {
     communitySection:"Avaliações da comunidade", avisCount:"avaliações",
     noReviews:"Ainda sem avaliações.\nSeja o primeiro!", member:"Membro",
     enableSound:"Ativar som", muteSound:"Silenciar",
+    trendingTag:"Lançamentos recentes", trendingTitle:"Em alta",
+    upcomingTag:"Em breve", upcomingTitle:"Próximos lançamentos",
+    gemsTag:"Subestimados", gemsTitle:"Joias escondidas",
+    communityRatings:"Avaliações", communityTracked:"Jogos seguidos",
   },
 };
 
@@ -351,6 +371,7 @@ const CSS = `
   .fi  {animation:fadeIn .4s ease both;}
 
   /* ── Float wrappers ─────────────────────────────── */
+  .hscroll-card{transition:transform .25s cubic-bezier(.34,1.4,.64,1);}
   .hf1{animation:float 5.2s ease-in-out infinite;}
   .hf2{animation:float 6.1s ease-in-out infinite .9s;}
   .hf3{animation:float 5.7s ease-in-out infinite 1.7s;}
@@ -502,6 +523,31 @@ const Skel = () => (
       <div className="skel" style={{ height:13, width:"78%", marginBottom:6 }} />
       <div className="skel" style={{ height:10, width:"45%" }} />
     </div>
+  </div>
+);
+
+/* ── HORIZONTAL SCROLL SECTION ───────────────────────────── */
+const HScrollSection = ({ games, onClick, accent = "#ff6b35", showDate = false }) => (
+  <div style={{ display:"flex", gap:11, overflowX:"auto", paddingBottom:8, scrollbarWidth:"none", msOverflowStyle:"none" }}>
+    {games.map(g => (
+      <div key={g.id} onClick={()=>onClick(g)} style={{ flexShrink:0, width:120, cursor:"pointer" }}
+        onMouseEnter={e=>e.currentTarget.style.transform="translateY(-5px)"}
+        onMouseLeave={e=>e.currentTarget.style.transform="translateY(0)"}
+        className="hscroll-card">
+        <div style={{ borderRadius:12, overflow:"hidden", aspectRatio:"3/4", background:"rgba(255,255,255,.04)", marginBottom:8, boxShadow:"0 8px 24px rgba(0,0,0,.5)" }}>
+          {g.cover && <img src={g.cover} alt={g.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />}
+        </div>
+        <div style={{ fontSize:11, fontWeight:700, color:"rgba(255,255,255,.78)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.3, marginBottom:3 }}>
+          {g.title.length>22?g.title.slice(0,22)+"…":g.title}
+        </div>
+        {showDate
+          ? <div style={{ fontSize:10, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif" }}>{g.year||"—"}</div>
+          : g.rating
+            ? <div style={{ fontSize:10, color:accent, fontWeight:700, fontFamily:"'Space Grotesk',sans-serif" }}>★ {g.rating}</div>
+            : null
+        }
+      </div>
+    ))}
   </div>
 );
 
@@ -1271,6 +1317,10 @@ export default function JoystickLog() {
   const [discoGames, setDiscoGames]     = useState([]);
   const [loadingDisco, setLoadingDisco] = useState(false);
   const [wishlistGames, setWishlistGames] = useState([]);
+  const [trendingGames, setTrendingGames] = useState([]);
+  const [upcomingGames, setUpcomingGames] = useState([]);
+  const [gemGames, setGemGames]           = useState([]);
+  const [communityStats, setCommunityStats] = useState({ ratings: 0, tracked: 0 });
 
   /* Auth */
   useEffect(() => {
@@ -1306,6 +1356,19 @@ export default function JoystickLog() {
         const unique = [...new Map(all.map(g=>[g.id,g])).values()].sort((a,b)=>(b.rating||0)-(a.rating||0)).slice(0,9);
         setTopGames(unique); setLoadingTop(false);
       }).catch(()=>setLoadingTop(false));
+  }, []);
+
+  /* Home extra sections: trending, upcoming, gems + community stats */
+  useEffect(() => {
+    fetch('/api/games/home').then(r=>r.json()).then(data => {
+      if (data.trending) setTrendingGames((data.trending||[]).map(formatGame).filter(g=>g.cover));
+      if (data.upcoming) setUpcomingGames((data.upcoming||[]).map(formatGame).filter(g=>g.cover));
+      if (data.gems)     setGemGames((data.gems||[]).map(formatGame).filter(g=>g.cover));
+    }).catch(()=>{});
+    Promise.all([
+      supabase.from('ratings').select('*', { count:'exact', head:true }),
+      supabase.from('game_status').select('*', { count:'exact', head:true }),
+    ]).then(([r, s]) => setCommunityStats({ ratings: r.count||0, tracked: s.count||0 })).catch(()=>{});
   }, []);
 
   /* Explore */
@@ -1461,6 +1524,8 @@ export default function JoystickLog() {
               {[
                 {n:"∞", l:t("igdbGames"), hot:true},
                 {n:"100%", l:t("free"), hot:true},
+                {n: communityStats.ratings > 0 ? communityStats.ratings.toLocaleString() : "…", l:t("communityRatings"), hot:false},
+                {n: communityStats.tracked > 0 ? communityStats.tracked.toLocaleString() : "…", l:t("communityTracked"), hot:false},
                 {n:user?Object.keys(userRatings).length:"—", l:t("myRatings"), hot:false},
                 {n:user?Object.keys(userStatus).length:"—", l:t("myList"), hot:false},
               ].map((s,i)=>(
@@ -1601,6 +1666,39 @@ export default function JoystickLog() {
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(152px,1fr))", gap:11 }}>
                   {topGames.slice(3,9).map((g,i)=><GameCard key={g.id} game={g} onClick={setSelected} rank={i+4}/>)}
                 </div>
+              </div>
+            )}
+
+            {/* ── TRENDING ── */}
+            {trendingGames.length > 0 && (
+              <div style={{ marginTop:56 }}>
+                <div style={{ marginBottom:20 }}>
+                  <div style={{ fontSize:10, color:"rgba(255,107,53,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>{t("trendingTag")}</div>
+                  <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:"#fff", letterSpacing:-.5, lineHeight:1 }}>{t("trendingTitle")}</h2>
+                </div>
+                <HScrollSection games={trendingGames} onClick={setSelected} accent="#ff6b35" />
+              </div>
+            )}
+
+            {/* ── UPCOMING ── */}
+            {upcomingGames.length > 0 && (
+              <div style={{ marginTop:56 }}>
+                <div style={{ marginBottom:20 }}>
+                  <div style={{ fontSize:10, color:"rgba(167,139,250,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>{t("upcomingTag")}</div>
+                  <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:"#fff", letterSpacing:-.5, lineHeight:1 }}>{t("upcomingTitle")}</h2>
+                </div>
+                <HScrollSection games={upcomingGames} onClick={setSelected} accent="#a78bfa" showDate />
+              </div>
+            )}
+
+            {/* ── HIDDEN GEMS ── */}
+            {gemGames.length > 0 && (
+              <div style={{ marginTop:56 }}>
+                <div style={{ marginBottom:20 }}>
+                  <div style={{ fontSize:10, color:"rgba(255,209,102,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>{t("gemsTag")}</div>
+                  <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:"#fff", letterSpacing:-.5, lineHeight:1 }}>{t("gemsTitle")}</h2>
+                </div>
+                <HScrollSection games={gemGames} onClick={setSelected} accent="#ffd166" />
               </div>
             )}
           </div>
