@@ -1389,7 +1389,7 @@ export default function JoystickLog() {
             </svg>
           </div>
           <span style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:15, letterSpacing:2.2, color:"rgba(255,255,255,.92)", textTransform:"uppercase" }}>
-            game<span style={{ background:"linear-gradient(90deg,#ff6b35,#ffd166)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>diary</span>
+            joystick<span style={{ background:"linear-gradient(90deg,#ff6b35,#ffd166)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>log</span>
           </span>
         </div>
 
