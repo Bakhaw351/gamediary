@@ -93,6 +93,7 @@ const TRANSLATIONS = {
     communitySection:"Avis de la communauté", avisCount:"avis",
     noReviews:"Aucun avis pour l'instant.\nSoyez le premier à en laisser un !", member:"Membre",
     enableSound:"Activer le son", muteSound:"Couper le son",
+    pseudoLabel:"Pseudo", pseudoSaved:"Pseudo sauvegardé !", pseudoPlaceholder:"Ton pseudo…",
     trendingTag:"Sorties récentes", trendingTitle:"Tendances",
     upcomingTag:"Prochainement", upcomingTitle:"Bientôt disponible",
     gemsTag:"Jeux sous-estimés", gemsTitle:"Pépites cachées",
@@ -143,6 +144,7 @@ const TRANSLATIONS = {
     communitySection:"Community reviews", avisCount:"reviews",
     noReviews:"No reviews yet.\nBe the first to leave one!", member:"Member",
     enableSound:"Enable sound", muteSound:"Mute",
+    pseudoLabel:"Username", pseudoSaved:"Username saved!", pseudoPlaceholder:"Your username…",
     trendingTag:"Recent releases", trendingTitle:"Trending",
     upcomingTag:"Coming soon", upcomingTitle:"Upcoming",
     gemsTag:"Underrated", gemsTitle:"Hidden gems",
@@ -191,6 +193,7 @@ const TRANSLATIONS = {
     communitySection:"Community-Bewertungen", avisCount:"Bewertungen",
     noReviews:"Noch keine Bewertungen.\nSei der Erste!", member:"Mitglied",
     enableSound:"Ton aktivieren", muteSound:"Stummschalten",
+    pseudoLabel:"Benutzername", pseudoSaved:"Benutzername gespeichert!", pseudoPlaceholder:"Dein Benutzername…",
     trendingTag:"Neue Releases", trendingTitle:"Angesagt",
     upcomingTag:"Demnächst", upcomingTitle:"Demnächst verfügbar",
     gemsTag:"Unterschätzt", gemsTitle:"Versteckte Perlen",
@@ -239,6 +242,7 @@ const TRANSLATIONS = {
     communitySection:"Reseñas de la comunidad", avisCount:"reseñas",
     noReviews:"Aún no hay reseñas.\n¡Sé el primero!", member:"Miembro",
     enableSound:"Activar sonido", muteSound:"Silenciar",
+    pseudoLabel:"Usuario", pseudoSaved:"¡Usuario guardado!", pseudoPlaceholder:"Tu usuario…",
     trendingTag:"Lanzamientos recientes", trendingTitle:"Tendencias",
     upcomingTag:"Próximamente", upcomingTitle:"Próximos lanzamientos",
     gemsTag:"Infravalorados", gemsTitle:"Joyas ocultas",
@@ -287,6 +291,7 @@ const TRANSLATIONS = {
     communitySection:"Avaliações da comunidade", avisCount:"avaliações",
     noReviews:"Ainda sem avaliações.\nSeja o primeiro!", member:"Membro",
     enableSound:"Ativar som", muteSound:"Silenciar",
+    pseudoLabel:"Usuário", pseudoSaved:"Usuário salvo!", pseudoPlaceholder:"Seu usuário…",
     trendingTag:"Lançamentos recentes", trendingTitle:"Em alta",
     upcomingTag:"Em breve", upcomingTitle:"Próximos lançamentos",
     gemsTag:"Subestimados", gemsTitle:"Joias escondidas",
@@ -660,9 +665,13 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
         if (error) throw error;
         onSuccess(data.user); onClose();
       } else {
-        const { data, error } = await supabase.auth.signUp({ email, password: pw });
+        const uname = username.trim() || email.split("@")[0];
+        const { data, error } = await supabase.auth.signUp({
+          email, password: pw,
+          options: { data: { username: uname } },
+        });
         if (error) throw error;
-        if (data.user) await supabase.from("profiles").upsert({ id: data.user.id, username: username || email.split("@")[0] });
+        if (data.user) await supabase.from("profiles").upsert({ id: data.user.id, username: uname });
         setOk(t("accountCreated"));
       }
     } catch (e) {
@@ -715,7 +724,7 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
 };
 
 /* ── CINEMATIC GAME PAGE ──────────────────────────────────── */
-const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired, t }) => {
+const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired, username, t }) => {
   const [myR, setMyR] = useState(userRatings[game.id]?.rating || 0);
   const [hovR, setHovR] = useState(0);
   const [txt, setTxt] = useState(userRatings[game.id]?.comment || "");
@@ -830,7 +839,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
     if (!myR) return;
     setLoading(true);
     const { error } = await supabase.from("ratings").upsert(
-      { user_id:user.id, game_id:game.id, rating:myR, comment:txt, user_display: user.email?.split("@")[0] },
+      { user_id:user.id, game_id:game.id, rating:myR, comment:txt, user_display: username || user.user_metadata?.username || user.email?.split("@")[0] },
       { onConflict:"user_id,game_id" }
     );
     if (!error) {
@@ -1317,6 +1326,7 @@ export default function JoystickLog() {
   const [discoGames, setDiscoGames]     = useState([]);
   const [loadingDisco, setLoadingDisco] = useState(false);
   const [wishlistGames, setWishlistGames] = useState([]);
+  const [profileUsername, setProfileUsername] = useState("");
   const [trendingGames, setTrendingGames] = useState([]);
   const [upcomingGames, setUpcomingGames] = useState([]);
   const [gemGames, setGemGames]           = useState([]);
@@ -1328,6 +1338,15 @@ export default function JoystickLog() {
     const { data:{ subscription } } = supabase.auth.onAuthStateChange((_,s) => setUser(s?.user||null));
     return () => subscription.unsubscribe();
   }, []);
+
+  /* Load username from profiles */
+  useEffect(() => {
+    if (!user) { setProfileUsername(""); return; }
+    const fromMeta = user.user_metadata?.username;
+    if (fromMeta) { setProfileUsername(fromMeta); return; }
+    supabase.from("profiles").select("username").eq("id", user.id).single()
+      .then(({ data }) => { if (data?.username) setProfileUsername(data.username); });
+  }, [user]);
 
   /* Load ratings & status */
   useEffect(() => {
@@ -1418,9 +1437,9 @@ export default function JoystickLog() {
   useEffect(() => {
     if (activeTags.length===0) { setDiscoGames([]); return; }
     setLoadingDisco(true);
-    fetch(`/api/games?q=${encodeURIComponent(activeTags[activeTags.length-1])}`)
+    fetch(`/api/games/discover?tags=${encodeURIComponent(activeTags.join(','))}`)
       .then(r=>r.json())
-      .then(data => { setDiscoGames(data.map(formatGame).filter(g=>g.cover&&!userRatings[g.id])); setLoadingDisco(false); })
+      .then(data => { setDiscoGames((Array.isArray(data)?data:[]).map(formatGame).filter(g=>g.cover&&!userRatings[g.id])); setLoadingDisco(false); })
       .catch(()=>setLoadingDisco(false));
   }, [activeTags]);
 
@@ -1831,11 +1850,12 @@ export default function JoystickLog() {
                   <div style={{ display:"flex", gap:22, alignItems:"center", flexWrap:"wrap", position:"relative", zIndex:1 }}>
                     {/* Avatar */}
                     <div style={{ width:72, height:72, borderRadius:18, background:"linear-gradient(135deg,#ff6b35,#ffd166)", display:"flex", alignItems:"center", justifyContent:"center", color:"#140800", fontWeight:800, fontSize:26, fontFamily:"'Syne',sans-serif", flexShrink:0, boxShadow:"0 0 28px rgba(255,107,53,.35)" }}>
-                      {user.email?.slice(0,2).toUpperCase()}
+                      {(profileUsername || user.email || "??").slice(0,2).toUpperCase()}
                     </div>
                     <div style={{ flex:1 }}>
                       <div style={{ fontSize:10, color:"rgba(255,107,53,.6)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:5 }}>{t("player")}</div>
-                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:20, color:"#fff", marginBottom:18, letterSpacing:-.2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth:400 }}>{user.email}</h2>
+                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:20, color:"#fff", marginBottom:2, letterSpacing:-.2 }}>{profileUsername || user.email?.split("@")[0]}</h2>
+                      <div style={{ fontSize:12, color:"rgba(255,255,255,.25)", fontFamily:"'Space Grotesk',sans-serif", marginBottom:18 }}>{user.email}</div>
                       {/* Stat cards in row */}
                       <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
                         {[
@@ -1856,6 +1876,39 @@ export default function JoystickLog() {
                     </div>
                   </div>
                 </div>
+
+                {/* Username edit */}
+                {(() => {
+                  const [uEdit, setUEdit] = useState(profileUsername);
+                  const [uSaved, setUSaved] = useState(false);
+                  const saveUsername = async () => {
+                    if (!uEdit.trim()) return;
+                    await supabase.from("profiles").upsert({ id: user.id, username: uEdit.trim() });
+                    await supabase.auth.updateUser({ data: { username: uEdit.trim() } });
+                    setProfileUsername(uEdit.trim());
+                    setUSaved(true);
+                    setTimeout(() => setUSaved(false), 2000);
+                  };
+                  return (
+                    <div style={{ marginBottom:28, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.06)", borderRadius:14, padding:"16px 18px" }}>
+                      <div style={{ fontSize:10, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:2.5, textTransform:"uppercase", marginBottom:10 }}>{t("pseudoLabel")}</div>
+                      <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+                        <input value={uEdit} onChange={e=>setUEdit(e.target.value)} onKeyDown={e=>e.key==="Enter"&&saveUsername()}
+                          placeholder={t("pseudoPlaceholder")}
+                          style={{ flex:1, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.1)", borderRadius:10, color:"#fff", padding:"9px 14px", fontSize:14, fontFamily:"'Space Grotesk',sans-serif", outline:"none", transition:"all .2s" }}
+                          onFocus={e=>{e.target.style.borderColor="rgba(255,107,53,.45)";e.target.style.boxShadow="0 0 0 3px rgba(255,107,53,.09)";}}
+                          onBlur={e=>{e.target.style.borderColor="rgba(255,255,255,.1)";e.target.style.boxShadow="none";}}
+                        />
+                        <button onClick={saveUsername} style={{ background:"rgba(255,107,53,.12)", border:"1px solid rgba(255,107,53,.28)", borderRadius:10, color:"#ff6b35", cursor:"pointer", fontSize:13, padding:"9px 18px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, whiteSpace:"nowrap", transition:"all .18s" }}
+                          onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,107,53,.22)";}}
+                          onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,107,53,.12)";}}>
+                          {uSaved ? "✓" : t("editBtn")}
+                        </button>
+                      </div>
+                      {uSaved && <div style={{ color:"#ffd166", fontSize:12, marginTop:8, fontFamily:"'Space Grotesk',sans-serif" }}>{t("pseudoSaved")}</div>}
+                    </div>
+                  );
+                })()}
 
                 {/* Wishlist */}
                 {wishlistGames.length>0 && (
@@ -1932,6 +1985,7 @@ export default function JoystickLog() {
           userStatus={userStatus}
           setUserStatus={setUserStatus}
           onAuthRequired={()=>{ setSelected(null); setShowAuth(true); }}
+          username={profileUsername}
           t={t}
         />
       )}
