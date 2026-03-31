@@ -535,12 +535,16 @@ const Skel = () => (
 
 /* ── COVER BACKGROUND ────────────────────────────────────── */
 const BG_SLOTS = [
-  { top:'-8%',  left:'-14%', size:380, rot:'-10deg', dur:'32s', delay:'0s'   },
-  { top:'8%',   right:'-12%',size:320, rot:'7deg',   dur:'40s', delay:'-14s' },
-  { top:'45%',  left:'-6%',  size:280, rot:'4deg',   dur:'36s', delay:'-22s' },
-  { bottom:'5%',right:'-10%',size:350, rot:'-6deg',  dur:'44s', delay:'-8s'  },
-  { bottom:'18%',left:'38%', size:260, rot:'3deg',   dur:'50s', delay:'-30s' },
-  { top:'28%',  left:'22%',  size:220, rot:'-4deg',  dur:'38s', delay:'-18s' },
+  { top:'-12%',   left:'-16%',   size:480, rot:'-10deg', dur:'32s', delay:'0s'   },
+  { top:'4%',     right:'-15%',  size:420, rot:'7deg',   dur:'40s', delay:'-14s' },
+  { top:'38%',    left:'-10%',   size:380, rot:'5deg',   dur:'50s', delay:'-30s' },
+  { top:'33%',    right:'-10%',  size:360, rot:'-4deg',  dur:'38s', delay:'-18s' },
+  { bottom:'-8%', left:'-14%',   size:440, rot:'4deg',   dur:'36s', delay:'-22s' },
+  { bottom:'-10%',right:'-15%',  size:460, rot:'-6deg',  dur:'44s', delay:'-8s'  },
+  { top:'16%',    left:'28%',    size:300, rot:'2deg',   dur:'55s', delay:'-35s' },
+  { top:'58%',    left:'30%',    size:280, rot:'-3deg',  dur:'48s', delay:'-25s' },
+  { top:'72%',    left:'16%',    size:260, rot:'6deg',   dur:'42s', delay:'-12s' },
+  { top:'68%',    right:'16%',   size:240, rot:'-5deg',  dur:'46s', delay:'-20s' },
 ];
 const CoverBackground = ({ covers }) => {
   if (!covers?.length) return null;
@@ -549,12 +553,12 @@ const CoverBackground = ({ covers }) => {
       {BG_SLOTS.map((p, i) => {
         const src = covers[i % covers.length];
         if (!src) return null;
-        const s = { position:'absolute', width:p.size, opacity:0.07, filter:'blur(62px) saturate(1.8)', animation:`bgDrift ${p.dur} ease-in-out infinite ${p.delay}` };
+        const s = { position:'absolute', width:p.size, opacity:0.11, filter:'blur(72px) saturate(2)', animation:`bgDrift ${p.dur} ease-in-out infinite ${p.delay}` };
         if (p.top)    s.top    = p.top;
         if (p.bottom) s.bottom = p.bottom;
         if (p.left)   s.left   = p.left;
         if (p.right)  s.right  = p.right;
-        return <div key={i} className="cover-bg-item" style={s}><img src={src} alt="" style={{ width:'100%', display:'block', borderRadius:20, transform:`rotate(${p.rot})` }} /></div>;
+        return <div key={i} className="cover-bg-item" style={s}><img src={src} alt="" style={{ width:'100%', display:'block', borderRadius:24, transform:`rotate(${p.rot})` }} /></div>;
       })}
     </div>
   );
@@ -1505,14 +1509,21 @@ export default function JoystickLog() {
       <style>{CSS}</style>
 
       {/* Game cover ambient background */}
-      <CoverBackground covers={[...topGames, ...trendingGames].slice(0,6).map(g=>g.cover).filter(Boolean)} />
+      <CoverBackground covers={[...topGames, ...trendingGames, ...gemGames].filter(g=>g.cover).map(g=>g.cover).slice(0,10)} />
 
-      {/* Ambient background layers */}
+      {/* Ambient gradient mesh */}
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 85% 45% at 50% 0%,rgba(255,107,53,.13) 0%,transparent 65%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 60% 60% at 92% 92%,rgba(210,80,20,.11) 0%,transparent 65%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 55% 65% at 4% 78%,rgba(167,139,250,.09) 0%,transparent 65%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 65% 40% at 50% 105%,rgba(255,209,102,.07) 0%,transparent 60%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 45% 40% at 12% 12%,rgba(90,70,210,.06) 0%,transparent 65%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 50% 45% at 88% 10%,rgba(255,107,53,.05) 0%,transparent 60%)", pointerEvents:"none" }} />
+      {/* Subtle grid overlay */}
+      <div style={{ position:"fixed", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px)", backgroundSize:"88px 88px", pointerEvents:"none" }} />
+      {/* Noise grain */}
+      <div style={{ position:"fixed", inset:0, backgroundImage:"url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E\")", opacity:.03, pointerEvents:"none" }} />
+      {/* Top accent line */}
       <div style={{ position:"fixed", top:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent 10%,rgba(255,107,53,.4) 50%,transparent 90%)", pointerEvents:"none", zIndex:200 }} />
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 70% 35% at 50% 0%,rgba(255,107,53,.07) 0%,transparent 70%)", pointerEvents:"none" }} />
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 45% 45% at 85% 85%,rgba(200,80,20,.05) 0%,transparent 70%)", pointerEvents:"none" }} />
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 40% 50% at 8% 70%,rgba(167,139,250,.03) 0%,transparent 70%)", pointerEvents:"none" }} />
-      <div style={{ position:"fixed", inset:0, backgroundImage:"url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E\")", opacity:.022, pointerEvents:"none" }} />
 
       {/* ── NAV ── */}
       <nav style={{ position:"sticky", top:0, zIndex:100, height:68, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 32px", background:"rgba(6,5,5,.9)", backdropFilter:"blur(32px) saturate(180%)", borderBottom:"1px solid rgba(255,255,255,.05)" }}>
