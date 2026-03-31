@@ -54,7 +54,7 @@ const TRANSLATIONS = {
     all:"Tous", unknown:"Inconnu", videogame:"Jeu vidéo",
     home:"Accueil", explore:"Explorer", discover:"Découvrir", profile:"Profil",
     logout:"Déco", loginBtn:"Connexion",
-    badge:"Votre journal gaming",
+    badge:"Votre journal JoystickLog",
     heroRate:"Notez", heroCritic:"Critiquez", heroShare:"Partagez",
     heroDesc:"Des millions de jeux, une seule app pour cataloguer ton histoire gaming. De la Game Boy à la PS5.",
     startFree:"Commencer gratuitement →", exploreGames:"Explorer les jeux",
@@ -72,7 +72,7 @@ const TRANSLATIONS = {
     gamesRated:"Jeux notés", inMyList:"Dans ma liste", wantToPlay:"Envie de jouer", avgRating:"Note moyenne",
     wishlistSection:"Envie de jouer", collection:"Collection",
     noRated:"Aucun jeu noté", startExplore:"Commence à explorer et noter des jeux", exploreArrow:"Explorer les jeux →",
-    welcomeBack:"Bon retour 👋", joinGameDiary:"Rejoindre GameDiary",
+    welcomeBack:"Bon retour 👋", joinJoystickLog:"Rejoindre JoystickLog",
     accessCollection:"Accède à ta collection", freeForever:"Gratuit, pour toujours",
     loginTab:"Connexion", signupTab:"Inscription",
     usernamePlaceholder:"Nom d'utilisateur", passwordPlaceholder:"Mot de passe (6 min)",
@@ -100,7 +100,7 @@ const TRANSLATIONS = {
     all:"All", unknown:"Unknown", videogame:"Video game",
     home:"Home", explore:"Explore", discover:"Discover", profile:"Profile",
     logout:"Logout", loginBtn:"Login",
-    badge:"Your gaming journal",
+    badge:"Your JoystickLog",
     heroRate:"Rate", heroCritic:"Review", heroShare:"Share",
     heroDesc:"Millions of games, one app to catalog your gaming history. From Game Boy to PS5.",
     startFree:"Get started for free →", exploreGames:"Explore games",
@@ -118,7 +118,7 @@ const TRANSLATIONS = {
     gamesRated:"Games rated", inMyList:"In my list", wantToPlay:"Want to play", avgRating:"Avg rating",
     wishlistSection:"Want to play", collection:"Collection",
     noRated:"No games rated yet", startExplore:"Start exploring and rating games", exploreArrow:"Explore games →",
-    welcomeBack:"Welcome back 👋", joinGameDiary:"Join GameDiary",
+    welcomeBack:"Welcome back 👋", joinJoystickLog:"Join JoystickLog",
     accessCollection:"Access your collection", freeForever:"Free, forever",
     loginTab:"Login", signupTab:"Sign up",
     usernamePlaceholder:"Username", passwordPlaceholder:"Password (6 min)",
@@ -163,7 +163,7 @@ const TRANSLATIONS = {
     gamesRated:"Bewertete Spiele", inMyList:"In meiner Liste", wantToPlay:"Möchte spielen", avgRating:"Durchschnitt",
     wishlistSection:"Möchte spielen", collection:"Sammlung",
     noRated:"Noch keine Spiele bewertet", startExplore:"Entdecke und bewerte Spiele", exploreArrow:"Spiele entdecken →",
-    welcomeBack:"Willkommen zurück 👋", joinGameDiary:"GameDiary beitreten",
+    welcomeBack:"Willkommen zurück 👋", joinJoystickLog:"JoystickLog beitreten",
     accessCollection:"Zugriff auf deine Sammlung", freeForever:"Kostenlos, für immer",
     loginTab:"Anmelden", signupTab:"Registrieren",
     usernamePlaceholder:"Benutzername", passwordPlaceholder:"Passwort (min. 6)",
@@ -207,7 +207,7 @@ const TRANSLATIONS = {
     gamesRated:"Juegos valorados", inMyList:"En mi lista", wantToPlay:"Quiero jugar", avgRating:"Nota media",
     wishlistSection:"Quiero jugar", collection:"Colección",
     noRated:"Sin juegos valorados", startExplore:"Empieza a explorar y valorar juegos", exploreArrow:"Explorar juegos →",
-    welcomeBack:"Bienvenido de vuelta 👋", joinGameDiary:"Unirse a GameDiary",
+    welcomeBack:"Bienvenido de vuelta 👋", joinJoystickLog:"Unirse a JoystickLog",
     accessCollection:"Accede a tu colección", freeForever:"Gratis, para siempre",
     loginTab:"Iniciar sesión", signupTab:"Registrarse",
     usernamePlaceholder:"Nombre de usuario", passwordPlaceholder:"Contraseña (mín. 6)",
@@ -251,7 +251,7 @@ const TRANSLATIONS = {
     gamesRated:"Jogos avaliados", inMyList:"Na minha lista", wantToPlay:"Quero jogar", avgRating:"Nota média",
     wishlistSection:"Quero jogar", collection:"Coleção",
     noRated:"Nenhum jogo avaliado", startExplore:"Comece a explorar e avaliar jogos", exploreArrow:"Explorar jogos →",
-    welcomeBack:"Bem-vindo de volta 👋", joinGameDiary:"Entrar no GameDiary",
+    welcomeBack:"Bem-vindo de volta 👋", joinJoystickLog:"Entrar no JoystickLog",
     accessCollection:"Acesse sua coleção", freeForever:"Grátis, para sempre",
     loginTab:"Entrar", signupTab:"Cadastrar",
     usernamePlaceholder:"Nome de usuário", passwordPlaceholder:"Senha (mín. 6)",
@@ -633,7 +633,7 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:22 }}>
             <div>
               <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:21, color:"#fff", marginBottom:3 }}>
-                {mode === "login" ? t("welcomeBack") : t("joinGameDiary")}
+                {mode === "login" ? t("welcomeBack") : t("joinJoystickLog")}
               </h2>
               <p style={{ color:"rgba(255,255,255,.28)", fontSize:13 }}>
                 {mode === "login" ? t("accessCollection") : t("freeForever")}
@@ -1243,7 +1243,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
 /* ═══════════════════════════════════════════════════════════
    MAIN
 ═══════════════════════════════════════════════════════════ */
-export default function GameDiary() {
+export default function JoystickLog() {
   const [lang, setLang] = useState("fr");
   useEffect(() => { setLang(detectLang()); }, []);
   const t = key => (TRANSLATIONS[lang]?.[key] ?? TRANSLATIONS.fr[key] ?? key);
