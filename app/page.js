@@ -552,7 +552,7 @@ const HScrollSection = ({ games, onClick, accent = "#ff6b35", showDate = false }
 );
 
 /* ── GAME CARD ────────────────────────────────────────────── */
-const GameCard = ({ game, onClick, rank }) => {
+const GameCard = ({ game, onClick, rank, userRating }) => {
   const [e, setE] = useState(false);
   return (
     <div className="card" onClick={() => onClick(game)}>
@@ -578,7 +578,7 @@ const GameCard = ({ game, onClick, rank }) => {
           ? <div style={{ position:"absolute", top:10, left:10, background:"linear-gradient(135deg,#ff6b35,#ffd166)", color:"#030401", borderRadius:7, padding:"2px 9px", fontSize:10, fontWeight:800, fontFamily:"'Space Grotesk',sans-serif", boxShadow:"0 2px 12px rgba(255,107,53,.4)" }}>#{rank}</div>
           : game.videoId && <div style={{ position:"absolute", top:10, left:10, background:"rgba(0,0,0,.52)", backdropFilter:"blur(8px)", border:"1px solid rgba(255,255,255,.1)", borderRadius:6, padding:"2px 8px", fontSize:9, color:"rgba(255,255,255,.6)", fontFamily:"'Space Grotesk',sans-serif", display:"flex", alignItems:"center", gap:3, letterSpacing:.4 }}>▶ trailer</div>
         }
-        <div style={{ position:"absolute", top:8, right:8 }}><Ring value={game.rating} size={38} /></div>
+        {userRating && <div style={{ position:"absolute", top:8, right:8 }}><Ring value={userRating} size={38} /></div>}
 
         {/* Info overlaid at bottom — poster style */}
         <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"0 11px 13px" }}>
@@ -1657,14 +1657,14 @@ export default function JoystickLog() {
               </div>
             ) : topGames.length>0 ? (
               <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr 1fr", gap:11 }}>
-                {topGames.slice(0,3).map((g,i)=> i===0 ? <FeaturedCard key={g.id} game={g} onClick={setSelected}/> : <GameCard key={g.id} game={g} onClick={setSelected} rank={i+1}/>)}
+                {topGames.slice(0,3).map((g,i)=> i===0 ? <FeaturedCard key={g.id} game={g} onClick={setSelected}/> : <GameCard key={g.id} game={g} onClick={setSelected} rank={i+1} userRating={userRatings[g.id]?.rating}/>)}
               </div>
             ) : <div style={{ textAlign:"center", padding:"50px 0", color:"rgba(255,255,255,.2)", fontFamily:"'Syne',sans-serif" }}>{t("loadError")}</div>}
 
             {topGames.length>3 && (
               <div className="fu2" style={{ marginTop:11 }}>
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(152px,1fr))", gap:11 }}>
-                  {topGames.slice(3,9).map((g,i)=><GameCard key={g.id} game={g} onClick={setSelected} rank={i+4}/>)}
+                  {topGames.slice(3,9).map((g,i)=><GameCard key={g.id} game={g} onClick={setSelected} rank={i+4} userRating={userRatings[g.id]?.rating}/>)}
                 </div>
               </div>
             )}
@@ -1757,7 +1757,7 @@ export default function JoystickLog() {
             ) : (
               <>
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(155px,1fr))", gap:12 }}>
-                  {exploreGames.map(g=><GameCard key={g.id} game={g} onClick={setSelected}/>)}
+                  {exploreGames.map(g=><GameCard key={g.id} game={g} onClick={setSelected} userRating={userRatings[g.id]?.rating}/>)}
                 </div>
                 <div ref={sentinelRef} style={{ height:60, display:"flex", alignItems:"center", justifyContent:"center", marginTop:8 }}>
                   {loadingMoreEx && <div className="spin" />}
@@ -1797,7 +1797,7 @@ export default function JoystickLog() {
                 </div>
                 {!loadingDisco && discoGames.length>0 ? (
                   <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(155px,1fr))", gap:12 }}>
-                    {discoGames.map(g=><GameCard key={g.id} game={g} onClick={setSelected}/>)}
+                    {discoGames.map(g=><GameCard key={g.id} game={g} onClick={setSelected} userRating={userRatings[g.id]?.rating}/>)}
                   </div>
                 ) : !loadingDisco ? (
                   <div style={{ color:"rgba(255,255,255,.25)", fontSize:14, borderLeft:"2px solid rgba(255,107,53,.3)", paddingLeft:16 }}>{t("noDiscoResults")}</div>
@@ -1866,7 +1866,7 @@ export default function JoystickLog() {
                       </h3>
                     </div>
                     <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))", gap:11 }}>
-                      {wishlistGames.map(g=><GameCard key={g.id} game={g} onClick={setSelected}/>)}
+                      {wishlistGames.map(g=><GameCard key={g.id} game={g} onClick={setSelected} userRating={userRatings[g.id]?.rating}/>)}
                     </div>
                   </div>
                 )}
