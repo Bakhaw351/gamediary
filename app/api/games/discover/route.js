@@ -21,7 +21,8 @@ const TAG_MAP = {
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  const tags = (searchParams.get('tags') || '').split(',').filter(Boolean);
+  const tags   = (searchParams.get('tags') || '').split(',').filter(Boolean);
+  const offset = parseInt(searchParams.get('offset') || '0', 10);
   if (tags.length === 0) return Response.json([]);
 
   const tokenRes = await fetch(
@@ -57,19 +58,19 @@ export async function GET(request) {
   if (genreIds.size > 0) {
     queries.push(fetch('https://api.igdb.com/v4/games', {
       method: 'POST', headers,
-      body: `${fields} where ${base} & genres = (${[...genreIds].join(',')}); sort total_rating_count desc; limit 30;`,
+      body: `${fields} where ${base} & genres = (${[...genreIds].join(',')}); sort total_rating_count desc; limit 30; offset ${offset};`,
     }).then(r => r.json()));
   }
   if (themeIds.size > 0) {
     queries.push(fetch('https://api.igdb.com/v4/games', {
       method: 'POST', headers,
-      body: `${fields} where ${base} & themes = (${[...themeIds].join(',')}); sort total_rating_count desc; limit 20;`,
+      body: `${fields} where ${base} & themes = (${[...themeIds].join(',')}); sort total_rating_count desc; limit 20; offset ${offset};`,
     }).then(r => r.json()));
   }
   if (gameModeIds.size > 0) {
     queries.push(fetch('https://api.igdb.com/v4/games', {
       method: 'POST', headers,
-      body: `${fields} where ${base} & game_modes = (${[...gameModeIds].join(',')}); sort total_rating_count desc; limit 20;`,
+      body: `${fields} where ${base} & game_modes = (${[...gameModeIds].join(',')}); sort total_rating_count desc; limit 20; offset ${offset};`,
     }).then(r => r.json()));
   }
   for (const term of searchTerms) {

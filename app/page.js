@@ -361,6 +361,8 @@ const CSS = `
   @keyframes slideUp  {from{opacity:0;transform:translateY(44px);}to{opacity:1;transform:translateY(0);}}
   @keyframes shine    {from{left:-80%;}to{left:130%;}}
   @keyframes float    {0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
+  @keyframes bgDrift  {0%{transform:translateY(0px) scale(1);}33%{transform:translateY(-22px) scale(1.03);}66%{transform:translateY(12px) scale(.97);}100%{transform:translateY(0px) scale(1);}}
+  .cover-bg-item{will-change:transform;}
   @keyframes marquee  {from{transform:translateX(0);}to{transform:translateX(-50%);}}
   @keyframes marqueeR {from{transform:translateX(-50%);}to{transform:translateX(0);}}
   @keyframes gradText {0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
@@ -530,6 +532,33 @@ const Skel = () => (
     </div>
   </div>
 );
+
+/* ── COVER BACKGROUND ────────────────────────────────────── */
+const BG_SLOTS = [
+  { top:'-8%',  left:'-14%', size:380, rot:'-10deg', dur:'32s', delay:'0s'   },
+  { top:'8%',   right:'-12%',size:320, rot:'7deg',   dur:'40s', delay:'-14s' },
+  { top:'45%',  left:'-6%',  size:280, rot:'4deg',   dur:'36s', delay:'-22s' },
+  { bottom:'5%',right:'-10%',size:350, rot:'-6deg',  dur:'44s', delay:'-8s'  },
+  { bottom:'18%',left:'38%', size:260, rot:'3deg',   dur:'50s', delay:'-30s' },
+  { top:'28%',  left:'22%',  size:220, rot:'-4deg',  dur:'38s', delay:'-18s' },
+];
+const CoverBackground = ({ covers }) => {
+  if (!covers?.length) return null;
+  return (
+    <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0, overflow:'hidden' }}>
+      {BG_SLOTS.map((p, i) => {
+        const src = covers[i % covers.length];
+        if (!src) return null;
+        const s = { position:'absolute', width:p.size, opacity:0.07, filter:'blur(62px) saturate(1.8)', animation:`bgDrift ${p.dur} ease-in-out infinite ${p.delay}` };
+        if (p.top)    s.top    = p.top;
+        if (p.bottom) s.bottom = p.bottom;
+        if (p.left)   s.left   = p.left;
+        if (p.right)  s.right  = p.right;
+        return <div key={i} className="cover-bg-item" style={s}><img src={src} alt="" style={{ width:'100%', display:'block', borderRadius:20, transform:`rotate(${p.rot})` }} /></div>;
+      })}
+    </div>
+  );
+};
 
 /* ── HORIZONTAL SCROLL SECTION ───────────────────────────── */
 const HScrollSection = ({ games, onClick, accent = "#ff6b35", showDate = false }) => (
@@ -1322,9 +1351,13 @@ export default function JoystickLog() {
   const sentinelRef = useRef(null);
   const platScrollRef = useRef(null);
   const scrollPlat = dir => platScrollRef.current?.scrollBy({ left: dir * 220, behavior:"smooth" });
-  const [activeTags, setActiveTags]     = useState([]);
-  const [discoGames, setDiscoGames]     = useState([]);
-  const [loadingDisco, setLoadingDisco] = useState(false);
+  const [activeTags, setActiveTags]         = useState([]);
+  const [discoGames, setDiscoGames]         = useState([]);
+  const [loadingDisco, setLoadingDisco]     = useState(false);
+  const [loadingMoreDisco, setLoadingMoreDisco] = useState(false);
+  const [discoOffset, setDiscoOffset]       = useState(0);
+  const [hasMoreDisco, setHasMoreDisco]     = useState(true);
+  const discoSentinelRef = useRef(null);
   const [wishlistGames, setWishlistGames] = useState([]);
   const [profileUsername, setProfileUsername] = useState("");
   const [trendingGames, setTrendingGames] = useState([]);
@@ -1434,14 +1467,34 @@ export default function JoystickLog() {
   }, [hasMoreEx, loadingEx, loadingMoreEx, exploreOffset, searchQ, platFilter]);
 
   /* Discover */
+  const fetchDisco = useCallback(async (tags, offset = 0) => {
+    if (tags.length === 0) { setDiscoGames([]); return; }
+    if (offset === 0) { setLoadingDisco(true); setDiscoGames([]); setHasMoreDisco(true); }
+    else setLoadingMoreDisco(true);
+    try {
+      const data = await fetch(`/api/games/discover?tags=${encodeURIComponent(tags.join(','))}&offset=${offset}`).then(r=>r.json());
+      const games = (Array.isArray(data) ? data : []).map(formatGame).filter(g => g.cover);
+      if (offset === 0) setDiscoGames(games);
+      else setDiscoGames(prev => { const ids = new Set(prev.map(g=>g.id)); return [...prev, ...games.filter(g=>!ids.has(g.id))]; });
+      setHasMoreDisco(games.length >= 20);
+    } catch {}
+    setLoadingDisco(false); setLoadingMoreDisco(false);
+  }, []);
+
+  useEffect(() => { setDiscoOffset(0); fetchDisco(activeTags, 0); }, [activeTags]);
+
   useEffect(() => {
-    if (activeTags.length===0) { setDiscoGames([]); return; }
-    setLoadingDisco(true);
-    fetch(`/api/games/discover?tags=${encodeURIComponent(activeTags.join(','))}`)
-      .then(r=>r.json())
-      .then(data => { setDiscoGames((Array.isArray(data)?data:[]).map(formatGame).filter(g=>g.cover&&!userRatings[g.id])); setLoadingDisco(false); })
-      .catch(()=>setLoadingDisco(false));
-  }, [activeTags]);
+    if (!discoSentinelRef.current) return;
+    const obs = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMoreDisco && !loadingDisco && !loadingMoreDisco && activeTags.length > 0) {
+        const next = discoOffset + 20;
+        setDiscoOffset(next);
+        fetchDisco(activeTags, next);
+      }
+    }, { threshold: 0.1 });
+    obs.observe(discoSentinelRef.current);
+    return () => obs.disconnect();
+  }, [hasMoreDisco, loadingDisco, loadingMoreDisco, activeTags, discoOffset, fetchDisco]);
 
   const logout = async () => { await supabase.auth.signOut(); setUser(null); setUserRatings({}); setUserStatus({}); setWishlistGames([]); };
 
@@ -1450,6 +1503,9 @@ export default function JoystickLog() {
   return (
     <div style={{ minHeight:"100vh", background:"#060505", color:"#e8e4e0", fontFamily:"'DM Sans',sans-serif" }}>
       <style>{CSS}</style>
+
+      {/* Game cover ambient background */}
+      <CoverBackground covers={[...topGames, ...trendingGames].slice(0,6).map(g=>g.cover).filter(Boolean)} />
 
       {/* Ambient background layers */}
       <div style={{ position:"fixed", top:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent 10%,rgba(255,107,53,.4) 50%,transparent 90%)", pointerEvents:"none", zIndex:200 }} />
@@ -1815,9 +1871,15 @@ export default function JoystickLog() {
                   {loadingDisco && <div className="spin"/>}
                 </div>
                 {!loadingDisco && discoGames.length>0 ? (
-                  <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(155px,1fr))", gap:12 }}>
-                    {discoGames.map(g=><GameCard key={g.id} game={g} onClick={setSelected} userRating={userRatings[g.id]?.rating}/>)}
-                  </div>
+                  <>
+                    <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(155px,1fr))", gap:12 }}>
+                      {discoGames.map(g=><GameCard key={g.id} game={g} onClick={setSelected} userRating={userRatings[g.id]?.rating}/>)}
+                    </div>
+                    <div ref={discoSentinelRef} style={{ height:60, display:"flex", alignItems:"center", justifyContent:"center", marginTop:8 }}>
+                      {loadingMoreDisco && <div className="spin"/>}
+                      {!hasMoreDisco && <span style={{ color:"rgba(255,255,255,.15)", fontSize:12, fontFamily:"'Syne',sans-serif" }}>{t("endResults")}</span>}
+                    </div>
+                  </>
                 ) : !loadingDisco ? (
                   <div style={{ color:"rgba(255,255,255,.25)", fontSize:14, borderLeft:"2px solid rgba(255,107,53,.3)", paddingLeft:16 }}>{t("noDiscoResults")}</div>
                 ) : null}
