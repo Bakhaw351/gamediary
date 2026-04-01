@@ -46,6 +46,17 @@ const RATING_LABELS = {
   9:"Chef-d'œuvre", 10:"Parfait ✦",
 };
 
+const BADGES_DEF = [
+  { id:"first",      icon:"🎮", label:{ fr:"Première note",   en:"First rating",     de:"Erste Wertung",    es:"Primera nota",    pt:"Primeira nota"    }, cond:(r,_)=>Object.keys(r).length>=1 },
+  { id:"critic",     icon:"✍️", label:{ fr:"Critique",        en:"Critic",           de:"Kritiker",         es:"Crítico",         pt:"Crítico"          }, cond:(r,_)=>Object.values(r).filter(x=>x.comment?.length>10).length>=3 },
+  { id:"collector",  icon:"📚", label:{ fr:"Collectionneur",  en:"Collector",        de:"Sammler",          es:"Coleccionista",   pt:"Colecionador"     }, cond:(r,_)=>Object.keys(r).length>=10 },
+  { id:"explorer",   icon:"🧭", label:{ fr:"Explorateur",     en:"Explorer",         de:"Entdecker",        es:"Explorador",      pt:"Explorador"       }, cond:(_,s)=>Object.keys(s).length>=5 },
+  { id:"completed",  icon:"🏆", label:{ fr:"Complétionniste", en:"Completionist",    de:"Perfektionist",    es:"Completista",     pt:"Perfeccionista"   }, cond:(_,s)=>Object.values(s).filter(x=>x==="completed").length>=3 },
+  { id:"devoted",    icon:"⭐", label:{ fr:"Passionné",       en:"Devoted",          de:"Passioniert",      es:"Apasionado",      pt:"Apaixonado"       }, cond:(r,_)=>Object.values(r).some(x=>x.rating===10) },
+  { id:"prolific",   icon:"🔥", label:{ fr:"Prolifique",      en:"Prolific",         de:"Produktiv",        es:"Prolífico",       pt:"Prolífico"        }, cond:(r,_)=>Object.keys(r).length>=25 },
+  { id:"wishlister", icon:"🔖", label:{ fr:"Chasseur",        en:"Hunter",           de:"Jäger",            es:"Cazador",         pt:"Caçador"          }, cond:(_,s)=>Object.values(s).filter(x=>x==="wishlist").length>=5 },
+];
+
 /* ── TRANSLATIONS ─────────────────────────────────────────── */
 const TRANSLATIONS = {
   fr: {
@@ -98,6 +109,12 @@ const TRANSLATIONS = {
     upcomingTag:"Prochainement", upcomingTitle:"Bientôt disponible",
     gemsTag:"Jeux sous-estimés", gemsTitle:"Pépites cachées",
     communityRatings:"Notes publiées", communityTracked:"Jeux suivis",
+    activityTag:"Activité récente", activityTitle:"Feed communauté", noActivity:"Aucune activité pour l'instant",
+    popularTag:"Le plus noté", popularTitle:"Populaire sur JoystickLog",
+    badgesTag:"Tes accomplissements", badgesTitle:"Badges",
+    listsTitle:"Mes listes", createList:"Nouvelle liste", listNamePlaceholder:"Nom de la liste…",
+    addToList:"Ajouter à une liste", noLists:"Aucune liste créée", listCreated:"Liste créée !", addedToList:"Ajouté !",
+    statsDistribution:"Distribution des notes", statsStatus:"Répartition des statuts",
   },
   en: {
     s_wishlist:"Want to play", s_playing:"Playing", s_completed:"Completed", s_dropped:"Dropped",
@@ -149,6 +166,12 @@ const TRANSLATIONS = {
     upcomingTag:"Coming soon", upcomingTitle:"Upcoming",
     gemsTag:"Underrated", gemsTitle:"Hidden gems",
     communityRatings:"Ratings", communityTracked:"Games tracked",
+    activityTag:"Recent activity", activityTitle:"Community feed", noActivity:"No activity yet",
+    popularTag:"Most rated", popularTitle:"Popular on JoystickLog",
+    badgesTag:"Your achievements", badgesTitle:"Badges",
+    listsTitle:"My lists", createList:"New list", listNamePlaceholder:"List name…",
+    addToList:"Add to a list", noLists:"No lists yet", listCreated:"List created!", addedToList:"Added!",
+    statsDistribution:"Rating distribution", statsStatus:"Status breakdown",
   },
   de: {
     s_wishlist:"Möchte spielen", s_playing:"Spiele gerade", s_completed:"Abgeschlossen", s_dropped:"Abgebrochen",
@@ -198,6 +221,12 @@ const TRANSLATIONS = {
     upcomingTag:"Demnächst", upcomingTitle:"Demnächst verfügbar",
     gemsTag:"Unterschätzt", gemsTitle:"Versteckte Perlen",
     communityRatings:"Bewertungen", communityTracked:"Verfolgte Spiele",
+    activityTag:"Letzte Aktivität", activityTitle:"Community-Feed", noActivity:"Noch keine Aktivität",
+    popularTag:"Am häufigsten bewertet", popularTitle:"Beliebt auf JoystickLog",
+    badgesTag:"Deine Errungenschaften", badgesTitle:"Abzeichen",
+    listsTitle:"Meine Listen", createList:"Neue Liste", listNamePlaceholder:"Listenname…",
+    addToList:"Zur Liste hinzufügen", noLists:"Noch keine Listen", listCreated:"Liste erstellt!", addedToList:"Hinzugefügt!",
+    statsDistribution:"Bewertungsverteilung", statsStatus:"Statusübersicht",
   },
   es: {
     s_wishlist:"Quiero jugar", s_playing:"Jugando", s_completed:"Completado", s_dropped:"Abandonado",
@@ -247,6 +276,12 @@ const TRANSLATIONS = {
     upcomingTag:"Próximamente", upcomingTitle:"Próximos lanzamientos",
     gemsTag:"Infravalorados", gemsTitle:"Joyas ocultas",
     communityRatings:"Valoraciones", communityTracked:"Juegos seguidos",
+    activityTag:"Actividad reciente", activityTitle:"Feed comunidad", noActivity:"Sin actividad por ahora",
+    popularTag:"Más valorados", popularTitle:"Popular en JoystickLog",
+    badgesTag:"Tus logros", badgesTitle:"Insignias",
+    listsTitle:"Mis listas", createList:"Nueva lista", listNamePlaceholder:"Nombre de la lista…",
+    addToList:"Añadir a una lista", noLists:"Sin listas", listCreated:"¡Lista creada!", addedToList:"¡Añadido!",
+    statsDistribution:"Distribución de notas", statsStatus:"Desglose de estados",
   },
   pt: {
     s_wishlist:"Quero jogar", s_playing:"Jogando", s_completed:"Completado", s_dropped:"Abandonado",
@@ -296,6 +331,12 @@ const TRANSLATIONS = {
     upcomingTag:"Em breve", upcomingTitle:"Próximos lançamentos",
     gemsTag:"Subestimados", gemsTitle:"Joias escondidas",
     communityRatings:"Avaliações", communityTracked:"Jogos seguidos",
+    activityTag:"Atividade recente", activityTitle:"Feed comunidade", noActivity:"Sem atividade por enquanto",
+    popularTag:"Mais avaliados", popularTitle:"Popular no JoystickLog",
+    badgesTag:"Suas conquistas", badgesTitle:"Badges",
+    listsTitle:"Minhas listas", createList:"Nova lista", listNamePlaceholder:"Nome da lista…",
+    addToList:"Adicionar a uma lista", noLists:"Sem listas", listCreated:"Lista criada!", addedToList:"Adicionado!",
+    statsDistribution:"Distribuição das notas", statsStatus:"Divisão por status",
   },
 };
 
@@ -321,6 +362,15 @@ const formatGame   = g   => ({
   summary:  g.summary || "",
   videoId:  g.videos?.[0]?.video_id || null,
 });
+
+const timeAgo = ts => {
+  if (!ts) return "";
+  const s = (Date.now() - new Date(ts).getTime()) / 1000;
+  if (s < 60) return "à l'instant";
+  if (s < 3600) return `il y a ${Math.floor(s/60)} min`;
+  if (s < 86400) return `il y a ${Math.floor(s/3600)} h`;
+  return `il y a ${Math.floor(s/86400)} j`;
+};
 
 const rc = r => !r ? "rgba(255,255,255,.3)" : r >= 8 ? "#ffd166" : r >= 6 ? "#ff9a3c" : "#ff4d4d";
 
@@ -757,7 +807,7 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
 };
 
 /* ── CINEMATIC GAME PAGE ──────────────────────────────────── */
-const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired, username, t }) => {
+const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired, username, userLists, t }) => {
   const [myR, setMyR] = useState(userRatings[game.id]?.rating || 0);
   const [hovR, setHovR] = useState(0);
   const [txt, setTxt] = useState(userRatings[game.id]?.comment || "");
@@ -774,6 +824,8 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
   const [myReactions, setMyReactions] = useState({});
   const [dlcs, setDlcs] = useState([]);
   const [series, setSeries] = useState([]);
+  const [showListMenu, setShowListMenu] = useState(false);
+  const [addedToList, setAddedToList] = useState(null);
 
   const DLC_LABELS = { 1:t("dlcDLC"), 2:t("dlcExpansion"), 4:t("dlcStandalone") };
 
@@ -815,6 +867,17 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
   };
 
   useEffect(() => { fetchCommunity(); }, [game.id]);
+
+  const addToList = async (listId, listName) => {
+    if (!user) { onAuthRequired(); return; }
+    await supabase.from("list_games").upsert(
+      { list_id:listId, game_id:game.id, game_title:game.title, game_cover:game.cover },
+      { onConflict:"list_id,game_id" }
+    );
+    setAddedToList(listName);
+    setShowListMenu(false);
+    setTimeout(() => setAddedToList(null), 2500);
+  };
 
   const toggleReaction = async (reviewerUserId, emoji) => {
     if (!user) { onAuthRequired(); return; }
@@ -872,7 +935,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
     if (!myR) return;
     setLoading(true);
     const { error } = await supabase.from("ratings").upsert(
-      { user_id:user.id, game_id:game.id, rating:myR, comment:txt, user_display: username || user.user_metadata?.username || user.email?.split("@")[0] },
+      { user_id:user.id, game_id:game.id, rating:myR, comment:txt, user_display: username || user.user_metadata?.username || user.email?.split("@")[0], game_title: game.title, game_cover: game.cover },
       { onConflict:"user_id,game_id" }
     );
     if (!error) {
@@ -993,6 +1056,30 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
                 </button>
               );
             })}
+
+            {/* Add to list */}
+            {user && userLists?.length > 0 && (
+              <div style={{ position:"relative" }}>
+                <button onClick={()=>setShowListMenu(m=>!m)}
+                  style={{ background:"rgba(255,255,255,.07)", border:"1px solid rgba(255,255,255,.12)", borderRadius:11, padding:"9px 17px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:12, cursor:"pointer", color:"rgba(255,255,255,.5)", display:"flex", alignItems:"center", gap:6, transition:"all .2s" }}
+                  onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(255,107,53,.4)";e.currentTarget.style.color="#ffd166";}}
+                  onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.12)";e.currentTarget.style.color="rgba(255,255,255,.5)";}}>
+                  📋 {addedToList ? `✓ ${addedToList}` : t("addToList")}
+                </button>
+                {showListMenu && (
+                  <div style={{ position:"absolute", top:"calc(100% + 8px)", left:0, zIndex:50, background:"#161210", border:"1px solid rgba(255,255,255,.1)", borderRadius:12, padding:6, minWidth:180, boxShadow:"0 20px 50px rgba(0,0,0,.7)" }}>
+                    {userLists.map(list => (
+                      <button key={list.id} onClick={()=>addToList(list.id, list.name)}
+                        style={{ display:"block", width:"100%", textAlign:"left", background:"none", border:"none", color:"rgba(255,255,255,.7)", padding:"9px 14px", borderRadius:8, cursor:"pointer", fontSize:13, fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, transition:"all .15s" }}
+                        onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,107,53,.1)";e.currentTarget.style.color="#fff";}}
+                        onMouseLeave={e=>{e.currentTarget.style.background="none";e.currentTarget.style.color="rgba(255,255,255,.7)";}}>
+                        📋 {list.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -1328,6 +1415,67 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
   );
 };
 
+/* ── USERNAME EDIT ────────────────────────────────────────── */
+const UsernameEdit = ({ user, profileUsername, setProfileUsername, t }) => {
+  const [uEdit, setUEdit] = useState(profileUsername);
+  const [uSaved, setUSaved] = useState(false);
+  useEffect(() => { setUEdit(profileUsername); }, [profileUsername]);
+  const saveUsername = async () => {
+    if (!uEdit.trim()) return;
+    await supabase.from("profiles").upsert({ id: user.id, username: uEdit.trim() });
+    await supabase.auth.updateUser({ data: { username: uEdit.trim() } });
+    setProfileUsername(uEdit.trim());
+    setUSaved(true);
+    setTimeout(() => setUSaved(false), 2000);
+  };
+  return (
+    <div style={{ marginBottom:28, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.06)", borderRadius:14, padding:"16px 18px" }}>
+      <div style={{ fontSize:10, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:2.5, textTransform:"uppercase", marginBottom:10 }}>{t("pseudoLabel")}</div>
+      <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+        <input value={uEdit} onChange={e=>setUEdit(e.target.value)} onKeyDown={e=>e.key==="Enter"&&saveUsername()}
+          placeholder={t("pseudoPlaceholder")}
+          style={{ flex:1, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.1)", borderRadius:10, color:"#fff", padding:"9px 14px", fontSize:14, fontFamily:"'Space Grotesk',sans-serif", outline:"none", transition:"all .2s" }}
+          onFocus={e=>{e.target.style.borderColor="rgba(255,107,53,.45)";e.target.style.boxShadow="0 0 0 3px rgba(255,107,53,.09)";}}
+          onBlur={e=>{e.target.style.borderColor="rgba(255,255,255,.1)";e.target.style.boxShadow="none";}}
+        />
+        <button onClick={saveUsername} style={{ background:"rgba(255,107,53,.12)", border:"1px solid rgba(255,107,53,.28)", borderRadius:10, color:"#ff6b35", cursor:"pointer", fontSize:13, padding:"9px 18px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, whiteSpace:"nowrap", transition:"all .18s" }}
+          onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,107,53,.22)";}}
+          onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,107,53,.12)";}}>
+          {uSaved ? "✓" : t("editBtn")}
+        </button>
+      </div>
+      {uSaved && <div style={{ color:"#ffd166", fontSize:12, marginTop:8, fontFamily:"'Space Grotesk',sans-serif" }}>{t("pseudoSaved")}</div>}
+    </div>
+  );
+};
+
+/* ── ACTIVITY ITEM ────────────────────────────────────────── */
+const ActivityItem = ({ item, onClick }) => {
+  const col = rc(item.rating);
+  const game = { id: item.game_id, title: item.game_title, cover: item.game_cover, platform:"Multi", year:"—", genre:"Jeu vidéo", rating:null, reviews:0, tags:[], summary:"", videoId:null };
+  return (
+    <div onClick={()=>onClick(game)}
+      style={{ display:"flex", gap:12, alignItems:"center", padding:"12px 14px", borderRadius:12, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.04)", cursor:"pointer", transition:"all .18s" }}
+      onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,107,53,.04)";e.currentTarget.style.borderColor="rgba(255,107,53,.12)";}}
+      onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,255,255,.02)";e.currentTarget.style.borderColor="rgba(255,255,255,.04)";}}>
+      <div style={{ width:36, height:48, borderRadius:7, overflow:"hidden", flexShrink:0, background:"rgba(255,255,255,.06)" }}>
+        {item.game_cover && <img src={item.game_cover} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} />}
+      </div>
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:3 }}>
+          <span style={{ fontWeight:700, fontSize:12, color:"#ff6b35", fontFamily:"'Space Grotesk',sans-serif" }}>{item.user_display || "Joueur"}</span>
+          <span style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'DM Sans',sans-serif" }}>{timeAgo(item.updated_at)}</span>
+        </div>
+        <div style={{ fontSize:12, color:"rgba(255,255,255,.65)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{item.game_title}</div>
+        {item.comment && <div style={{ fontSize:11, color:"rgba(255,255,255,.25)", fontStyle:"italic", marginTop:2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>"{item.comment}"</div>}
+      </div>
+      <div style={{ flexShrink:0, background:`${col}18`, border:`1px solid ${col}44`, borderRadius:8, padding:"4px 10px", textAlign:"center" }}>
+        <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:16, color:col, lineHeight:1 }}>{item.rating}</div>
+      </div>
+    </div>
+  );
+};
+
 /* ═══════════════════════════════════════════════════════════
    MAIN
 ═══════════════════════════════════════════════════════════ */
@@ -1340,8 +1488,9 @@ export default function JoystickLog() {
   const [selected, setSelected] = useState(null);
   const [user, setUser]         = useState(null);
   const [showAuth, setShowAuth] = useState(false);
-  const [userRatings, setUserRatings] = useState({});
-  const [userStatus, setUserStatus]   = useState({});
+  const [userRatings, setUserRatings]     = useState({});
+  const [userStatus, setUserStatus]       = useState({});
+  const [ratedGamesList, setRatedGamesList] = useState([]);
 
   const [topGames, setTopGames]         = useState([]);
   const [loadingTop, setLoadingTop]     = useState(true);
@@ -1368,6 +1517,11 @@ export default function JoystickLog() {
   const [upcomingGames, setUpcomingGames] = useState([]);
   const [gemGames, setGemGames]           = useState([]);
   const [communityStats, setCommunityStats] = useState({ ratings: 0, tracked: 0 });
+  const [activityFeed, setActivityFeed]     = useState([]);
+  const [popularGames, setPopularGames]     = useState([]);
+  const [userLists, setUserLists]           = useState([]);
+  const [showCreateList, setShowCreateList] = useState(false);
+  const [newListName, setNewListName]       = useState("");
 
   /* Auth */
   useEffect(() => {
@@ -1387,9 +1541,18 @@ export default function JoystickLog() {
 
   /* Load ratings & status */
   useEffect(() => {
-    if (!user) { setUserRatings({}); setUserStatus({}); setWishlistGames([]); return; }
+    if (!user) { setUserRatings({}); setUserStatus({}); setWishlistGames([]); setRatedGamesList([]); return; }
     supabase.from("ratings").select("*").eq("user_id", user.id).then(({ data }) => {
-      if (data) { const r={}; data.forEach(d => r[d.game_id]={rating:d.rating,comment:d.comment}); setUserRatings(r); }
+      if (data) {
+        const r = {};
+        const games = [];
+        data.forEach(d => {
+          r[d.game_id] = { rating:d.rating, comment:d.comment };
+          if (d.game_title) games.push({ id:d.game_id, title:d.game_title, cover:d.game_cover||null, platform:"Multi", year:"—", genre:"Jeu vidéo", rating:null, reviews:0, tags:[], summary:"", videoId:null });
+        });
+        setUserRatings(r);
+        if (games.length > 0) setRatedGamesList(games);
+      }
     });
     supabase.from("game_status").select("*").eq("user_id", user.id).then(({ data }) => {
       if (data) {
@@ -1426,6 +1589,48 @@ export default function JoystickLog() {
       supabase.from('game_status').select('*', { count:'exact', head:true }),
     ]).then(([r, s]) => setCommunityStats({ ratings: r.count||0, tracked: s.count||0 })).catch(()=>{});
   }, []);
+
+  /* Activity feed + popular on platform */
+  useEffect(() => {
+    supabase.from("ratings")
+      .select("user_id, game_id, rating, comment, user_display, game_title, game_cover, updated_at")
+      .order("updated_at", { ascending: false })
+      .limit(20)
+      .then(({ data }) => { if (data) setActivityFeed(data.filter(d => d.game_title && d.user_display)); })
+      .catch(() => {});
+    supabase.from("ratings")
+      .select("game_id, game_title, game_cover, rating")
+      .not("game_title", "is", null)
+      .limit(300)
+      .then(({ data }) => {
+        if (!data) return;
+        const map = {};
+        data.forEach(d => {
+          if (!map[d.game_id]) map[d.game_id] = { id: d.game_id, title: d.game_title, cover: d.game_cover, ratings: [], count: 0 };
+          map[d.game_id].ratings.push(d.rating);
+          map[d.game_id].count++;
+        });
+        const popular = Object.values(map)
+          .filter(g => g.count >= 1 && g.cover)
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 15)
+          .map(g => ({ ...g, avgRating: Math.round(g.ratings.reduce((a,r)=>a+r,0)/g.ratings.length), platform:"Multi", year:"—", genre:"", tags:[], summary:"", videoId:null }));
+        setPopularGames(popular);
+      }).catch(() => {});
+  }, []);
+
+  /* User lists */
+  useEffect(() => {
+    if (!user) { setUserLists([]); return; }
+    supabase.from("user_lists").select("id, name, created_at").eq("user_id", user.id).order("created_at", { ascending: false })
+      .then(({ data }) => { if (data) setUserLists(data); }).catch(() => {});
+  }, [user]);
+
+  const createList = async () => {
+    if (!newListName.trim() || !user) return;
+    const { data } = await supabase.from("user_lists").insert({ user_id: user.id, name: newListName.trim() }).select().single();
+    if (data) { setUserLists(p => [data, ...p]); setNewListName(""); setShowCreateList(false); }
+  };
 
   /* Explore */
   const fetchExplore = useCallback(async (q, plat, offset = 0) => {
@@ -1502,7 +1707,9 @@ export default function JoystickLog() {
 
   const logout = async () => { await supabase.auth.signOut(); setUser(null); setUserRatings({}); setUserStatus({}); setWishlistGames([]); };
 
-  const allRatedGames = [...topGames, ...exploreGames].filter((g,i,arr) => userRatings[g.id] && arr.findIndex(x=>x.id===g.id)===i);
+  const allRatedGames = ratedGamesList.length > 0
+    ? ratedGamesList
+    : [...topGames, ...exploreGames].filter((g,i,arr) => userRatings[g.id] && arr.findIndex(x=>x.id===g.id)===i);
 
   return (
     <div style={{ minHeight:"100vh", background:"#060505", color:"#e8e4e0", fontFamily:"'DM Sans',sans-serif" }}>
@@ -1787,6 +1994,32 @@ export default function JoystickLog() {
                 <HScrollSection games={gemGames} onClick={setSelected} accent="#ffd166" />
               </div>
             )}
+
+            {/* ── POPULAR ON JOYSTICKLOG ── */}
+            {popularGames.length > 0 && (
+              <div style={{ marginTop:56 }}>
+                <div style={{ marginBottom:20 }}>
+                  <div style={{ fontSize:10, color:"rgba(255,209,102,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>{t("popularTag")}</div>
+                  <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:"#fff", letterSpacing:-.5, lineHeight:1 }}>{t("popularTitle")}</h2>
+                </div>
+                <HScrollSection games={popularGames} onClick={g=>setSelected(g)} accent="#ffd166" />
+              </div>
+            )}
+
+            {/* ── ACTIVITY FEED ── */}
+            {activityFeed.length > 0 && (
+              <div style={{ marginTop:56 }}>
+                <div style={{ marginBottom:20 }}>
+                  <div style={{ fontSize:10, color:"rgba(255,107,53,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>{t("activityTag")}</div>
+                  <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:"#fff", letterSpacing:-.5, lineHeight:1 }}>{t("activityTitle")}</h2>
+                </div>
+                <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+                  {activityFeed.slice(0, 10).map((item, i) => (
+                    <ActivityItem key={`${item.user_id}-${item.game_id}-${i}`} item={item} onClick={g=>setSelected(g)} />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -1951,37 +2184,112 @@ export default function JoystickLog() {
                 </div>
 
                 {/* Username edit */}
-                {(() => {
-                  const [uEdit, setUEdit] = useState(profileUsername);
-                  const [uSaved, setUSaved] = useState(false);
-                  const saveUsername = async () => {
-                    if (!uEdit.trim()) return;
-                    await supabase.from("profiles").upsert({ id: user.id, username: uEdit.trim() });
-                    await supabase.auth.updateUser({ data: { username: uEdit.trim() } });
-                    setProfileUsername(uEdit.trim());
-                    setUSaved(true);
-                    setTimeout(() => setUSaved(false), 2000);
-                  };
-                  return (
-                    <div style={{ marginBottom:28, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.06)", borderRadius:14, padding:"16px 18px" }}>
-                      <div style={{ fontSize:10, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:2.5, textTransform:"uppercase", marginBottom:10 }}>{t("pseudoLabel")}</div>
-                      <div style={{ display:"flex", gap:8, alignItems:"center" }}>
-                        <input value={uEdit} onChange={e=>setUEdit(e.target.value)} onKeyDown={e=>e.key==="Enter"&&saveUsername()}
-                          placeholder={t("pseudoPlaceholder")}
-                          style={{ flex:1, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.1)", borderRadius:10, color:"#fff", padding:"9px 14px", fontSize:14, fontFamily:"'Space Grotesk',sans-serif", outline:"none", transition:"all .2s" }}
-                          onFocus={e=>{e.target.style.borderColor="rgba(255,107,53,.45)";e.target.style.boxShadow="0 0 0 3px rgba(255,107,53,.09)";}}
-                          onBlur={e=>{e.target.style.borderColor="rgba(255,255,255,.1)";e.target.style.boxShadow="none";}}
-                        />
-                        <button onClick={saveUsername} style={{ background:"rgba(255,107,53,.12)", border:"1px solid rgba(255,107,53,.28)", borderRadius:10, color:"#ff6b35", cursor:"pointer", fontSize:13, padding:"9px 18px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, whiteSpace:"nowrap", transition:"all .18s" }}
-                          onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,107,53,.22)";}}
-                          onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,107,53,.12)";}}>
-                          {uSaved ? "✓" : t("editBtn")}
-                        </button>
-                      </div>
-                      {uSaved && <div style={{ color:"#ffd166", fontSize:12, marginTop:8, fontFamily:"'Space Grotesk',sans-serif" }}>{t("pseudoSaved")}</div>}
+                <UsernameEdit user={user} profileUsername={profileUsername} setProfileUsername={setProfileUsername} t={t} />
+
+                {/* Rating distribution */}
+                {Object.keys(userRatings).length > 0 && (
+                  <div style={{ marginBottom:28, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.06)", borderRadius:14, padding:"18px 20px" }}>
+                    <div style={{ fontSize:10, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:2.5, textTransform:"uppercase", marginBottom:14 }}>{t("statsDistribution")}</div>
+                    <div style={{ display:"flex", alignItems:"flex-end", gap:3, height:72 }}>
+                      {[1,2,3,4,5,6,7,8,9,10].map(n => {
+                        const count = Object.values(userRatings).filter(r=>r.rating===n).length;
+                        const maxC = Math.max(1, ...[1,2,3,4,5,6,7,8,9,10].map(x=>Object.values(userRatings).filter(r=>r.rating===x).length));
+                        const pct = (count/maxC)*100;
+                        const col = rc(n);
+                        return (
+                          <div key={n} style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:3 }}>
+                            <div style={{ width:"100%", height:50, display:"flex", alignItems:"flex-end" }}>
+                              <div style={{ width:"100%", height:`${Math.max(6,pct)}%`, background:col, borderRadius:"3px 3px 0 0", opacity:count>0?0.85:0.12, transition:"height .4s ease" }} />
+                            </div>
+                            <div style={{ fontSize:9, color:col, fontWeight:700, fontFamily:"'Syne',sans-serif", opacity:count>0?1:.3 }}>{n}</div>
+                            {count>0 && <div style={{ fontSize:8, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif" }}>{count}</div>}
+                          </div>
+                        );
+                      })}
                     </div>
-                  );
-                })()}
+                  </div>
+                )}
+
+                {/* Status breakdown */}
+                {Object.keys(userStatus).length > 0 && (
+                  <div style={{ marginBottom:28, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.06)", borderRadius:14, padding:"18px 20px" }}>
+                    <div style={{ fontSize:10, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:2.5, textTransform:"uppercase", marginBottom:14 }}>{t("statsStatus")}</div>
+                    <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                      {Object.entries(STATUS_CONFIG).map(([key, cfg]) => {
+                        const count = Object.values(userStatus).filter(s=>s===key).length;
+                        const total = Object.keys(userStatus).length;
+                        const pct = total > 0 ? Math.round((count/total)*100) : 0;
+                        return (
+                          <div key={key} style={{ display:"flex", alignItems:"center", gap:10 }}>
+                            <span style={{ fontSize:14, width:20, flexShrink:0 }}>{cfg.icon}</span>
+                            <div style={{ flex:1 }}>
+                              <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
+                                <span style={{ fontSize:11, color:"rgba(255,255,255,.5)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600 }}>{cfg.label}</span>
+                                <span style={{ fontSize:11, color:cfg.color, fontFamily:"'Syne',sans-serif", fontWeight:700 }}>{count}</span>
+                              </div>
+                              <div style={{ height:5, background:"rgba(255,255,255,.06)", borderRadius:99, overflow:"hidden" }}>
+                                <div style={{ width:`${pct}%`, height:"100%", background:cfg.color, borderRadius:99, transition:"width .5s ease", boxShadow:`0 0 6px ${cfg.color}66` }} />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Badges */}
+                <div style={{ marginBottom:28, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.06)", borderRadius:14, padding:"18px 20px" }}>
+                  <div style={{ fontSize:10, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:2.5, textTransform:"uppercase", marginBottom:14 }}>{t("badgesTag")}</div>
+                  <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+                    {BADGES_DEF.map(b => {
+                      const earned = b.cond(userRatings, userStatus);
+                      return (
+                        <div key={b.id} title={b.label[lang]||b.label.fr}
+                          style={{ display:"flex", alignItems:"center", gap:7, padding:"7px 13px", borderRadius:12, background: earned ? "rgba(255,107,53,.08)" : "rgba(255,255,255,.02)", border:`1px solid ${earned ? "rgba(255,107,53,.28)" : "rgba(255,255,255,.05)"}`, opacity: earned ? 1 : 0.38, transition:"all .2s" }}>
+                          <span style={{ fontSize:16, filter: earned ? "none" : "grayscale(1)" }}>{b.icon}</span>
+                          <span style={{ fontSize:11, fontWeight:700, color: earned ? "#ffd166" : "rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif" }}>{b.label[lang]||b.label.fr}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* My Lists */}
+                <div style={{ marginBottom:28 }}>
+                  <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
+                    <div className="sect-h">
+                      <h3 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"rgba(255,255,255,.7)", letterSpacing:-.3 }}>{t("listsTitle")} <span style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {userLists.length}</span></h3>
+                    </div>
+                    {!showCreateList && (
+                      <button onClick={()=>setShowCreateList(true)} style={{ background:"rgba(255,107,53,.08)", border:"1px solid rgba(255,107,53,.22)", borderRadius:10, color:"rgba(255,107,53,.85)", cursor:"pointer", fontSize:12, padding:"7px 14px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>+ {t("createList")}</button>
+                    )}
+                  </div>
+                  {showCreateList && (
+                    <div style={{ display:"flex", gap:8, marginBottom:12 }}>
+                      <input value={newListName} onChange={e=>setNewListName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&createList()} placeholder={t("listNamePlaceholder")} autoFocus
+                        style={{ flex:1, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.1)", borderRadius:10, color:"#fff", padding:"9px 14px", fontSize:14, fontFamily:"'Space Grotesk',sans-serif", outline:"none" }}
+                        onFocus={e=>{e.target.style.borderColor="rgba(255,107,53,.45)";}}
+                        onBlur={e=>{e.target.style.borderColor="rgba(255,255,255,.1)";}}
+                      />
+                      <button onClick={createList} style={{ background:"rgba(255,107,53,.12)", border:"1px solid rgba(255,107,53,.28)", borderRadius:10, color:"#ff6b35", cursor:"pointer", fontSize:14, padding:"9px 16px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>+</button>
+                      <button onClick={()=>{setShowCreateList(false);setNewListName("");}} style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", borderRadius:10, color:"rgba(255,255,255,.4)", cursor:"pointer", fontSize:14, padding:"9px 14px", fontFamily:"'Space Grotesk',sans-serif" }}>✕</button>
+                    </div>
+                  )}
+                  {userLists.length === 0 ? (
+                    <div style={{ color:"rgba(255,255,255,.2)", fontSize:13, fontFamily:"'DM Sans',sans-serif", textAlign:"center", padding:"20px 0", borderRadius:12, background:"rgba(255,255,255,.015)", border:"1px dashed rgba(255,255,255,.05)" }}>{t("noLists")}</div>
+                  ) : (
+                    <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+                      {userLists.map(list => (
+                        <div key={list.id} style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 16px", borderRadius:11, background:"rgba(255,255,255,.025)", border:"1px solid rgba(255,255,255,.055)" }}>
+                          <span style={{ fontSize:16 }}>📋</span>
+                          <span style={{ flex:1, fontSize:14, fontWeight:600, color:"rgba(255,255,255,.75)", fontFamily:"'Space Grotesk',sans-serif" }}>{list.name}</span>
+                          <span style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'DM Sans',sans-serif" }}>{new Date(list.created_at).toLocaleDateString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* Wishlist */}
                 {wishlistGames.length>0 && (
@@ -2059,6 +2367,7 @@ export default function JoystickLog() {
           setUserStatus={setUserStatus}
           onAuthRequired={()=>{ setSelected(null); setShowAuth(true); }}
           username={profileUsername}
+          userLists={userLists}
           t={t}
         />
       )}
