@@ -1184,7 +1184,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
             <div style={{ marginTop:14 }}>
               <div style={{ fontSize:9, color:"rgba(255,255,255,.18)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:2, textTransform:"uppercase", marginBottom:8 }}>Acheter</div>
               <a
-                href={`https://www.instant-gaming.com/fr/recherche/?q=${encodeURIComponent(game.title)}&igr=gamer-f4e324`}
+                href={`https://www.instant-gaming.com/fr/search/?q=${encodeURIComponent(game.title)}&igr=gamer-f4e324`}
                 target="_blank" rel="noopener noreferrer sponsored"
                 style={{ display:"flex", alignItems:"center", gap:10, background:"linear-gradient(135deg,rgba(0,180,80,.12),rgba(0,220,100,.06))", border:"1px solid rgba(0,200,80,.25)", borderRadius:12, padding:"11px 14px", textDecoration:"none", transition:"all .22s", cursor:"pointer", marginBottom:8 }}
                 onMouseEnter={e=>{ e.currentTarget.style.background="linear-gradient(135deg,rgba(0,180,80,.22),rgba(0,220,100,.12))"; e.currentTarget.style.borderColor="rgba(0,200,80,.5)"; e.currentTarget.style.transform="translateY(-2px)"; }}
