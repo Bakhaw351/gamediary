@@ -3,6 +3,7 @@ export async function GET(request) {
   const query = searchParams.get('q') || '';
   const offset = parseInt(searchParams.get('offset') || '0', 10);
   const platformId = searchParams.get('platform') || '';
+  const gameId = searchParams.get('id') || '';
 
   const tokenRes = await fetch(
     `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_CLIENT_ID}&client_secret=${process.env.TWITCH_CLIENT_SECRET}&grant_type=client_credentials`,
@@ -10,8 +11,24 @@ export async function GET(request) {
   );
   const { access_token } = await tokenRes.json();
 
-  const platClause = platformId ? ` & platforms = (${platformId})` : '';
+  const headers = {
+    'Client-ID': process.env.TWITCH_CLIENT_ID,
+    'Authorization': `Bearer ${access_token}`,
+    'Content-Type': 'text/plain',
+  };
+
   const fields = 'fields name,cover.url,first_release_date,genres.name,rating,total_rating_count,platforms.name,summary,videos.video_id;';
+
+  // Single game fetch by IGDB id
+  if (gameId) {
+    const data = await fetch('https://api.igdb.com/v4/games', {
+      method: 'POST', headers,
+      body: `${fields} where id = ${gameId}; limit 1;`,
+    }).then(r => r.json()).catch(() => []);
+    return Response.json(Array.isArray(data) && data[0] ? data[0] : null);
+  }
+
+  const platClause = platformId ? ` & platforms = (${platformId})` : '';
 
   let body;
   if (query.length >= 2) {
@@ -21,13 +38,7 @@ export async function GET(request) {
   }
 
   const igdbRes = await fetch('https://api.igdb.com/v4/games', {
-    method: 'POST',
-    headers: {
-      'Client-ID': process.env.TWITCH_CLIENT_ID,
-      'Authorization': `Bearer ${access_token}`,
-      'Content-Type': 'text/plain',
-    },
-    body,
+    method: 'POST', headers, body,
   });
 
   const games = await igdbRes.json();

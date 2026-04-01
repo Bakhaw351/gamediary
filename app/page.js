@@ -1884,6 +1884,45 @@ export default function JoystickLog() {
   const [showResetPw, setShowResetPw]       = useState(false);
   const [legalModal, setLegalModal]         = useState(null);
 
+  /* ── URL state: restore tab + game on load, sync on change ── */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tabParam = params.get('tab');
+    if (tabParam && ['home','explore','discover','profile'].includes(tabParam)) setTab(tabParam);
+    const gameId = params.get('game');
+    if (gameId) {
+      fetch(`/api/games?id=${gameId}`).then(r=>r.json()).then(data => {
+        if (data?.id) setSelected(formatGame(data));
+      }).catch(()=>{});
+    }
+    const onPop = () => {
+      const p = new URLSearchParams(window.location.search);
+      const t = p.get('tab'); if (t) setTab(t);
+      if (!p.get('game')) setSelected(null);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    params.set('tab', tab);
+    window.history.replaceState({}, '', `?${params.toString()}`);
+  }, [tab]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (selected) {
+      params.set('game', selected.id);
+      window.history.pushState({}, '', `?${params.toString()}`);
+    } else {
+      params.delete('game');
+      window.history.replaceState({}, '', `?${params.toString()}`);
+    }
+  }, [selected]);
+
   /* Auth */
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => { if (data.session?.user) setUser(data.session.user); });

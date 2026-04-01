@@ -7,22 +7,22 @@
  */
 
 const TAG_MAP = {
-  "Open World":   { genres: [],     themes: [38],     game_modes: [],      kw: [] },
+  "Open World":   { genres: [31],   themes: [38],     game_modes: [],      kw: [] },
   "RPG":          { genres: [12],   themes: [],       game_modes: [],      kw: [] },
-  "Action":       { genres: [],     themes: [1],      game_modes: [],      kw: [] },
+  "Action":       { genres: [25],   themes: [1],      game_modes: [],      kw: [] },
   "Aventure":     { genres: [31],   themes: [],       game_modes: [],      kw: [] },
-  "Platformer":   { genres: [8],    themes: [],       game_modes: [],      kw: [] },
-  "Roguelike":    { genres: [],     themes: [],       game_modes: [],      kw: ["roguelike", "roguelite"] },
+  "Platformer":   { genres: [8],    themes: [],       game_modes: [],      kw: ["platformer"] },
+  "Roguelike":    { genres: [12],   themes: [],       game_modes: [],      kw: ["roguelike", "roguelite", "rogue-like"] },
   "Souls-like":   { genres: [12],   themes: [1],      game_modes: [],      kw: ["souls-like", "soulslike", "soulsborne"] },
   "Simulation":   { genres: [13],   themes: [33],     game_modes: [],      kw: [] },
-  "Rétro":        { genres: [],     themes: [],       game_modes: [],      kw: ["retro", "pixel art", "16-bit", "8-bit"] },
-  "Difficile":    { genres: [],     themes: [],       game_modes: [],      kw: ["difficult", "challenging", "hardcore"] },
-  "Narratif":     { genres: [34],   themes: [31, 43], game_modes: [],      kw: [] },
+  "Rétro":        { genres: [8,32], themes: [],       game_modes: [],      kw: ["pixel art", "16-bit", "8-bit", "retro"] },
+  "Difficile":    { genres: [12,25],themes: [1],      game_modes: [],      kw: ["difficult", "challenging", "hardcore"] },
+  "Narratif":     { genres: [34,31],themes: [31, 43], game_modes: [],      kw: [] },
   "Multijoueur":  { genres: [],     themes: [],       game_modes: [2,3,5], kw: [] },
   "Indie":        { genres: [32],   themes: [],       game_modes: [],      kw: [] },
-  "Horreur":      { genres: [],     themes: [19],     game_modes: [],      kw: [] },
+  "Horreur":      { genres: [25],   themes: [19],     game_modes: [],      kw: [] },
   "Sport":        { genres: [14],   themes: [],       game_modes: [],      kw: [] },
-  "FPS":          { genres: [5],    themes: [],       game_modes: [],      kw: [] },
+  "FPS":          { genres: [5],    themes: [1],      game_modes: [],      kw: [] },
   "Puzzle":       { genres: [9],    themes: [],       game_modes: [],      kw: [] },
 };
 
