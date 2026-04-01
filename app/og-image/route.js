@@ -1,0 +1,46 @@
+export const runtime = 'edge';
+
+export async function GET() {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#09080e"/>
+      <stop offset="100%" stop-color="#130a04"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff6b35"/>
+      <stop offset="100%" stop-color="#ffd166"/>
+    </linearGradient>
+    <filter id="blur1"><feGaussianBlur stdDeviation="60"/></filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="200" cy="200" r="280" fill="#ff6b35" opacity="0.06" filter="url(#blur1)"/>
+  <circle cx="1000" cy="450" r="220" fill="#ffd166" opacity="0.05" filter="url(#blur1)"/>
+  <rect x="0" y="0" width="1200" height="3" fill="url(#accent)"/>
+  <rect x="80" y="200" width="64" height="64" rx="16" fill="#ff6b35"/>
+  <ellipse cx="112" cy="249" rx="17" ry="6" fill="rgba(255,255,255,.88)"/>
+  <rect x="108.4" y="224" width="7.2" height="25" rx="3.6" fill="white"/>
+  <circle cx="112" cy="220" r="9.6" fill="white"/>
+  <text x="160" y="247" font-family="Arial Black,sans-serif" font-weight="900" font-size="42" fill="white" letter-spacing="-1">JoystickLog</text>
+  <rect x="160" y="258" width="130" height="22" rx="11" fill="rgba(255,107,53,.15)" stroke="rgba(255,107,53,.35)" stroke-width="1"/>
+  <text x="225" y="273" font-family="Arial,sans-serif" font-size="11" fill="#ff6b35" font-weight="700" letter-spacing="2" text-anchor="middle">GRATUIT</text>
+  <rect x="80" y="316" width="600" height="1" fill="rgba(255,255,255,.07)"/>
+  <text x="80" y="380" font-family="Arial Black,sans-serif" font-weight="900" font-size="62" fill="white" letter-spacing="-2">Note. Critique.</text>
+  <text x="80" y="452" font-family="Arial Black,sans-serif" font-weight="900" font-size="62" letter-spacing="-2"><tspan fill="#ff6b35">Partage</tspan><tspan fill="white"> tes jeux.</tspan></text>
+  <text x="80" y="510" font-family="Arial,sans-serif" font-size="22" fill="rgba(255,255,255,.4)">Des millions de jeux · De la Game Boy à la PS5</text>
+  <text x="80" y="580" font-family="Arial,sans-serif" font-size="18" fill="rgba(255,107,53,.6)" font-weight="700" letter-spacing="1">joystick-log.com</text>
+  <rect x="820" y="120" width="130" height="175" rx="14" fill="rgba(255,107,53,.06)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+  <rect x="970" y="80" width="130" height="175" rx="14" fill="rgba(167,139,250,.06)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+  <rect x="820" y="320" width="130" height="175" rx="14" fill="rgba(255,209,102,.05)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+  <rect x="970" y="280" width="130" height="175" rx="14" fill="rgba(255,107,53,.05)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+  <rect x="900" y="265" width="36" height="22" rx="7" fill="#ff6b35"/>
+  <text x="918" y="280" font-family="Arial Black,sans-serif" font-size="12" fill="white" font-weight="900" text-anchor="middle">9</text>
+</svg>`;
+
+  return new Response(svg, {
+    headers: {
+      'Content-Type': 'image/svg+xml',
+      'Cache-Control': 'public, max-age=86400',
+    },
+  });
+}
