@@ -1025,6 +1025,8 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
   const [communityReviews, setCommunityReviews] = useState([]);
   const [reactions, setReactions] = useState({});
   const [myReactions, setMyReactions] = useState({});
+  const [likes, setLikes] = useState({});
+  const [myLikes, setMyLikes] = useState(new Set());
   const [dlcs, setDlcs] = useState([]);
   const [series, setSeries] = useState([]);
   const [showListMenu, setShowListMenu] = useState(false);
@@ -1084,6 +1086,32 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
         });
         setMyReactions(mine);
       }
+    }
+
+    const { data: likeData } = await supabase.from("likes").select("*").eq("game_id", game.id);
+    if (likeData) {
+      const counts = {};
+      likeData.forEach(l => { counts[l.reviewer_id] = (counts[l.reviewer_id] || 0) + 1; });
+      setLikes(counts);
+      if (user) setMyLikes(new Set(likeData.filter(l => l.user_id === user.id).map(l => l.reviewer_id)));
+    }
+  };
+
+  const toggleLike = async (reviewerUserId) => {
+    if (!user) { onAuthRequired(); return; }
+    const liked = myLikes.has(reviewerUserId);
+    if (liked) {
+      await supabase.from("likes").delete()
+        .eq("user_id", user.id).eq("game_id", game.id).eq("reviewer_id", reviewerUserId);
+      setMyLikes(p => { const s = new Set(p); s.delete(reviewerUserId); return s; });
+      setLikes(p => ({ ...p, [reviewerUserId]: Math.max(0, (p[reviewerUserId] || 1) - 1) }));
+    } else {
+      await supabase.from("likes").upsert(
+        { user_id: user.id, game_id: game.id, reviewer_id: reviewerUserId },
+        { onConflict: "user_id,game_id,reviewer_id" }
+      );
+      setMyLikes(p => new Set([...p, reviewerUserId]));
+      setLikes(p => ({ ...p, [reviewerUserId]: (p[reviewerUserId] || 0) + 1 }));
     }
   };
 
@@ -1685,8 +1713,22 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
                           {rv.comment && (
                             <p style={{ color:"rgba(255,255,255,.48)", fontSize:13, lineHeight:1.75, fontFamily:"'DM Sans',sans-serif", fontStyle:"italic", margin:"0 0 12px", paddingLeft:50 }}>"{rv.comment}"</p>
                           )}
-                          {/* Emoji reactions */}
-                          <div style={{ display:"flex", gap:6, flexWrap:"wrap", paddingLeft:50 }}>
+                          {/* Like + Emoji reactions */}
+                          <div style={{ display:"flex", gap:6, flexWrap:"wrap", paddingLeft:50, alignItems:"center" }}>
+                            {/* ❤️ Like button */}
+                            {(() => {
+                              const liked = myLikes.has(rv.user_id);
+                              const count = likes[rv.user_id] || 0;
+                              return (
+                                <button onClick={() => toggleLike(rv.user_id)}
+                                  style={{ background: liked ? "rgba(239,68,68,.14)" : "rgba(255,255,255,.03)", border:`1px solid ${liked ? "rgba(239,68,68,.45)" : "rgba(255,255,255,.07)"}`, borderRadius:20, padding:"4px 12px", cursor:"pointer", fontSize:13, display:"flex", alignItems:"center", gap:5, transition:"all .18s", lineHeight:1, color: liked ? "#ef4444" : "rgba(255,255,255,.35)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>
+                                  <span style={{ fontSize:15 }}>{liked ? "❤️" : "🤍"}</span>
+                                  {count > 0 && <span style={{ fontSize:12 }}>{count}</span>}
+                                </button>
+                              );
+                            })()}
+                            {/* Separator */}
+                            <div style={{ width:1, height:18, background:"rgba(255,255,255,.07)", flexShrink:0 }} />
                             {EMOJIS.map(emoji => {
                               const count = rxCounts[emoji] || 0;
                               const active = myRx.includes(emoji);
