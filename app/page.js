@@ -67,6 +67,7 @@ const TRANSLATIONS = {
     logout:"Déco", loginBtn:"Connexion",
     badge:"Votre journal JoystickLog",
     heroRate:"Notez", heroCritic:"Critiquez", heroShare:"Partagez",
+    heroTagline:"De la Game Boy à la PS5, chaque jeu a marqué ta vie — fait par un gamer, pour les gamers.",
     heroDesc:"Des millions de jeux, une seule app pour cataloguer ton histoire gaming. De la Game Boy à la PS5.",
     startFree:"Commencer gratuitement →", exploreGames:"Explorer les jeux",
     igdbGames:"Jeux IGDB", free:"Gratuit", myRatings:"Mes notes", myList:"Ma liste",
@@ -129,6 +130,7 @@ const TRANSLATIONS = {
     logout:"Logout", loginBtn:"Login",
     badge:"Your JoystickLog",
     heroRate:"Rate", heroCritic:"Review", heroShare:"Share",
+    heroTagline:"From Game Boy to PS5, every game left its mark — made by a gamer, for gamers.",
     heroDesc:"Millions of games, one app to catalog your gaming history. From Game Boy to PS5.",
     startFree:"Get started for free →", exploreGames:"Explore games",
     igdbGames:"IGDB Games", free:"Free", myRatings:"My ratings", myList:"My list",
@@ -191,6 +193,7 @@ const TRANSLATIONS = {
     logout:"Abmelden", loginBtn:"Anmelden",
     badge:"Dein Gaming-Tagebuch",
     heroRate:"Bewerten", heroCritic:"Rezensieren", heroShare:"Teilen",
+    heroTagline:"Von Game Boy bis PS5 — jedes Spiel hat eine Spur hinterlassen. Gemacht von einem Gamer, für Gamer.",
     heroDesc:"Millionen Spiele, eine App für deine Gaming-Geschichte. Von Game Boy bis PS5.",
     startFree:"Kostenlos starten →", exploreGames:"Spiele entdecken",
     igdbGames:"IGDB-Spiele", free:"Kostenlos", myRatings:"Meine Bewertungen", myList:"Meine Liste",
@@ -246,6 +249,7 @@ const TRANSLATIONS = {
     logout:"Salir", loginBtn:"Iniciar sesión",
     badge:"Tu diario gamer",
     heroRate:"Valora", heroCritic:"Critica", heroShare:"Comparte",
+    heroTagline:"De Game Boy a PS5, cada juego dejó su huella — hecho por un gamer, para gamers.",
     heroDesc:"Millones de juegos, una app para catalogar tu historia gamer. De Game Boy a PS5.",
     startFree:"Empezar gratis →", exploreGames:"Explorar juegos",
     igdbGames:"Juegos IGDB", free:"Gratis", myRatings:"Mis valoraciones", myList:"Mi lista",
@@ -301,6 +305,7 @@ const TRANSLATIONS = {
     logout:"Sair", loginBtn:"Entrar",
     badge:"Seu diário gamer",
     heroRate:"Avalie", heroCritic:"Critique", heroShare:"Compartilhe",
+    heroTagline:"Do Game Boy ao PS5, cada jogo deixou sua marca — feito por um gamer, para gamers.",
     heroDesc:"Milhões de jogos, um app para catalogar sua história gamer. Do Game Boy ao PS5.",
     startFree:"Começar gratuitamente →", exploreGames:"Explorar jogos",
     igdbGames:"Jogos IGDB", free:"Grátis", myRatings:"Minhas notas", myList:"Minha lista",
@@ -2525,11 +2530,15 @@ export default function JoystickLog() {
               <span style={{ fontSize:11, color:"rgba(255,107,53,.85)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:1.5, textTransform:"uppercase" }}>{t("badge")}</span>
             </div>
 
-            <h1 className="fu2 hero-h1" style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:"clamp(52px,6.8vw,96px)", lineHeight:.87, letterSpacing:"-3.5px", marginBottom:26 }}>
+            <h1 className="fu2 hero-h1" style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:"clamp(52px,6.8vw,96px)", lineHeight:.87, letterSpacing:"-3.5px", marginBottom:32 }}>
               <span className="grad-text">{t("heroRate")}</span><span style={{ color:"rgba(255,107,53,.5)" }}>.</span><br/>
               <span style={{ color:"rgba(255,255,255,.9)" }}>{t("heroCritic")}</span><span style={{ color:"rgba(255,255,255,.1)" }}>.</span><br/>
               <span style={{ color:"rgba(255,255,255,.42)" }}>{t("heroShare")}</span><span style={{ color:"rgba(255,255,255,.06)" }}>.</span>
             </h1>
+
+            <p style={{ fontSize:15, color:"rgba(255,255,255,.55)", maxWidth:460, lineHeight:1.75, fontFamily:"'DM Sans',sans-serif", marginBottom:18, fontStyle:"italic", borderLeft:"2px solid rgba(255,107,53,.35)", paddingLeft:14 }}>
+              {t("heroTagline")}
+            </p>
 
             <p className="fu3" style={{ fontSize:16, color:"rgba(255,255,255,.32)", maxWidth:420, lineHeight:1.9, fontFamily:"'DM Sans',sans-serif", marginBottom:40 }}>
               {t("heroDesc")}
