@@ -396,7 +396,7 @@ const CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
-  body{background:#060505;color:#e8e4e0;}
+  body{background:#0a080f;color:#e8e4e0;}
   ::-webkit-scrollbar{width:4px;}
   ::-webkit-scrollbar-track{background:transparent;}
   ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#ff6b35,#7a2800);border-radius:99px;}
@@ -412,6 +412,8 @@ const CSS = `
   @keyframes shine    {from{left:-80%;}to{left:130%;}}
   @keyframes float    {0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
   @keyframes bgDrift  {0%{transform:translateY(0px) scale(1);}33%{transform:translateY(-22px) scale(1.03);}66%{transform:translateY(12px) scale(.97);}100%{transform:translateY(0px) scale(1);}}
+  @keyframes jacketDrift{0%{transform:translateY(0px) rotate(var(--rot));}50%{transform:translateY(-14px) rotate(var(--rot));}100%{transform:translateY(0px) rotate(var(--rot));}}
+  .jacket-item{will-change:transform;}
   .cover-bg-item{will-change:transform;}
   @keyframes marquee  {from{transform:translateX(0);}to{transform:translateX(-50%);}}
   @keyframes marqueeR {from{transform:translateX(-50%);}to{transform:translateX(0);}}
@@ -603,12 +605,56 @@ const CoverBackground = ({ covers }) => {
       {BG_SLOTS.map((p, i) => {
         const src = covers[i % covers.length];
         if (!src) return null;
-        const s = { position:'absolute', width:p.size, opacity:0.11, filter:'blur(72px) saturate(2)', animation:`bgDrift ${p.dur} ease-in-out infinite ${p.delay}` };
+        const s = { position:'absolute', width:p.size, opacity:0.14, filter:'blur(60px) saturate(2.2)', animation:`bgDrift ${p.dur} ease-in-out infinite ${p.delay}` };
         if (p.top)    s.top    = p.top;
         if (p.bottom) s.bottom = p.bottom;
         if (p.left)   s.left   = p.left;
         if (p.right)  s.right  = p.right;
         return <div key={i} className="cover-bg-item" style={s}><img src={src} alt="" style={{ width:'100%', display:'block', borderRadius:24, transform:`rotate(${p.rot})` }} /></div>;
+      })}
+    </div>
+  );
+};
+
+/* ── JACKET WALL — visible covers floating in bg ─────────── */
+const JACKET_SLOTS = [
+  { top:'6%',    left:'1%',    w:78,  rot:'-9deg',  dur:'58s', delay:'0s'    },
+  { top:'30%',   left:'0.5%',  w:70,  rot:'5deg',   dur:'50s', delay:'-22s'  },
+  { top:'56%',   left:'1.5%',  w:74,  rot:'-5deg',  dur:'63s', delay:'-37s'  },
+  { top:'76%',   left:'0.8%',  w:66,  rot:'7deg',   dur:'54s', delay:'-14s'  },
+  { top:'5%',    right:'1%',   w:76,  rot:'7deg',   dur:'52s', delay:'-10s'  },
+  { top:'32%',   right:'0.5%', w:72,  rot:'-6deg',  dur:'60s', delay:'-30s'  },
+  { top:'58%',   right:'1.5%', w:68,  rot:'4deg',   dur:'47s', delay:'-42s'  },
+  { top:'78%',   right:'0.8%', w:78,  rot:'-4deg',  dur:'55s', delay:'-7s'   },
+  { top:'3%',    left:'14%',   w:58,  rot:'3deg',   dur:'68s', delay:'-48s'  },
+  { top:'3%',    right:'15%',  w:56,  rot:'-3deg',  dur:'72s', delay:'-33s'  },
+  { bottom:'2%', left:'13%',   w:62,  rot:'-6deg',  dur:'64s', delay:'-20s'  },
+  { bottom:'2%', right:'13%',  w:60,  rot:'5deg',   dur:'57s', delay:'-27s'  },
+];
+const JacketWall = ({ covers }) => {
+  if (!covers?.length) return null;
+  return (
+    <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0, overflow:'hidden' }}>
+      {JACKET_SLOTS.map((p, i) => {
+        const src = covers[i % covers.length];
+        if (!src) return null;
+        const s = {
+          position:'absolute', width:p.w,
+          opacity:0.08,
+          filter:'blur(2px)',
+          '--rot': p.rot,
+          animation:`jacketDrift ${p.dur} ease-in-out infinite ${p.delay}`,
+          transform:`rotate(${p.rot})`,
+        };
+        if (p.top)    s.top    = p.top;
+        if (p.bottom) s.bottom = p.bottom;
+        if (p.left)   s.left   = p.left;
+        if (p.right)  s.right  = p.right;
+        return (
+          <div key={i} className="jacket-item" style={s}>
+            <img src={src} alt="" style={{ width:'100%', display:'block', borderRadius:10, boxShadow:'0 8px 24px rgba(0,0,0,.6)' }} />
+          </div>
+        );
       })}
     </div>
   );
@@ -1712,19 +1758,21 @@ export default function JoystickLog() {
     : [...topGames, ...exploreGames].filter((g,i,arr) => userRatings[g.id] && arr.findIndex(x=>x.id===g.id)===i);
 
   return (
-    <div style={{ minHeight:"100vh", background:"#060505", color:"#e8e4e0", fontFamily:"'DM Sans',sans-serif" }}>
+    <div style={{ minHeight:"100vh", background:"#0a080f", color:"#e8e4e0", fontFamily:"'DM Sans',sans-serif" }}>
       <style>{CSS}</style>
 
-      {/* Game cover ambient background */}
+      {/* Game cover ambient background (color blobs) */}
       <CoverBackground covers={[...topGames, ...trendingGames, ...gemGames].filter(g=>g.cover).map(g=>g.cover).slice(0,10)} />
+      {/* Jacket wall — visible covers floating in background */}
+      <JacketWall covers={[...topGames, ...trendingGames, ...gemGames, ...exploreGames].filter(g=>g.cover).map(g=>g.cover).slice(0,12)} />
 
       {/* Ambient gradient mesh */}
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 85% 45% at 50% 0%,rgba(255,107,53,.13) 0%,transparent 65%)", pointerEvents:"none" }} />
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 60% 60% at 92% 92%,rgba(210,80,20,.11) 0%,transparent 65%)", pointerEvents:"none" }} />
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 55% 65% at 4% 78%,rgba(167,139,250,.09) 0%,transparent 65%)", pointerEvents:"none" }} />
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 65% 40% at 50% 105%,rgba(255,209,102,.07) 0%,transparent 60%)", pointerEvents:"none" }} />
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 45% 40% at 12% 12%,rgba(90,70,210,.06) 0%,transparent 65%)", pointerEvents:"none" }} />
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 50% 45% at 88% 10%,rgba(255,107,53,.05) 0%,transparent 60%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 85% 48% at 50% 0%,rgba(255,107,53,.18) 0%,transparent 65%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 60% 60% at 92% 92%,rgba(210,80,20,.15) 0%,transparent 65%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 55% 65% at 4% 78%,rgba(167,139,250,.13) 0%,transparent 65%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 65% 40% at 50% 105%,rgba(255,209,102,.10) 0%,transparent 60%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 45% 40% at 12% 12%,rgba(90,70,210,.10) 0%,transparent 65%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 50% 45% at 88% 10%,rgba(255,107,53,.09) 0%,transparent 60%)", pointerEvents:"none" }} />
       {/* Subtle grid overlay */}
       <div style={{ position:"fixed", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px)", backgroundSize:"88px 88px", pointerEvents:"none" }} />
       {/* Noise grain */}
@@ -1739,14 +1787,27 @@ export default function JoystickLog() {
 
         {/* Logo */}
         <div style={{ display:"flex", alignItems:"center", gap:11 }}>
-          <div style={{ width:32, height:32, borderRadius:9, background:"linear-gradient(135deg,#ff6b35 0%,#c84400 100%)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 0 20px rgba(255,107,53,.38), inset 0 1px 0 rgba(255,255,255,.2)" }}>
-            <svg width="15" height="15" viewBox="0 0 26 26">
-              <polygon points="0,5 26,0 26,21 0,26" fill="#fff" />
+          <div style={{ width:36, height:36, borderRadius:11, background:"linear-gradient(135deg,#ff6b35 0%,#c84400 100%)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 0 24px rgba(255,107,53,.45), 0 0 0 1px rgba(255,255,255,.15) inset", flexShrink:0 }}>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
+              {/* Controller body */}
+              <path d="M4 9C4 7.3 5.3 6 7 6H17C18.7 6 20 7.3 20 9V14C20 15.7 19 17 17.5 17C16.8 17 16.2 16.6 15.7 16L14.8 15H9.2L8.3 16C7.8 16.6 7.2 17 6.5 17C5 17 4 15.7 4 14V9Z" fill="rgba(255,255,255,.95)"/>
+              {/* D-pad vertical */}
+              <rect x="7.5" y="8.5" width="1.5" height="5" rx=".75" fill="#c84400"/>
+              {/* D-pad horizontal */}
+              <rect x="5.8" y="10.25" width="4.9" height="1.5" rx=".75" fill="#c84400"/>
+              {/* Face buttons */}
+              <circle cx="14.5" cy="9.5" r="1" fill="#c84400"/>
+              <circle cx="16.3" cy="11.2" r="1" fill="#c84400"/>
+              <circle cx="14.5" cy="12.9" r="1" fill="#c84400"/>
+              <circle cx="12.7" cy="11.2" r="1" fill="#c84400"/>
             </svg>
           </div>
-          <span style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:15, letterSpacing:2.2, color:"rgba(255,255,255,.92)", textTransform:"uppercase" }}>
-            joystick<span style={{ background:"linear-gradient(90deg,#ff6b35,#ffd166)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>log</span>
-          </span>
+          <div style={{ display:"flex", flexDirection:"column", gap:0, lineHeight:1 }}>
+            <span style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:15, letterSpacing:2, color:"rgba(255,255,255,.92)", textTransform:"uppercase" }}>
+              joystick<span style={{ background:"linear-gradient(90deg,#ff6b35,#ffd166)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>log</span>
+            </span>
+            <span style={{ fontSize:9, color:"rgba(255,255,255,.22)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, letterSpacing:1.8, textTransform:"uppercase" }}>game journal</span>
+          </div>
         </div>
 
         {/* Center nav */}
