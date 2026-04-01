@@ -13,7 +13,7 @@ const TAG_MAP = {
   "Aventure":     { genres: [31],   themes: [],       game_modes: [],      kw: [] },
   "Platformer":   { genres: [8],    themes: [],       game_modes: [],      kw: [] },
   "Roguelike":    { genres: [],     themes: [],       game_modes: [],      kw: ["roguelike", "roguelite"] },
-  "Souls-like":   { genres: [],     themes: [],       game_modes: [],      kw: ["souls-like", "soulslike", "soulsborne"] },
+  "Souls-like":   { genres: [12],   themes: [1],      game_modes: [],      kw: ["souls-like", "soulslike", "soulsborne"] },
   "Simulation":   { genres: [13],   themes: [33],     game_modes: [],      kw: [] },
   "Rétro":        { genres: [],     themes: [],       game_modes: [],      kw: ["retro", "pixel art", "16-bit", "8-bit"] },
   "Difficile":    { genres: [],     themes: [],       game_modes: [],      kw: ["difficult", "challenging", "hardcore"] },
