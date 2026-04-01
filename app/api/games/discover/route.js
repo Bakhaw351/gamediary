@@ -26,18 +26,15 @@ const TAG_MAP = {
   "Puzzle":       { genres: [9],    themes: [],       game_modes: [],      kw: [] },
 };
 
+import { getIgdbToken } from '../igdb-token.js';
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const tags   = (searchParams.get('tags') || '').split(',').filter(Boolean);
   const offset = parseInt(searchParams.get('offset') || '0', 10);
   if (tags.length === 0) return Response.json([]);
 
-  // ── IGDB auth ──────────────────────────────────────────────
-  const { access_token } = await fetch(
-    `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_CLIENT_ID}&client_secret=${process.env.TWITCH_CLIENT_SECRET}&grant_type=client_credentials`,
-    { method: 'POST' }
-  ).then(r => r.json());
-
+  const access_token = await getIgdbToken();
   const headers = {
     'Client-ID':     process.env.TWITCH_CLIENT_ID,
     'Authorization': `Bearer ${access_token}`,

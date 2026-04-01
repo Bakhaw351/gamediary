@@ -1,10 +1,10 @@
-export async function GET() {
-  const tokenRes = await fetch(
-    `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_CLIENT_ID}&client_secret=${process.env.TWITCH_CLIENT_SECRET}&grant_type=client_credentials`,
-    { method: 'POST' }
-  );
-  const { access_token } = await tokenRes.json();
+import { getIgdbToken } from '../igdb-token.js';
 
+// Cache this route for 1 hour — IGDB data doesn't change minute by minute
+export const revalidate = 3600;
+
+export async function GET() {
+  const access_token = await getIgdbToken();
   const headers = {
     'Client-ID': process.env.TWITCH_CLIENT_ID,
     'Authorization': `Bearer ${access_token}`,
@@ -16,33 +16,25 @@ export async function GET() {
   const fields = 'fields name,cover.url,first_release_date,rating,total_rating_count,genres.name,platforms.name,summary,videos.video_id;';
 
   const [trending, upcoming, gems, top] = await Promise.all([
-    // Trending: games released in last 12 months with decent ratings
     fetch('https://api.igdb.com/v4/games', {
-      method: 'POST',
-      headers,
+      method: 'POST', headers,
       body: `${fields} where cover != null & parent_game = null & first_release_date > ${twelveMonthsAgo} & first_release_date < ${now} & rating > 60 & total_rating_count > 3; sort total_rating_count desc; limit 20;`,
-    }).then(r => r.json()),
+    }).then(r => r.json()).catch(() => []),
 
-    // Upcoming: future releases sorted by hype
     fetch('https://api.igdb.com/v4/games', {
-      method: 'POST',
-      headers,
+      method: 'POST', headers,
       body: `fields name,cover.url,first_release_date,hypes,genres.name,platforms.name,summary; where cover != null & parent_game = null & first_release_date > ${now}; sort hypes desc; limit 20;`,
-    }).then(r => r.json()),
+    }).then(r => r.json()).catch(() => []),
 
-    // Hidden gems: high rating but under the radar
     fetch('https://api.igdb.com/v4/games', {
-      method: 'POST',
-      headers,
+      method: 'POST', headers,
       body: `${fields} where cover != null & parent_game = null & rating > 82 & total_rating_count >= 5 & total_rating_count < 300; sort rating desc; limit 20;`,
-    }).then(r => r.json()),
+    }).then(r => r.json()).catch(() => []),
 
-    // Top all-time: highest total_rating_count with good rating
     fetch('https://api.igdb.com/v4/games', {
-      method: 'POST',
-      headers,
+      method: 'POST', headers,
       body: `${fields} where cover != null & parent_game = null & rating > 75 & total_rating_count > 200; sort total_rating_count desc; limit 12;`,
-    }).then(r => r.json()),
+    }).then(r => r.json()).catch(() => []),
   ]);
 
   return Response.json({

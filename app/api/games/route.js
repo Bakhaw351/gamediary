@@ -1,3 +1,5 @@
+import { getIgdbToken } from './igdb-token.js';
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('q') || '';
@@ -5,12 +7,7 @@ export async function GET(request) {
   const platformId = searchParams.get('platform') || '';
   const gameId = searchParams.get('id') || '';
 
-  const tokenRes = await fetch(
-    `https://id.twitch.tv/oauth2/token?client_id=${process.env.TWITCH_CLIENT_ID}&client_secret=${process.env.TWITCH_CLIENT_SECRET}&grant_type=client_credentials`,
-    { method: 'POST' }
-  );
-  const { access_token } = await tokenRes.json();
-
+  const access_token = await getIgdbToken();
   const headers = {
     'Client-ID': process.env.TWITCH_CLIENT_ID,
     'Authorization': `Bearer ${access_token}`,
