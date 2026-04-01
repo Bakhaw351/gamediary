@@ -2009,6 +2009,10 @@ export default function JoystickLog() {
   const [topGames, setTopGames]         = useState([]);
   const [loadingTop, setLoadingTop]     = useState(true);
   const [searchQ, setSearchQ]           = useState("");
+  const [suggestions, setSuggestions]   = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggLoading, setSuggLoading]   = useState(false);
+  const suggRef = useRef(null);
   const [platFilter, setPlatFilter]     = useState("Tous");
   const [exploreGames, setExploreGames] = useState([]);
   const [loadingEx, setLoadingEx]       = useState(true);
@@ -2197,6 +2201,33 @@ export default function JoystickLog() {
     const { data } = await supabase.from("user_lists").insert({ user_id: user.id, name: newListName.trim() }).select().single();
     if (data) { setUserLists(p => [data, ...p]); setNewListName(""); setShowCreateList(false); }
   };
+
+  /* Search suggestions */
+  useEffect(() => {
+    if (searchQ.length < 2) { setSuggestions([]); setShowSuggestions(false); return; }
+    setSuggLoading(true);
+    const timer = setTimeout(() => {
+      fetch(`/api/games?q=${encodeURIComponent(searchQ)}&offset=0`)
+        .then(r => r.json())
+        .then(data => {
+          const items = (Array.isArray(data) ? data : [])
+            .filter(g => g.cover?.url)
+            .slice(0, 6)
+            .map(g => ({ id: g.id, title: g.name, cover: formatCover(g.cover?.url), year: formatYear(g.first_release_date), genre: g.genres?.[0]?.name || "" }));
+          setSuggestions(items);
+          setShowSuggestions(items.length > 0);
+          setSuggLoading(false);
+        }).catch(() => { setSuggLoading(false); });
+    }, 220);
+    return () => clearTimeout(timer);
+  }, [searchQ]);
+
+  /* Close suggestions on outside click */
+  useEffect(() => {
+    const handler = e => { if (suggRef.current && !suggRef.current.contains(e.target)) setShowSuggestions(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   /* Explore */
   const fetchExplore = useCallback(async (q, plat, offset = 0) => {
@@ -2631,19 +2662,70 @@ export default function JoystickLog() {
                     <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:30, color:"#fff", letterSpacing:"-1px", lineHeight:1 }}>{t("exploreTitle")}</h2>
                   </div>
                 </div>
-                {/* Search bar */}
-                <div className="explore-search" style={{ position:"relative", flexShrink:0 }}>
-                  <input value={searchQ} onChange={e=>setSearchQ(e.target.value)}
+                {/* Search bar + suggestions */}
+                <div ref={suggRef} className="explore-search" style={{ position:"relative", flexShrink:0 }}>
+                  <input value={searchQ}
+                    onChange={e=>{ setSearchQ(e.target.value); setShowSuggestions(true); }}
+                    onFocus={e=>{ e.target.style.borderColor="rgba(255,107,53,.48)"; e.target.style.background="rgba(255,255,255,.06)"; e.target.style.boxShadow="0 0 0 3px rgba(255,107,53,.09)"; setShowSuggestions(true); }}
+                    onBlur={e=>{ e.target.style.borderColor="rgba(255,255,255,.09)"; e.target.style.background="rgba(255,255,255,.04)"; e.target.style.boxShadow="none"; }}
+                    onKeyDown={e=>{ if(e.key==="Escape"){ setShowSuggestions(false); e.target.blur(); } }}
                     placeholder={t("searchPlaceholder")}
                     style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.09)", borderRadius:14, color:"rgba(255,255,255,.88)", padding:"12px 46px 12px 46px", fontSize:14, width:320, outline:"none", transition:"all .22s" }}
-                    onFocus={e=>{e.target.style.borderColor="rgba(255,107,53,.48)";e.target.style.background="rgba(255,255,255,.06)";e.target.style.boxShadow="0 0 0 3px rgba(255,107,53,.09)";}}
-                    onBlur={e=>{e.target.style.borderColor="rgba(255,255,255,.09)";e.target.style.background="rgba(255,255,255,.04)";e.target.style.boxShadow="none";}}
                   />
                   <span style={{ position:"absolute", left:16, top:"50%", transform:"translateY(-50%)", color:"rgba(255,255,255,.22)", fontSize:17 }}>⌕</span>
-                  {loadingEx
+                  {(loadingEx || suggLoading)
                     ? <div className="spin" style={{ position:"absolute", right:14, top:"50%", transform:"translateY(-50%)" }} />
-                    : <span style={{ position:"absolute", right:14, top:"50%", transform:"translateY(-50%)", fontSize:11, color:"rgba(255,255,255,.14)", fontFamily:"'Space Grotesk',sans-serif" }}>⌘K</span>
+                    : searchQ.length === 0 && <span style={{ position:"absolute", right:14, top:"50%", transform:"translateY(-50%)", fontSize:11, color:"rgba(255,255,255,.14)", fontFamily:"'Space Grotesk',sans-serif" }}>⌘K</span>
                   }
+                  {/* Suggestions dropdown */}
+                  {showSuggestions && suggestions.length > 0 && (
+                    <div style={{ position:"absolute", top:"calc(100% + 6px)", left:0, right:0, background:"#131020", border:"1px solid rgba(255,255,255,.09)", borderRadius:14, overflow:"hidden", zIndex:200, boxShadow:"0 24px 60px rgba(0,0,0,.75)" }}>
+                      {/* Popular when no query */}
+                      {suggestions.map((s, i) => (
+                        <div key={s.id}
+                          onMouseDown={e=>{ e.preventDefault(); setSearchQ(s.title); setShowSuggestions(false); setSelected(null); }}
+                          style={{ display:"flex", alignItems:"center", gap:12, padding:"9px 14px", cursor:"pointer", borderBottom: i < suggestions.length-1 ? "1px solid rgba(255,255,255,.04)" : "none", transition:"background .15s" }}
+                          onMouseEnter={e=>e.currentTarget.style.background="rgba(255,107,53,.08)"}
+                          onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                          <div style={{ width:28, height:38, borderRadius:5, overflow:"hidden", background:"rgba(255,255,255,.06)", flexShrink:0 }}>
+                            {s.cover && <img src={s.cover} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} />}
+                          </div>
+                          <div style={{ flex:1, minWidth:0 }}>
+                            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.82)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{s.title}</div>
+                            <div style={{ fontSize:11, color:"rgba(255,255,255,.24)", fontFamily:"'DM Sans',sans-serif" }}>{s.genre}{s.genre && s.year ? " · " : ""}{s.year !== "—" ? s.year : ""}</div>
+                          </div>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.2)" strokeWidth="2" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </div>
+                      ))}
+                      {/* Popular suggestions quand query vide */}
+                      <div style={{ padding:"8px 14px", borderTop:"1px solid rgba(255,255,255,.04)", display:"flex", gap:6, flexWrap:"wrap" }}>
+                        {POPULAR_QUERIES.slice(0,5).map(q => (
+                          <button key={q} onMouseDown={e=>{ e.preventDefault(); setSearchQ(q); setShowSuggestions(false); }}
+                            style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.07)", borderRadius:99, padding:"3px 10px", fontSize:11, color:"rgba(255,255,255,.35)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, cursor:"pointer", transition:"all .15s" }}
+                            onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(255,107,53,.3)";e.currentTarget.style.color="#ff6b35";}}
+                            onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.07)";e.currentTarget.style.color="rgba(255,255,255,.35)";}}>
+                            {q}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {/* Popular shown on focus with empty query */}
+                  {showSuggestions && suggestions.length === 0 && searchQ.length === 0 && (
+                    <div style={{ position:"absolute", top:"calc(100% + 6px)", left:0, right:0, background:"#131020", border:"1px solid rgba(255,255,255,.09)", borderRadius:14, padding:"10px 14px", zIndex:200, boxShadow:"0 24px 60px rgba(0,0,0,.75)" }}>
+                      <div style={{ fontSize:10, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:2, textTransform:"uppercase", marginBottom:8 }}>Populaire</div>
+                      <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+                        {POPULAR_QUERIES.map(q => (
+                          <button key={q} onMouseDown={e=>{ e.preventDefault(); setSearchQ(q); setShowSuggestions(false); }}
+                            style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.07)", borderRadius:99, padding:"4px 12px", fontSize:12, color:"rgba(255,255,255,.4)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, cursor:"pointer", transition:"all .15s" }}
+                            onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(255,107,53,.3)";e.currentTarget.style.color="#ff6b35";}}
+                            onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.07)";e.currentTarget.style.color="rgba(255,255,255,.4)";}}>
+                            {q}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               {/* Platform chips — scrollable bar with arrows */}
