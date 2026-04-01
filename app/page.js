@@ -1176,7 +1176,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
               <a
                 href={`https://www.instant-gaming.com/fr/recherche/?q=${encodeURIComponent(game.title)}&igr=gamer-f4e324`}
                 target="_blank" rel="noopener noreferrer sponsored"
-                style={{ display:"flex", alignItems:"center", gap:10, background:"linear-gradient(135deg,rgba(0,180,80,.12),rgba(0,220,100,.06))", border:"1px solid rgba(0,200,80,.25)", borderRadius:12, padding:"11px 14px", textDecoration:"none", transition:"all .22s", cursor:"pointer" }}
+                style={{ display:"flex", alignItems:"center", gap:10, background:"linear-gradient(135deg,rgba(0,180,80,.12),rgba(0,220,100,.06))", border:"1px solid rgba(0,200,80,.25)", borderRadius:12, padding:"11px 14px", textDecoration:"none", transition:"all .22s", cursor:"pointer", marginBottom:8 }}
                 onMouseEnter={e=>{ e.currentTarget.style.background="linear-gradient(135deg,rgba(0,180,80,.22),rgba(0,220,100,.12))"; e.currentTarget.style.borderColor="rgba(0,200,80,.5)"; e.currentTarget.style.transform="translateY(-2px)"; }}
                 onMouseLeave={e=>{ e.currentTarget.style.background="linear-gradient(135deg,rgba(0,180,80,.12),rgba(0,220,100,.06))"; e.currentTarget.style.borderColor="rgba(0,200,80,.25)"; e.currentTarget.style.transform=""; }}>
                 <svg width="20" height="20" viewBox="0 0 40 40" fill="none" style={{ flexShrink:0 }}>
@@ -1188,8 +1188,23 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
                   <div style={{ fontSize:10, color:"rgba(0,200,80,.7)", fontFamily:"'Space Grotesk',sans-serif", marginTop:1 }}>Meilleur prix →</div>
                 </div>
               </a>
+              <a
+                href={`https://www.amazon.fr/s?k=${encodeURIComponent(game.title + " jeu video")}&tag=joysticklog-21`}
+                target="_blank" rel="noopener noreferrer sponsored"
+                style={{ display:"flex", alignItems:"center", gap:10, background:"linear-gradient(135deg,rgba(255,153,0,.1),rgba(255,180,0,.05))", border:"1px solid rgba(255,153,0,.22)", borderRadius:12, padding:"11px 14px", textDecoration:"none", transition:"all .22s", cursor:"pointer" }}
+                onMouseEnter={e=>{ e.currentTarget.style.background="linear-gradient(135deg,rgba(255,153,0,.2),rgba(255,180,0,.1))"; e.currentTarget.style.borderColor="rgba(255,153,0,.48)"; e.currentTarget.style.transform="translateY(-2px)"; }}
+                onMouseLeave={e=>{ e.currentTarget.style.background="linear-gradient(135deg,rgba(255,153,0,.1),rgba(255,180,0,.05))"; e.currentTarget.style.borderColor="rgba(255,153,0,.22)"; e.currentTarget.style.transform=""; }}>
+                <svg width="20" height="20" viewBox="0 0 40 40" fill="none" style={{ flexShrink:0 }}>
+                  <rect width="40" height="40" rx="8" fill="#ff9900"/>
+                  <text x="50%" y="55%" dominantBaseline="middle" textAnchor="middle" fontSize="18" fill="white">a</text>
+                </svg>
+                <div>
+                  <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.85)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2 }}>Amazon.fr</div>
+                  <div style={{ fontSize:10, color:"rgba(255,153,0,.75)", fontFamily:"'Space Grotesk',sans-serif", marginTop:1 }}>Voir sur Amazon →</div>
+                </div>
+              </a>
               <div style={{ fontSize:8.5, color:"rgba(255,255,255,.12)", fontFamily:"'DM Sans',sans-serif", marginTop:6, lineHeight:1.5 }}>
-                Lien affilié — nous touchons une commission sans surcoût pour toi.
+                Liens affiliés — commission sans surcoût pour toi.
               </div>
             </div>
           </div>
