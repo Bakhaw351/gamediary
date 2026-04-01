@@ -410,9 +410,23 @@ const PLATFORM_IDS = {
 /* ── CSS ─────────────────────────────────────────────────── */
 const CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
+  :root{
+    --c-bg:#09080e;--c-nav:rgba(6,5,5,.9);--c-modal:#131020;
+    --c-input:rgba(255,255,255,.03);--c-el:rgba(255,255,255,.018);
+    --c-text:#ddd8d2;--c-text-2:rgba(255,255,255,.55);--c-text-3:rgba(255,255,255,.32);--c-text-4:rgba(255,255,255,.18);
+    --c-border:rgba(255,255,255,.065);--c-border-s:rgba(255,255,255,.048);
+    --c-card-a:#131020;--c-card-b:#0e0c18;--c-skel-a:#0f0d18;--c-skel-b:#1a1726;
+  }
+  [data-theme="light"]{
+    --c-bg:#f4f0e8;--c-nav:rgba(247,244,238,.96);--c-modal:#ffffff;
+    --c-input:rgba(0,0,0,.045);--c-el:rgba(0,0,0,.032);
+    --c-text:#1c1917;--c-text-2:rgba(28,25,23,.6);--c-text-3:rgba(28,25,23,.38);--c-text-4:rgba(28,25,23,.24);
+    --c-border:rgba(0,0,0,.09);--c-border-s:rgba(0,0,0,.065);
+    --c-card-a:#ffffff;--c-card-b:#f8f5f0;--c-skel-a:#e8e4dc;--c-skel-b:#f0ece3;
+  }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
-  body{background:#09080e;color:#ddd8d2;font-family:'Plus Jakarta Sans',sans-serif;}
+  body{background:var(--c-bg);color:var(--c-text);font-family:'Plus Jakarta Sans',sans-serif;}
   ::-webkit-scrollbar{width:5px;}
   ::-webkit-scrollbar-track{background:transparent;}
   ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#ff6b35,#7a2800);border-radius:99px;}
@@ -448,8 +462,8 @@ const CSS = `
   /* ── Cards ──────────────────────────────────────── */
   .card{
     cursor:pointer;border-radius:18px;overflow:hidden;
-    background:linear-gradient(160deg,#131020 0%,#0e0c18 100%);
-    border:1px solid rgba(255,255,255,.06);
+    background:linear-gradient(160deg,var(--c-card-a) 0%,var(--c-card-b) 100%);
+    border:1px solid var(--c-border-s);
     transition:transform .42s cubic-bezier(.34,1.4,.64,1),box-shadow .42s,border-color .3s;
     position:relative;
   }
@@ -465,7 +479,7 @@ const CSS = `
   .card:hover .play-btn{transform:scale(1);}
   .play-btn:hover{background:rgba(255,107,53,.22)!important;border-color:rgba(255,107,53,.55)!important;}
 
-  .row{background:rgba(255,255,255,.018);border:1px solid rgba(255,255,255,.048);border-radius:14px;transition:background .22s,border-color .22s,transform .22s;cursor:pointer;}
+  .row{background:var(--c-el);border:1px solid var(--c-border-s);border-radius:14px;transition:background .22s,border-color .22s,transform .22s;cursor:pointer;}
   .row:hover{background:rgba(255,107,53,.05);border-color:rgba(255,107,53,.2);transform:translateX(6px);}
 
   /* ── Buttons ────────────────────────────────────── */
@@ -475,30 +489,30 @@ const CSS = `
   .btn:active{transform:translateY(0);}
   .btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none;}
   .btn:disabled::after{display:none;}
-  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.36);cursor:pointer;border-radius:13px;padding:12px 24px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;transition:all .22s;display:inline-flex;align-items:center;}
-  .btn-ghost:hover{border-color:rgba(255,255,255,.28);color:rgba(255,255,255,.82);background:rgba(255,255,255,.04);}
+  .btn-ghost{background:transparent;border:1px solid var(--c-border);color:var(--c-text-3);cursor:pointer;border-radius:13px;padding:12px 24px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;transition:all .22s;display:inline-flex;align-items:center;}
+  .btn-ghost:hover{border-color:var(--c-text-2);color:var(--c-text);background:var(--c-el);}
 
   /* ── Inputs ─────────────────────────────────────── */
-  .inp{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:13px;color:#ddd8d2;padding:13px 17px;font-size:14px;width:100%;outline:none;transition:border-color .22s,background .22s,box-shadow .22s;}
-  .inp:focus{border-color:rgba(255,107,53,.55);background:rgba(255,255,255,.05);box-shadow:0 0 0 3px rgba(255,107,53,.1);}
-  .inp::placeholder{color:rgba(255,255,255,.16);}
+  .inp{background:var(--c-input);border:1px solid var(--c-border);border-radius:13px;color:var(--c-text);padding:13px 17px;font-size:14px;width:100%;outline:none;transition:border-color .22s,background .22s,box-shadow .22s;}
+  .inp:focus{border-color:rgba(255,107,53,.55);background:var(--c-input);box-shadow:0 0 0 3px rgba(255,107,53,.1);}
+  .inp::placeholder{color:var(--c-text-4);}
 
   /* ── Skeleton ───────────────────────────────────── */
-  .skel{background:linear-gradient(90deg,#0f0d18 25%,#1a1726 50%,#0f0d18 75%);background-size:700px 100%;animation:shimmer 2.2s infinite;border-radius:10px;}
+  .skel{background:linear-gradient(90deg,var(--c-skel-a) 25%,var(--c-skel-b) 50%,var(--c-skel-a) 75%);background-size:700px 100%;animation:shimmer 2.2s infinite;border-radius:10px;}
 
   /* ── Nav ────────────────────────────────────────── */
-  .nav-btn{background:transparent;border:none;padding:9px 20px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:color .2s;color:rgba(255,255,255,.26);letter-spacing:.2px;position:relative;}
+  .nav-btn{background:transparent;border:none;padding:9px 20px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:color .2s;color:var(--c-text-3);letter-spacing:.2px;position:relative;}
   .nav-btn::after{content:'';position:absolute;bottom:-2px;left:50%;right:50%;height:2px;background:linear-gradient(90deg,#ff6b35,#ffd166);border-radius:2px;transition:left .28s cubic-bezier(.4,0,.2,1),right .28s cubic-bezier(.4,0,.2,1),opacity .2s;opacity:0;}
-  .nav-btn:hover{color:rgba(255,255,255,.7);}
-  .nav-btn.active{color:#fff;}
+  .nav-btn:hover{color:var(--c-text-2);}
+  .nav-btn.active{color:var(--c-text);}
   .nav-btn.active::after{left:20px;right:20px;opacity:1;}
   .nav-center{display:flex;}
 
   /* ── Chips & Tags ───────────────────────────────── */
-  .chip{background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.068);border-radius:99px;padding:5px 16px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all .22s;color:rgba(255,255,255,.26);white-space:nowrap;}
+  .chip{background:var(--c-el);border:1px solid var(--c-border);border-radius:99px;padding:5px 16px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all .22s;color:var(--c-text-3);white-space:nowrap;}
   .chip:hover{border-color:rgba(255,107,53,.4);color:#ff6b35;background:rgba(255,107,53,.07);}
   .chip.on{background:linear-gradient(135deg,rgba(255,107,53,.15),rgba(255,209,102,.08));border-color:rgba(255,107,53,.44);color:#ffd166;box-shadow:0 0 20px rgba(255,107,53,.15);}
-  .tag{background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.062);border-radius:12px;padding:10px 18px;font-size:13px;font-weight:600;font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all .22s;color:rgba(255,255,255,.26);position:relative;overflow:hidden;}
+  .tag{background:var(--c-el);border:1px solid var(--c-border);border-radius:12px;padding:10px 18px;font-size:13px;font-weight:600;font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all .22s;color:var(--c-text-3);position:relative;overflow:hidden;}
   .tag::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,107,53,.08),rgba(255,209,102,.04));opacity:0;transition:opacity .22s;}
   .tag:hover{border-color:rgba(255,107,53,.32);color:#ff9a3c;transform:translateY(-2px);}
   .tag:hover::after{opacity:1;}
@@ -511,7 +525,7 @@ const CSS = `
 
   /* ── Section headers ────────────────────────────── */
   .section-label{font-size:10px;color:rgba(255,107,53,.6);font-weight:700;font-family:'Space Grotesk',sans-serif;letter-spacing:3.5px;text-transform:uppercase;margin-bottom:8px;}
-  .section-title{font-family:'Syne',sans-serif;font-weight:800;font-size:34px;color:#fff;letter-spacing:-1.2px;line-height:1.02;}
+  .section-title{font-family:'Syne',sans-serif;font-weight:800;font-size:34px;color:var(--c-text);letter-spacing:-1.2px;line-height:1.02;}
   .sect-h{display:flex;align-items:center;gap:14px;}
   .sect-h::before{content:'';width:3px;height:26px;background:linear-gradient(to bottom,#ff6b35,#ffd166);border-radius:99px;flex-shrink:0;box-shadow:0 0 14px rgba(255,107,53,.55);}
 
@@ -522,7 +536,7 @@ const CSS = `
   .hcard:hover .hcard-img{box-shadow:0 22px 56px rgba(0,0,0,.75),0 0 24px rgba(255,107,53,.1);}
 
   /* ── Section divider ─────────────────────────────── */
-  .sect-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06) 20%,rgba(255,255,255,.06) 80%,transparent);margin:64px 0;}
+  .sect-divider{height:1px;background:linear-gradient(90deg,transparent,var(--c-border) 20%,var(--c-border) 80%,transparent);margin:64px 0;}
 
   /* ── Gradient text ──────────────────────────────── */
   .grad-text{background:linear-gradient(135deg,#fff 0%,#ff6b35 38%,#ffd166 72%,#ffe5a0 100%);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradText 5s ease infinite;}
@@ -543,37 +557,37 @@ const CSS = `
   .yt-bg-wrap iframe{position:absolute;top:50%;left:50%;width:177.78vh;height:100vh;min-width:100%;min-height:56.25vw;transform:translate(-50%,-50%);border:none;opacity:.62;}
 
   /* ── Stat cards ─────────────────────────────────── */
-  .stat-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.052);border-radius:18px;padding:22px 26px;min-width:120px;transition:all .28s;position:relative;overflow:hidden;}
+  .stat-card{background:var(--c-el);border:1px solid var(--c-border-s);border-radius:18px;padding:22px 26px;min-width:120px;transition:all .28s;position:relative;overflow:hidden;}
   .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,107,53,.4),transparent);opacity:0;transition:opacity .28s;}
-  .stat-card:hover{background:rgba(255,107,53,.04);border-color:rgba(255,107,53,.15);transform:translateY(-4px);box-shadow:0 20px 52px rgba(0,0,0,.4);}
+  .stat-card:hover{background:rgba(255,107,53,.04);border-color:rgba(255,107,53,.15);transform:translateY(-4px);box-shadow:0 20px 52px rgba(0,0,0,.15);}
   .stat-card:hover::before{opacity:1;}
-  .stat-mini{background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.055);border-radius:16px;padding:18px 22px;text-align:center;transition:all .26s;cursor:default;}
-  .stat-mini:hover{background:rgba(255,107,53,.06);border-color:rgba(255,107,53,.2);transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,0,0,.32);}
+  .stat-mini{background:var(--c-el);border:1px solid var(--c-border-s);border-radius:16px;padding:18px 22px;text-align:center;transition:all .26s;cursor:default;}
+  .stat-mini:hover{background:rgba(255,107,53,.06);border-color:rgba(255,107,53,.2);transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,0,0,.12);}
 
   /* ── Profile ────────────────────────────────────── */
   .profile-banner{position:relative;border-radius:22px;overflow:hidden;background:linear-gradient(135deg,rgba(255,107,53,.07) 0%,rgba(255,209,102,.03) 50%,rgba(167,139,250,.04) 100%);border:1px solid rgba(255,255,255,.07);padding:34px 30px 30px;}
   .profile-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#ff6b35,#ffd166 55%,#a78bfa);}
   .bounce{animation:bounceY 2s ease-in-out infinite;}
-  .glass-panel{background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.065);border-radius:22px;backdrop-filter:blur(14px);}
+  .glass-panel{background:var(--c-el);border:1px solid var(--c-border);border-radius:22px;backdrop-filter:blur(14px);}
   .gp-grid{display:grid;grid-template-columns:260px 1fr;gap:36px;align-items:start;}
 
   /* ── Activity feed ──────────────────────────────── */
-  .activity-item{display:flex;gap:14px;padding:16px;border-radius:16px;border:1px solid rgba(255,255,255,.045);background:rgba(255,255,255,.016);transition:all .22s;cursor:pointer;}
+  .activity-item{display:flex;gap:14px;padding:16px;border-radius:16px;border:1px solid var(--c-border-s);background:var(--c-el);transition:all .22s;cursor:pointer;}
   .activity-item:hover{background:rgba(255,107,53,.04);border-color:rgba(255,107,53,.15);transform:translateX(4px);}
 
   @media(max-width:900px){.gp-grid{grid-template-columns:1fr!important;}}
 
   /* ── Footer ──────────────────────────────────────────────── */
-  .site-footer{border-top:1px solid rgba(255,255,255,.055);padding:48px 0 40px;margin-top:80px;}
-  .site-footer a,.site-footer button{color:rgba(255,255,255,.3);background:none;border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:.2px;text-decoration:none;transition:color .18s;padding:0;}
-  .site-footer a:hover,.site-footer button:hover{color:rgba(255,255,255,.7);}
+  .site-footer{border-top:1px solid var(--c-border);padding:48px 0 40px;margin-top:80px;}
+  .site-footer a,.site-footer button{color:var(--c-text-3);background:none;border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:.2px;text-decoration:none;transition:color .18s;padding:0;}
+  .site-footer a:hover,.site-footer button:hover{color:var(--c-text);}
   .legal-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(12px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;}
-  .legal-modal{background:linear-gradient(160deg,#131020,#0e0c18);border:1px solid rgba(255,255,255,.09);border-radius:22px;max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:36px 38px;}
+  .legal-modal{background:var(--c-modal);border:1px solid var(--c-border);border-radius:22px;max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:36px 38px;}
   @media(max-width:640px){.site-footer{margin-bottom:80px;}.legal-modal{padding:24px 20px;}}
 
   /* ── Mobile bottom nav ───────────────────────────────────── */
-  .mob-nav-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(6,5,5,.96);backdrop-filter:blur(28px) saturate(180%);border-top:1px solid rgba(255,255,255,.07);padding-bottom:env(safe-area-inset-bottom,0);}
-  .mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;padding:8px 4px;color:rgba(255,255,255,.28);transition:color .18s;font-family:'Space Grotesk',sans-serif;}
+  .mob-nav-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--c-nav);backdrop-filter:blur(28px) saturate(180%);border-top:1px solid var(--c-border);padding-bottom:env(safe-area-inset-bottom,0);}
+  .mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;padding:8px 4px;color:var(--c-text-3);transition:color .18s;font-family:'Space Grotesk',sans-serif;}
   .mob-nav-btn.active{color:#ff6b35;}
   .mob-nav-btn svg{display:block;margin-bottom:1px;}
   .mob-nav-btn span{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
@@ -888,26 +902,26 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
 
   return (
     <div onClick={onClose} style={{ position:"fixed", inset:0, zIndex:9999, background:"rgba(0,0,0,.82)", backdropFilter:"blur(18px)", display:"flex", alignItems:"center", justifyContent:"center", padding:20, animation:"fadeIn .2s" }}>
-      <div onClick={e => e.stopPropagation()} style={{ width:"100%", maxWidth:420, borderRadius:22, background:"rgba(9,7,7,.98)", border:"1px solid rgba(255,255,255,.07)", overflow:"hidden", animation:"scaleIn .28s cubic-bezier(.34,1.3,.64,1)", boxShadow:"0 60px 120px rgba(0,0,0,.9), 0 0 80px rgba(255,107,53,.06)" }}>
+      <div onClick={e => e.stopPropagation()} style={{ width:"100%", maxWidth:420, borderRadius:22, background:"var(--c-modal)", border:"1px solid var(--c-border)", overflow:"hidden", animation:"scaleIn .28s cubic-bezier(.34,1.3,.64,1)", boxShadow:"0 60px 120px rgba(0,0,0,.7), 0 0 80px rgba(255,107,53,.06)" }}>
         <div style={{ height:3, background:"linear-gradient(90deg,#ff6b35 0%,#ffd166 55%,#a78bfa 100%)" }} />
         <div style={{ padding:"26px 26px 30px" }}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:22 }}>
             <div>
-              <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:21, color:"#fff", marginBottom:3 }}>
+              <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:21, color:"var(--c-text)", marginBottom:3 }}>
                 {forgotMode ? t("forgotTitle") : mode === "login" ? t("welcomeBack") : t("joinJoystickLog")}
               </h2>
-              <p style={{ color:"rgba(255,255,255,.28)", fontSize:13 }}>
+              <p style={{ color:"var(--c-text-3)", fontSize:13 }}>
                 {forgotMode ? t("forgotDesc") : mode === "login" ? t("accessCollection") : t("freeForever")}
               </p>
             </div>
-            <button onClick={onClose} style={{ background:"rgba(255,255,255,.06)", border:"none", borderRadius:8, width:32, height:32, display:"flex", alignItems:"center", justifyContent:"center", color:"rgba(255,255,255,.4)", cursor:"pointer" }}>✕</button>
+            <button onClick={onClose} style={{ background:"var(--c-el)", border:"none", borderRadius:8, width:32, height:32, display:"flex", alignItems:"center", justifyContent:"center", color:"var(--c-text-3)", cursor:"pointer" }}>✕</button>
           </div>
 
           {!forgotMode && (
-            <div style={{ display:"flex", gap:5, marginBottom:18, background:"rgba(255,255,255,.04)", borderRadius:10, padding:4 }}>
+            <div style={{ display:"flex", gap:5, marginBottom:18, background:"var(--c-el)", borderRadius:10, padding:4 }}>
               {[["login",t("loginTab")],["signup",t("signupTab")]].map(([m,l]) => (
                 <button key={m} onClick={() => { setMode(m); setErr(""); setOk(""); }}
-                  style={{ flex:1, background:mode===m?"rgba(255,107,53,.13)":"transparent", color:mode===m?"#ffd166":"rgba(255,255,255,.32)", border:mode===m?"1px solid rgba(255,107,53,.28)":"1px solid transparent", borderRadius:7, padding:"8px", fontSize:13, fontFamily:"'Syne',sans-serif", fontWeight:700, cursor:"pointer", transition:"all .15s" }}>{l}</button>
+                  style={{ flex:1, background:mode===m?"rgba(255,107,53,.13)":"transparent", color:mode===m?"#ffd166":"var(--c-text-3)", border:mode===m?"1px solid rgba(255,107,53,.28)":"1px solid transparent", borderRadius:7, padding:"8px", fontSize:13, fontFamily:"'Syne',sans-serif", fontWeight:700, cursor:"pointer", transition:"all .15s" }}>{l}</button>
               ))}
             </div>
           )}
@@ -2093,7 +2107,30 @@ export default function JoystickLog() {
   const [notifications, setNotifications]   = useState([]);
   const [showNotifs, setShowNotifs]         = useState(false);
   const [topReviews, setTopReviews]         = useState([]);
+  const [theme, setTheme]                   = useState("dark");
   const notifRef = useRef(null);
+
+  /* ── Theme tokens ─── */
+  const th = theme === "light" ? {
+    bg:"#f4f0e8", bgNav:"rgba(247,244,238,.96)", bgModal:"#ffffff",
+    bgInput:"rgba(0,0,0,.045)", bgEl:"rgba(0,0,0,.032)",
+    text:"#1c1917", textHigh:"rgba(28,25,23,.95)", textMid:"rgba(28,25,23,.6)",
+    textLow:"rgba(28,25,23,.38)", textFaint:"rgba(28,25,23,.24)",
+    border:"rgba(0,0,0,.09)", borderS:"rgba(0,0,0,.06)",
+  } : {
+    bg:"#09080e", bgNav:"rgba(6,5,5,.9)", bgModal:"#131020",
+    bgInput:"rgba(255,255,255,.03)", bgEl:"rgba(255,255,255,.018)",
+    text:"#ddd8d2", textHigh:"#ffffff", textMid:"rgba(255,255,255,.55)",
+    textLow:"rgba(255,255,255,.32)", textFaint:"rgba(255,255,255,.18)",
+    border:"rgba(255,255,255,.065)", borderS:"rgba(255,255,255,.048)",
+  };
+
+  /* ── Theme persistence ── */
+  useEffect(() => {
+    const saved = localStorage.getItem("jl-theme");
+    if (saved === "light" || saved === "dark") setTheme(saved);
+  }, []);
+  useEffect(() => { localStorage.setItem("jl-theme", theme); }, [theme]);
 
   /* ── URL state: restore tab + game on load, sync on change ── */
   const openUserProfile = (uname) => {
@@ -2391,7 +2428,7 @@ export default function JoystickLog() {
     : [...topGames, ...exploreGames].filter((g,i,arr) => userRatings[g.id] && arr.findIndex(x=>x.id===g.id)===i);
 
   return (
-    <div style={{ minHeight:"100vh", background:"#09080e", color:"#ddd8d2", fontFamily:"'Plus Jakarta Sans',sans-serif" }}>
+    <div data-theme={theme} style={{ minHeight:"100vh", background:th.bg, color:th.text, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>
       <style>{CSS}</style>
 
       {/* Game cover ambient background (color blobs) */}
@@ -2414,7 +2451,7 @@ export default function JoystickLog() {
       <div style={{ position:"fixed", top:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent 10%,rgba(255,107,53,.4) 50%,transparent 90%)", pointerEvents:"none", zIndex:200 }} />
 
       {/* ── NAV ── */}
-      <nav className="top-nav" style={{ position:"sticky", top:0, zIndex:100, height:68, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 32px", background:"rgba(6,5,5,.9)", backdropFilter:"blur(32px) saturate(180%)", borderBottom:"1px solid rgba(255,255,255,.05)" }}>
+      <nav className="top-nav" style={{ position:"sticky", top:0, zIndex:100, height:68, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 32px", background:th.bgNav, backdropFilter:"blur(32px) saturate(180%)", borderBottom:`1px solid ${th.borderS}` }}>
         {/* Animated bottom border */}
         <div style={{ position:"absolute", bottom:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent 0%,rgba(255,107,53,.22) 30%,rgba(255,209,102,.3) 50%,rgba(255,107,53,.22) 70%,transparent 100%)", pointerEvents:"none" }} />
 
@@ -2452,6 +2489,17 @@ export default function JoystickLog() {
 
         {/* Right side */}
         <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+          {/* 🌙/☀️ Theme toggle */}
+          <button onClick={() => setTheme(t => t === "dark" ? "light" : "dark")}
+            title={theme === "dark" ? "Mode jour" : "Mode nuit"}
+            style={{ width:36, height:36, borderRadius:10, background:th.bgEl, border:`1px solid ${th.borderS}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", transition:"all .18s", color:th.textMid, flexShrink:0 }}
+            onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(255,107,53,.35)"; e.currentTarget.style.color="#ff6b35"; }}
+            onMouseLeave={e=>{ e.currentTarget.style.borderColor=th.borderS; e.currentTarget.style.color=th.textMid; }}>
+            {theme === "dark"
+              ? <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              : <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            }
+          </button>
           {user ? (
             <>
               {/* 🔔 Notifications bell */}
@@ -2466,10 +2514,10 @@ export default function JoystickLog() {
                   )}
                 </button>
                 {showNotifs && (
-                  <div style={{ position:"absolute", top:"calc(100% + 8px)", right:0, width:300, background:"#131020", border:"1px solid rgba(255,255,255,.09)", borderRadius:16, zIndex:300, boxShadow:"0 24px 60px rgba(0,0,0,.75)", overflow:"hidden" }}>
-                    <div style={{ padding:"14px 16px 10px", borderBottom:"1px solid rgba(255,255,255,.06)", fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:14, color:"#fff" }}>Notifications</div>
+                  <div style={{ position:"absolute", top:"calc(100% + 8px)", right:0, width:300, background:th.bgModal, border:`1px solid ${th.border}`, borderRadius:16, zIndex:300, boxShadow:"0 24px 60px rgba(0,0,0,.55)", overflow:"hidden" }}>
+                    <div style={{ padding:"14px 16px 10px", borderBottom:`1px solid ${th.borderS}`, fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:14, color:th.textHigh }}>Notifications</div>
                     {notifications.length === 0 ? (
-                      <div style={{ padding:"24px 16px", textAlign:"center", color:"rgba(255,255,255,.22)", fontFamily:"'Space Grotesk',sans-serif", fontSize:13 }}>Aucune notification</div>
+                      <div style={{ padding:"24px 16px", textAlign:"center", color:th.textLow, fontFamily:"'Space Grotesk',sans-serif", fontSize:13 }}>Aucune notification</div>
                     ) : (
                       <div style={{ maxHeight:340, overflowY:"auto" }}>
                         {notifications.map(n => (
@@ -2481,11 +2529,11 @@ export default function JoystickLog() {
                               ? <img src={n.game_cover} alt="" style={{ width:30, height:40, borderRadius:5, objectFit:"cover", flexShrink:0 }} />
                               : <div style={{ width:30, height:40, borderRadius:5, background:"rgba(255,255,255,.06)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14 }}>❤️</div>}
                             <div style={{ flex:1, minWidth:0 }}>
-                              <div style={{ fontSize:12, color:"rgba(255,255,255,.7)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, lineHeight:1.4 }}>
+                              <div style={{ fontSize:12, color:th.textMid, fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, lineHeight:1.4 }}>
                                 <span style={{ color:"#ff6b35" }}>{n.from_user || "Quelqu'un"}</span> a liké ta critique
                               </div>
-                              {n.game_title && <div style={{ fontSize:11, color:"rgba(255,255,255,.3)", fontFamily:"'DM Sans',sans-serif", marginTop:2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{n.game_title}</div>}
-                              <div style={{ fontSize:10, color:"rgba(255,255,255,.18)", fontFamily:"'DM Sans',sans-serif", marginTop:2 }}>{timeAgo(n.created_at)}</div>
+                              {n.game_title && <div style={{ fontSize:11, color:th.textLow, fontFamily:"'DM Sans',sans-serif", marginTop:2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{n.game_title}</div>}
+                              <div style={{ fontSize:10, color:th.textFaint, fontFamily:"'DM Sans',sans-serif", marginTop:2 }}>{timeAgo(n.created_at)}</div>
                             </div>
                             {!n.read && <div style={{ width:6, height:6, borderRadius:"50%", background:"#ff6b35", flexShrink:0 }} />}
                           </div>
@@ -2536,19 +2584,19 @@ export default function JoystickLog() {
               <span style={{ color:"rgba(255,255,255,.42)" }}>{t("heroShare")}</span><span style={{ color:"rgba(255,255,255,.06)" }}>.</span>
             </h1>
 
-            <p style={{ fontSize:15, color:"rgba(255,255,255,.55)", maxWidth:460, lineHeight:1.75, fontFamily:"'DM Sans',sans-serif", marginBottom:18, fontStyle:"italic", borderLeft:"2px solid rgba(255,107,53,.35)", paddingLeft:14 }}>
+            <p style={{ fontSize:15, color:th.textMid, maxWidth:460, lineHeight:1.75, fontFamily:"'DM Sans',sans-serif", marginBottom:18, fontStyle:"italic", borderLeft:"2px solid rgba(255,107,53,.35)", paddingLeft:14 }}>
               {t("heroTagline")}
             </p>
 
-            <p className="fu3" style={{ fontSize:16, color:"rgba(255,255,255,.32)", maxWidth:420, lineHeight:1.9, fontFamily:"'DM Sans',sans-serif", marginBottom:40 }}>
+            <p className="fu3" style={{ fontSize:16, color:th.textLow, maxWidth:420, lineHeight:1.9, fontFamily:"'DM Sans',sans-serif", marginBottom:40 }}>
               {t("heroDesc")}
             </p>
 
             <div className="fu4 hero-btns" style={{ display:"flex", alignItems:"center", gap:14, flexWrap:"wrap" }}>
               {!user && <button className="btn" onClick={()=>setShowAuth(true)} style={{ padding:"14px 34px", fontSize:15 }}>{t("startFree")}</button>}
-              <button onClick={()=>setTab("explore")} style={{ background:"none", border:"1px solid rgba(255,255,255,.11)", borderRadius:11, color:"rgba(255,255,255,.38)", cursor:"pointer", fontSize:14, padding:"13px 22px", fontFamily:"'Syne',sans-serif", fontWeight:600, transition:"all .2s" }}
-                onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.28)";e.currentTarget.style.color="rgba(255,255,255,.75)";}}
-                onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.11)";e.currentTarget.style.color="rgba(255,255,255,.38)";}}>
+              <button onClick={()=>setTab("explore")} style={{ background:"none", border:`1px solid ${th.borderS}`, borderRadius:11, color:th.textLow, cursor:"pointer", fontSize:14, padding:"13px 22px", fontFamily:"'Syne',sans-serif", fontWeight:600, transition:"all .2s" }}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor=th.border;e.currentTarget.style.color=th.textMid;}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor=th.borderS;e.currentTarget.style.color=th.textLow;}}>
                 {t("exploreGames")}
               </button>
             </div>
@@ -2563,8 +2611,8 @@ export default function JoystickLog() {
                 {n: user ? Object.keys(userStatus).length : "—", l:t("myList"), hot:false},
               ].map((s,i)=>(
                 <div key={i} className="stat-mini">
-                  <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:26, color: s.hot ? "#ff6b35" : "rgba(255,255,255,.8)", lineHeight:1, marginBottom:5, textShadow: s.hot ? "0 0 28px rgba(255,107,53,.5)" : "none" }}>{s.n}</div>
-                  <div style={{ fontSize:10, color:"rgba(255,255,255,.22)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:.8, fontWeight:600, textTransform:"uppercase" }}>{s.l}</div>
+                  <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:26, color: s.hot ? "#ff6b35" : th.textMid, lineHeight:1, marginBottom:5, textShadow: s.hot ? "0 0 28px rgba(255,107,53,.5)" : "none" }}>{s.n}</div>
+                  <div style={{ fontSize:10, color:th.textFaint, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:.8, fontWeight:600, textTransform:"uppercase" }}>{s.l}</div>
                 </div>
               ))}
             </div>
@@ -2702,7 +2750,7 @@ export default function JoystickLog() {
                   <div className="sect-h">
                     <div>
                       <div style={{ fontSize:10, color:"rgba(255,107,53,.6)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3.5, textTransform:"uppercase", marginBottom:5 }}>{t("trendingTag")}</div>
-                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:"#fff", letterSpacing:-.6, lineHeight:1 }}>{t("trendingTitle")}</h2>
+                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:th.textHigh, letterSpacing:-.6, lineHeight:1 }}>{t("trendingTitle")}</h2>
                     </div>
                   </div>
                 </div>
@@ -2717,7 +2765,7 @@ export default function JoystickLog() {
                   <div className="sect-h" style={{ "--bar-color":"#a78bfa" }}>
                     <div>
                       <div style={{ fontSize:10, color:"rgba(167,139,250,.65)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3.5, textTransform:"uppercase", marginBottom:5 }}>{t("upcomingTag")}</div>
-                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:"#fff", letterSpacing:-.6, lineHeight:1 }}>{t("upcomingTitle")}</h2>
+                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:th.textHigh, letterSpacing:-.6, lineHeight:1 }}>{t("upcomingTitle")}</h2>
                     </div>
                   </div>
                 </div>
@@ -2732,7 +2780,7 @@ export default function JoystickLog() {
                   <div className="sect-h">
                     <div>
                       <div style={{ fontSize:10, color:"rgba(255,209,102,.65)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3.5, textTransform:"uppercase", marginBottom:5 }}>{t("gemsTag")}</div>
-                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:"#fff", letterSpacing:-.6, lineHeight:1 }}>{t("gemsTitle")}</h2>
+                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:th.textHigh, letterSpacing:-.6, lineHeight:1 }}>{t("gemsTitle")}</h2>
                     </div>
                   </div>
                 </div>
@@ -2748,7 +2796,7 @@ export default function JoystickLog() {
                   <div className="sect-h">
                     <div>
                       <div style={{ fontSize:10, color:"rgba(255,209,102,.65)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3.5, textTransform:"uppercase", marginBottom:5 }}>{t("popularTag")}</div>
-                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:"#fff", letterSpacing:-.6, lineHeight:1 }}>{t("popularTitle")}</h2>
+                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:th.textHigh, letterSpacing:-.6, lineHeight:1 }}>{t("popularTitle")}</h2>
                     </div>
                   </div>
                 </div>
@@ -2764,7 +2812,7 @@ export default function JoystickLog() {
                   <div className="sect-h">
                     <div>
                       <div style={{ fontSize:10, color:"rgba(255,107,53,.6)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3.5, textTransform:"uppercase", marginBottom:5 }}>{t("activityTag")}</div>
-                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:"#fff", letterSpacing:-.6, lineHeight:1 }}>{t("activityTitle")}</h2>
+                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:th.textHigh, letterSpacing:-.6, lineHeight:1 }}>{t("activityTitle")}</h2>
                     </div>
                   </div>
                 </div>
@@ -2784,7 +2832,7 @@ export default function JoystickLog() {
                   <div className="sect-h">
                     <div>
                       <div style={{ fontSize:10, color:"rgba(239,68,68,.65)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3.5, textTransform:"uppercase", marginBottom:5 }}>Communauté</div>
-                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:"#fff", letterSpacing:-.6, lineHeight:1 }}>Top critiques ❤️</h2>
+                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:th.textHigh, letterSpacing:-.6, lineHeight:1 }}>Top critiques ❤️</h2>
                     </div>
                   </div>
                 </div>
@@ -2850,7 +2898,7 @@ export default function JoystickLog() {
                 <div className="sect-h">
                   <div>
                     <div style={{ fontSize:10, color:"rgba(255,107,53,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>{t("igdbTag")}</div>
-                    <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:30, color:"#fff", letterSpacing:"-1px", lineHeight:1 }}>{t("exploreTitle")}</h2>
+                    <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:30, color:th.textHigh, letterSpacing:"-1px", lineHeight:1 }}>{t("exploreTitle")}</h2>
                   </div>
                 </div>
                 {/* Search bar + suggestions */}
@@ -2870,7 +2918,7 @@ export default function JoystickLog() {
                   }
                   {/* Suggestions dropdown */}
                   {showSuggestions && suggestions.length > 0 && (
-                    <div style={{ position:"absolute", top:"calc(100% + 6px)", left:0, right:0, background:"#131020", border:"1px solid rgba(255,255,255,.09)", borderRadius:14, overflow:"hidden", zIndex:200, boxShadow:"0 24px 60px rgba(0,0,0,.75)" }}>
+                    <div style={{ position:"absolute", top:"calc(100% + 6px)", left:0, right:0, background:th.bgModal, border:`1px solid ${th.border}`, borderRadius:14, overflow:"hidden", zIndex:200, boxShadow:"0 24px 60px rgba(0,0,0,.45)" }}>
                       {/* Popular when no query */}
                       {suggestions.map((s, i) => (
                         <div key={s.id}
@@ -2903,8 +2951,8 @@ export default function JoystickLog() {
                   )}
                   {/* Popular shown on focus with empty query */}
                   {showSuggestions && suggestions.length === 0 && searchQ.length === 0 && (
-                    <div style={{ position:"absolute", top:"calc(100% + 6px)", left:0, right:0, background:"#131020", border:"1px solid rgba(255,255,255,.09)", borderRadius:14, padding:"10px 14px", zIndex:200, boxShadow:"0 24px 60px rgba(0,0,0,.75)" }}>
-                      <div style={{ fontSize:10, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:2, textTransform:"uppercase", marginBottom:8 }}>Populaire</div>
+                    <div style={{ position:"absolute", top:"calc(100% + 6px)", left:0, right:0, background:th.bgModal, border:`1px solid ${th.border}`, borderRadius:14, padding:"10px 14px", zIndex:200, boxShadow:"0 24px 60px rgba(0,0,0,.45)" }}>
+                      <div style={{ fontSize:10, color:th.textFaint, fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:2, textTransform:"uppercase", marginBottom:8 }}>Populaire</div>
                       <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
                         {POPULAR_QUERIES.map(q => (
                           <button key={q} onMouseDown={e=>{ e.preventDefault(); setSearchQ(q); setShowSuggestions(false); }}
