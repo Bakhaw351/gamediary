@@ -1010,7 +1010,7 @@ const ResetPasswordModal = ({ onClose, t }) => {
 };
 
 /* ── CINEMATIC GAME PAGE ──────────────────────────────────── */
-const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired, username, userLists, lang, t }) => {
+const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired, username, userLists, lang, onUserClick, t }) => {
   const [myR, setMyR] = useState(userRatings[game.id]?.rating || 0);
   const [hovR, setHovR] = useState(0);
   const [txt, setTxt] = useState(userRatings[game.id]?.comment || "");
@@ -1671,7 +1671,11 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
                             <div style={{ width:38, height:38, borderRadius:11, background:`linear-gradient(135deg,${col},${col}88)`, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:13, color:"#0a0600", flexShrink:0 }}>{initials}</div>
                             <div style={{ flex:1, minWidth:0 }}>
                               <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
-                                <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.72)" }}>{rv.user_display || t("member")}</span>
+                                <span onClick={()=>rv.user_display && onUserClick(rv.user_display)} style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.72)", cursor:rv.user_display?"pointer":"default" }}
+                                  onMouseEnter={e=>{if(rv.user_display)e.currentTarget.style.color="#ff6b35";}}
+                                  onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,.72)";}}>
+                                  {rv.user_display || t("member")}
+                                </span>
                                 <span style={{ background:`${col}18`, border:`1px solid ${col}40`, borderRadius:6, padding:"1px 9px", fontSize:11, color:col, fontFamily:"'Syne',sans-serif", fontWeight:800 }}>{rv.rating}/10</span>
                                 <span style={{ fontSize:11, color:"rgba(255,255,255,.18)", fontFamily:"'DM Sans',sans-serif" }}>{RATING_LABELS[rv.rating]}</span>
                               </div>
@@ -1846,8 +1850,117 @@ const LegalModal = ({ type, onClose }) => {
   );
 };
 
+/* ── PUBLIC PROFILE ───────────────────────────────────────── */
+const PublicProfile = ({ username, onClose, onGameClick, t }) => {
+  const [ratings, setRatings] = useState([]);
+  const [statuses, setStatuses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!username) return;
+    setLoading(true);
+    supabase.from('ratings').select('*').eq('user_display', username)
+      .order('updated_at', { ascending: false }).limit(100)
+      .then(({ data: rData }) => {
+        setRatings(rData || []);
+        const uid = rData?.[0]?.user_id;
+        if (uid) {
+          supabase.from('game_status').select('*').eq('user_id', uid)
+            .then(({ data: sData }) => { setStatuses(sData || []); setLoading(false); });
+        } else { setLoading(false); }
+      }).catch(() => setLoading(false));
+  }, [username]);
+
+  const initials = username ? username.slice(0,2).toUpperCase() : "??";
+  const avgRating = ratings.length ? (ratings.reduce((s,r)=>s+r.rating,0)/ratings.length).toFixed(1) : "—";
+  const completed = statuses.filter(s=>s.status==="completed").length;
+  const playing   = statuses.filter(s=>s.status==="playing").length;
+  const reviews   = ratings.filter(r=>r.comment?.length > 0);
+
+  const BADGE_COLOR = ["#ff6b35","#ffd166","#a78bfa","#34d399","#60a5fa","#f472b6","#fb923c","#4ade80"];
+  const col = BADGE_COLOR[username ? username.charCodeAt(0) % BADGE_COLOR.length : 0];
+
+  return (
+    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.88)", backdropFilter:"blur(18px)", zIndex:9000, overflowY:"auto" }}
+      onClick={onClose}>
+      <div style={{ maxWidth:780, margin:"0 auto", padding:"40px 20px 80px" }} onClick={e=>e.stopPropagation()}>
+
+        {/* Close */}
+        <button onClick={onClose} style={{ background:"rgba(255,255,255,.06)", border:"1px solid rgba(255,255,255,.1)", borderRadius:10, color:"rgba(255,255,255,.5)", cursor:"pointer", padding:"8px 16px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:12, marginBottom:32, display:"flex", alignItems:"center", gap:6 }}>
+          ← {t("home")}
+        </button>
+
+        {/* Header */}
+        <div style={{ display:"flex", alignItems:"center", gap:24, marginBottom:36 }}>
+          <div style={{ width:72, height:72, borderRadius:20, background:`linear-gradient(135deg,${col},${col}88)`, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:26, color:"#fff", flexShrink:0, boxShadow:`0 0 32px ${col}44` }}>{initials}</div>
+          <div>
+            <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:28, color:"#fff", letterSpacing:"-.5px" }}>{username}</div>
+            <div style={{ fontSize:12, color:"rgba(255,255,255,.28)", fontFamily:"'Space Grotesk',sans-serif", marginTop:4 }}>{t("player")}</div>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:10, marginBottom:36 }}>
+          {[
+            { n: ratings.length, l: t("gamesRated") },
+            { n: avgRating,      l: t("avgRating") },
+            { n: completed,      l: t("s_completed") },
+            { n: playing,        l: t("s_playing") },
+          ].map(s => (
+            <div key={s.l} style={{ background:"rgba(255,255,255,.025)", border:"1px solid rgba(255,255,255,.07)", borderRadius:14, padding:"16px 18px", textAlign:"center" }}>
+              <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:col, lineHeight:1, marginBottom:4 }}>{loading ? "…" : s.n}</div>
+              <div style={{ fontSize:10, color:"rgba(255,255,255,.25)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:1, textTransform:"uppercase" }}>{s.l}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Recent games grid */}
+        {ratings.length > 0 && (
+          <div style={{ marginBottom:36 }}>
+            <div style={{ fontSize:10, color:"rgba(255,107,53,.6)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:14 }}>{t("myRatings")}</div>
+            <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
+              {ratings.slice(0,18).map(r => (
+                <div key={r.game_id} onClick={()=>{ if(r.game_cover) onGameClick({ id:r.game_id, title:r.game_title, cover:r.game_cover, platform:"Multi", year:"—", genre:"", rating:null, reviews:0, tags:[], summary:"", allPlatforms:[], videoId:null }); }}
+                  style={{ width:52, height:72, borderRadius:8, overflow:"hidden", background:"rgba(255,255,255,.05)", cursor:r.game_cover?"pointer":"default", position:"relative", flexShrink:0, border:"1px solid rgba(255,255,255,.07)" }}>
+                  {r.game_cover && <img src={r.game_cover} alt={r.game_title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />}
+                  <div style={{ position:"absolute", bottom:2, right:2, background:`${rc(r.rating)}cc`, borderRadius:4, padding:"1px 5px", fontSize:9, fontFamily:"'Syne',sans-serif", fontWeight:800, color:"#fff" }}>{r.rating}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Reviews */}
+        {reviews.length > 0 && (
+          <div>
+            <div style={{ fontSize:10, color:"rgba(255,107,53,.6)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:14 }}>{t("communitySection")}</div>
+            <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+              {reviews.slice(0,8).map(r => (
+                <div key={r.game_id} style={{ background:"rgba(255,255,255,.022)", border:"1px solid rgba(255,255,255,.07)", borderRadius:14, padding:"14px 16px" }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:8 }}>
+                    {r.game_cover && <img src={r.game_cover} alt="" style={{ width:32, height:42, borderRadius:6, objectFit:"cover" }} />}
+                    <div>
+                      <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.8)" }}>{r.game_title}</div>
+                      <span style={{ background:`${rc(r.rating)}18`, border:`1px solid ${rc(r.rating)}40`, borderRadius:5, padding:"1px 8px", fontSize:11, color:rc(r.rating), fontFamily:"'Syne',sans-serif", fontWeight:800 }}>{r.rating}/10</span>
+                    </div>
+                  </div>
+                  <p style={{ color:"rgba(255,255,255,.42)", fontSize:13, lineHeight:1.7, fontFamily:"'DM Sans',sans-serif", margin:0 }}>"{r.comment}"</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {!loading && ratings.length === 0 && (
+          <div style={{ textAlign:"center", padding:"60px 0", color:"rgba(255,255,255,.2)", fontFamily:"'Syne',sans-serif", fontSize:16 }}>Aucune note publiée</div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 /* ── ACTIVITY ITEM ────────────────────────────────────────── */
-const ActivityItem = ({ item, onClick }) => {
+const ActivityItem = ({ item, onClick, onUserClick }) => {
   const col = rc(item.rating);
   const game = { id: item.game_id, title: item.game_title, cover: item.game_cover, platform:"Multi", year:"—", genre:"Jeu vidéo", rating:null, reviews:0, tags:[], summary:"", videoId:null };
   return (
@@ -1860,7 +1973,11 @@ const ActivityItem = ({ item, onClick }) => {
       </div>
       <div style={{ flex:1, minWidth:0 }}>
         <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:3 }}>
-          <span style={{ fontWeight:700, fontSize:12, color:"#ff6b35", fontFamily:"'Space Grotesk',sans-serif" }}>{item.user_display || "Joueur"}</span>
+          <span onClick={e=>{e.stopPropagation();if(item.user_display)onUserClick(item.user_display);}} style={{ fontWeight:700, fontSize:12, color:"#ff6b35", fontFamily:"'Space Grotesk',sans-serif", cursor:item.user_display?"pointer":"default", textDecoration:"none" }}
+            onMouseEnter={e=>{if(item.user_display)e.currentTarget.style.textDecoration="underline";}}
+            onMouseLeave={e=>{e.currentTarget.style.textDecoration="none";}}>
+            {item.user_display || "Joueur"}
+          </span>
           <span style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'DM Sans',sans-serif" }}>{timeAgo(item.updated_at)}</span>
         </div>
         <div style={{ fontSize:12, color:"rgba(255,255,255,.65)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{item.game_title}</div>
@@ -1921,8 +2038,16 @@ export default function JoystickLog() {
   const [newListName, setNewListName]       = useState("");
   const [showResetPw, setShowResetPw]       = useState(false);
   const [legalModal, setLegalModal]         = useState(null);
+  const [publicProfile, setPublicProfile]   = useState(null);
 
   /* ── URL state: restore tab + game on load, sync on change ── */
+  const openUserProfile = (uname) => {
+    setPublicProfile(uname);
+    const params = new URLSearchParams(window.location.search);
+    params.set('user', uname);
+    window.history.pushState({}, '', `?${params.toString()}`);
+  };
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const tabParam = params.get('tab');
@@ -1933,10 +2058,13 @@ export default function JoystickLog() {
         if (data?.id) setSelected(formatGame(data));
       }).catch(()=>{});
     }
+    const userParam = params.get('user');
+    if (userParam) setPublicProfile(userParam);
     const onPop = () => {
       const p = new URLSearchParams(window.location.search);
       const t = p.get('tab'); if (t) setTab(t);
       if (!p.get('game')) setSelected(null);
+      setPublicProfile(p.get('user') || null);
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
@@ -2483,7 +2611,7 @@ export default function JoystickLog() {
                 </div>
                 <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
                   {activityFeed.slice(0, 10).map((item, i) => (
-                    <ActivityItem key={`${item.user_id}-${item.game_id}-${i}`} item={item} onClick={g=>setSelected(g)} />
+                    <ActivityItem key={`${item.user_id}-${item.game_id}-${i}`} item={item} onClick={g=>setSelected(g)} onUserClick={openUserProfile} />
                   ))}
                 </div>
               </div>
@@ -2837,6 +2965,7 @@ export default function JoystickLog() {
           username={profileUsername}
           userLists={userLists}
           lang={lang}
+          onUserClick={openUserProfile}
           t={t}
         />
       )}
@@ -2882,6 +3011,14 @@ export default function JoystickLog() {
       {showAuth && <AuthModal onClose={()=>setShowAuth(false)} onSuccess={u=>{ setUser(u); setShowAuth(false); }} t={t}/>}
       {showResetPw && <ResetPasswordModal onClose={()=>setShowResetPw(false)} t={t}/>}
       {legalModal && <LegalModal type={legalModal} onClose={()=>setLegalModal(null)}/>}
+      {publicProfile && (
+        <PublicProfile
+          username={publicProfile}
+          onClose={()=>{ setPublicProfile(null); const p=new URLSearchParams(window.location.search); p.delete('user'); window.history.replaceState({},'',`?${p.toString()}`); }}
+          onGameClick={g=>{ setPublicProfile(null); setSelected(g); }}
+          t={t}
+        />
+      )}
     </div>
   );
 }
