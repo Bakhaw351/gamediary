@@ -1835,19 +1835,19 @@ export default function JoystickLog() {
 
         {/* Logo */}
         <div onClick={()=>setTab("home")} style={{ display:"flex", alignItems:"center", gap:11, cursor:"pointer" }}>
-          <div style={{ width:36, height:36, borderRadius:11, background:"linear-gradient(135deg,#ff6b35 0%,#c84400 100%)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 0 24px rgba(255,107,53,.45), 0 0 0 1px rgba(255,255,255,.15) inset", flexShrink:0 }}>
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
-              {/* Controller body */}
-              <path d="M4 9C4 7.3 5.3 6 7 6H17C18.7 6 20 7.3 20 9V14C20 15.7 19 17 17.5 17C16.8 17 16.2 16.6 15.7 16L14.8 15H9.2L8.3 16C7.8 16.6 7.2 17 6.5 17C5 17 4 15.7 4 14V9Z" fill="rgba(255,255,255,.95)"/>
-              {/* D-pad vertical */}
-              <rect x="7.5" y="8.5" width="1.5" height="5" rx=".75" fill="#c84400"/>
-              {/* D-pad horizontal */}
-              <rect x="5.8" y="10.25" width="4.9" height="1.5" rx=".75" fill="#c84400"/>
-              {/* Face buttons */}
-              <circle cx="14.5" cy="9.5" r="1" fill="#c84400"/>
-              <circle cx="16.3" cy="11.2" r="1" fill="#c84400"/>
-              <circle cx="14.5" cy="12.9" r="1" fill="#c84400"/>
-              <circle cx="12.7" cy="11.2" r="1" fill="#c84400"/>
+          <div style={{ width:38, height:38, borderRadius:11, background:"linear-gradient(135deg,#ff6b35 0%,#b83a00 100%)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 0 28px rgba(255,107,53,.5), 0 0 0 1px rgba(255,255,255,.15) inset", flexShrink:0 }}>
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+              {/* Base plate */}
+              <ellipse cx="16" cy="24.5" rx="8.5" ry="3" fill="rgba(255,255,255,.88)"/>
+              {/* Shaft */}
+              <rect x="14.2" y="12" width="3.6" height="12.5" rx="1.8" fill="white"/>
+              {/* Ball */}
+              <circle cx="16" cy="10" r="4.8" fill="white"/>
+              {/* Shine */}
+              <circle cx="14.2" cy="8.4" r="1.4" fill="rgba(255,255,255,.45)"/>
+              {/* Buttons */}
+              <circle cx="9.5" cy="24.8" r="1.6" fill="#b83a00"/>
+              <circle cx="22.5" cy="24.8" r="1.6" fill="#b83a00"/>
             </svg>
           </div>
           <div style={{ display:"flex", flexDirection:"column", gap:0, lineHeight:1 }}>
