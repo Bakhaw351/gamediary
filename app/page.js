@@ -1779,7 +1779,7 @@ JoystickLog is provided "as is" without warranties. We shall not be liable for a
 8. GOVERNING LAW
 These terms are governed by the laws of France. Any dispute shall be subject to the jurisdiction of French courts.
 
-Contact: support@joysticklog.app`,
+Contact: contact@joystick-log.com`,
   },
   privacy: {
     title: "Privacy Policy",
@@ -1805,19 +1805,19 @@ Your data is stored securely via Supabase (EU region). We apply industry-standar
 - Supabase: database and authentication
 
 5. YOUR RIGHTS (GDPR)
-You have the right to: access, rectify, delete your data, and object to processing. To exercise these rights contact us at: privacy@joysticklog.app
+You have the right to: access, rectify, delete your data, and object to processing. To exercise these rights contact us at: contact@joystick-log.com
 
 6. COOKIES
 We use only technically necessary cookies for session management. No advertising or tracking cookies.
 
 7. CONTACT
-Data controller: JoystickLog — privacy@joysticklog.app`,
+Data controller: JoystickLog — contact@joystick-log.com`,
   },
   legal: {
     title: "Legal Notices",
     body: `PUBLISHER
 JoystickLog
-Contact: support@joysticklog.app
+Contact: contact@joystick-log.com
 
 HOSTING
 Vercel Inc. — 340 Pine Street, Suite 701, San Francisco, CA 94104, USA
@@ -1830,7 +1830,7 @@ DISCLAIMER
 JoystickLog makes no warranty as to the accuracy or completeness of game information sourced from IGDB. Users are responsible for the content they submit.
 
 CONTACT
-For any enquiry: support@joysticklog.app`,
+For any enquiry: contact@joystick-log.com`,
   },
 };
 
@@ -3064,7 +3064,7 @@ export default function JoystickLog() {
               <button className="site-footer" onClick={()=>setLegalModal("tos")}>Terms of Service</button>
               <button className="site-footer" onClick={()=>setLegalModal("privacy")}>Privacy Policy</button>
               <button className="site-footer" onClick={()=>setLegalModal("legal")}>Legal Notices</button>
-              <a className="site-footer" href="mailto:support@joysticklog.app">Contact</a>
+              <a className="site-footer" href="mailto:contact@joystick-log.com">Contact</a>
             </div>
           </div>
         </footer>
