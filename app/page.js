@@ -393,119 +393,125 @@ const PLATFORM_IDS = {
 
 /* ── CSS ─────────────────────────────────────────────────── */
 const CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
-  body{background:#0a080f;color:#e8e4e0;}
-  ::-webkit-scrollbar{width:4px;}
+  body{background:#09080e;color:#ddd8d2;font-family:'Plus Jakarta Sans',sans-serif;}
+  ::-webkit-scrollbar{width:5px;}
   ::-webkit-scrollbar-track{background:transparent;}
   ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#ff6b35,#7a2800);border-radius:99px;}
   textarea,input,button{font-family:'Space Grotesk',sans-serif;}
 
-  @keyframes fadeUp   {from{opacity:0;transform:translateY(26px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes fadeUp   {from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
   @keyframes fadeIn   {from{opacity:0;}to{opacity:1;}}
-  @keyframes scaleIn  {from{opacity:0;transform:scale(.93);}to{opacity:1;transform:scale(1);}}
-  @keyframes pulse    {0%,100%{opacity:.35;}50%{opacity:1;}}
+  @keyframes scaleIn  {from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
+  @keyframes pulse    {0%,100%{opacity:.3;}50%{opacity:1;}}
   @keyframes spin     {to{transform:rotate(360deg);}}
   @keyframes shimmer  {from{background-position:-700px 0;}to{background-position:700px 0;}}
-  @keyframes slideUp  {from{opacity:0;transform:translateY(44px);}to{opacity:1;transform:translateY(0);}}
   @keyframes shine    {from{left:-80%;}to{left:130%;}}
-  @keyframes float    {0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
-  @keyframes bgDrift  {0%{transform:translateY(0px) scale(1);}33%{transform:translateY(-22px) scale(1.03);}66%{transform:translateY(12px) scale(.97);}100%{transform:translateY(0px) scale(1);}}
-  @keyframes jacketDrift{0%{transform:translateY(0px) rotate(var(--rot));}50%{transform:translateY(-14px) rotate(var(--rot));}100%{transform:translateY(0px) rotate(var(--rot));}}
-  .jacket-item{will-change:transform;}
-  .cover-bg-item{will-change:transform;}
+  @keyframes float    {0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  @keyframes bgDrift  {0%{transform:translateY(0) scale(1);}33%{transform:translateY(-22px) scale(1.03);}66%{transform:translateY(12px) scale(.97);}100%{transform:translateY(0) scale(1);}}
+  @keyframes jacketDrift{0%{transform:translateY(0) rotate(var(--rot));}50%{transform:translateY(-14px) rotate(var(--rot));}100%{transform:translateY(0) rotate(var(--rot));}}
   @keyframes marquee  {from{transform:translateX(0);}to{transform:translateX(-50%);}}
   @keyframes marqueeR {from{transform:translateX(-50%);}to{transform:translateX(0);}}
   @keyframes gradText {0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
-  @keyframes bounceY  {0%,100%{transform:translateX(-50%) translateY(0);}60%{transform:translateX(-50%) translateY(7px);}}
-  @keyframes glowPulse{0%,100%{opacity:.5;}50%{opacity:1;}}
+  @keyframes bounceY  {0%,100%{transform:translateX(-50%) translateY(0);}60%{transform:translateX(-50%) translateY(8px);}}
   @keyframes popIn    {from{transform:scale(0) rotate(-12deg);opacity:0;}to{transform:scale(1) rotate(0);opacity:1;}}
-  @keyframes borderFlow{0%{background-position:0% 50%;}100%{background-position:200% 50%;}}
+  @keyframes revealLine{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+  .jacket-item,.cover-bg-item{will-change:transform;}
 
-  .fu  {animation:fadeUp .55s cubic-bezier(.4,0,.2,1) both;}
-  .fu2 {animation:fadeUp .55s .1s  cubic-bezier(.4,0,.2,1) both;}
-  .fu3 {animation:fadeUp .55s .2s  cubic-bezier(.4,0,.2,1) both;}
-  .fu4 {animation:fadeUp .55s .3s  cubic-bezier(.4,0,.2,1) both;}
-  .fi  {animation:fadeIn .4s ease both;}
-
-  /* ── Float wrappers ─────────────────────────────── */
-  .hscroll-card{transition:transform .25s cubic-bezier(.34,1.4,.64,1);}
+  .fu  {animation:fadeUp .65s cubic-bezier(.22,1,.36,1) both;}
+  .fu2 {animation:fadeUp .65s .12s cubic-bezier(.22,1,.36,1) both;}
+  .fu3 {animation:fadeUp .65s .22s cubic-bezier(.22,1,.36,1) both;}
+  .fu4 {animation:fadeUp .65s .34s cubic-bezier(.22,1,.36,1) both;}
+  .fi  {animation:fadeIn .45s ease both;}
   .hf1{animation:float 5.2s ease-in-out infinite;}
   .hf2{animation:float 6.1s ease-in-out infinite .9s;}
   .hf3{animation:float 5.7s ease-in-out infinite 1.7s;}
 
   /* ── Cards ──────────────────────────────────────── */
-  .card{cursor:pointer;border-radius:16px;overflow:hidden;background:#0e0b0a;border:1px solid rgba(255,255,255,.055);transition:transform .38s cubic-bezier(.34,1.4,.64,1),box-shadow .38s,border-color .28s;position:relative;}
-  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#ff6b35 35%,#ffd166 65%,transparent);opacity:0;transition:opacity .3s;z-index:4;}
-  .card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.05) 0%,transparent 45%);opacity:0;transition:opacity .3s;z-index:1;pointer-events:none;border-radius:16px;}
-  .card:hover{transform:translateY(-12px) scale(1.03);border-color:rgba(255,107,53,.32);box-shadow:0 40px 90px rgba(0,0,0,.72),0 0 0 1px rgba(255,107,53,.1),0 0 60px rgba(255,107,53,.07);}
+  .card{
+    cursor:pointer;border-radius:18px;overflow:hidden;
+    background:linear-gradient(160deg,#131020 0%,#0e0c18 100%);
+    border:1px solid rgba(255,255,255,.06);
+    transition:transform .42s cubic-bezier(.34,1.4,.64,1),box-shadow .42s,border-color .3s;
+    position:relative;
+  }
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#ff6b35 30%,#ffd166 70%,transparent);opacity:0;transition:opacity .35s;z-index:4;}
+  .card::after{content:'';position:absolute;inset:0;background:linear-gradient(145deg,rgba(255,255,255,.055) 0%,transparent 42%);opacity:0;transition:opacity .35s;z-index:1;pointer-events:none;border-radius:18px;}
+  .card:hover{transform:translateY(-14px) scale(1.035);border-color:rgba(255,107,53,.3);box-shadow:0 48px 100px rgba(0,0,0,.82),0 0 0 1px rgba(255,107,53,.08),0 0 80px rgba(255,107,53,.07);}
   .card:hover::before,.card:hover::after{opacity:1;}
-  .card img{transition:transform .65s cubic-bezier(.4,0,.2,1),filter .3s;}
-  .card:hover img{transform:scale(1.08);filter:brightness(1.07) saturate(1.12);}
-  .card-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse 65% 65% at 50% 50%,rgba(0,0,0,.65) 0%,transparent 70%);opacity:0;transition:opacity .28s;z-index:2;}
+  .card img{transition:transform .7s cubic-bezier(.4,0,.2,1),filter .35s;}
+  .card:hover img{transform:scale(1.09);filter:brightness(1.09) saturate(1.18);}
+  .card-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(0,0,0,.6) 0%,transparent 70%);opacity:0;transition:opacity .3s;z-index:2;}
   .card:hover .card-play{opacity:1;}
-  .play-btn{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.08);backdrop-filter:blur(16px);border:1.5px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:15px;transform:scale(.7);transition:transform .32s cubic-bezier(.34,1.4,.64,1),background .2s,border-color .2s;}
+  .play-btn{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.07);backdrop-filter:blur(20px);border:1.5px solid rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:16px;transform:scale(.62);transition:transform .36s cubic-bezier(.34,1.4,.64,1),background .22s;}
   .card:hover .play-btn{transform:scale(1);}
-  .play-btn:hover{background:rgba(255,107,53,.25)!important;border-color:rgba(255,107,53,.6)!important;}
+  .play-btn:hover{background:rgba(255,107,53,.22)!important;border-color:rgba(255,107,53,.55)!important;}
 
-  .row{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:14px;transition:background .22s,border-color .22s,transform .22s;cursor:pointer;}
-  .row:hover{background:rgba(255,107,53,.05);border-color:rgba(255,107,53,.2);transform:translateX(5px);}
+  .row{background:rgba(255,255,255,.018);border:1px solid rgba(255,255,255,.048);border-radius:14px;transition:background .22s,border-color .22s,transform .22s;cursor:pointer;}
+  .row:hover{background:rgba(255,107,53,.05);border-color:rgba(255,107,53,.2);transform:translateX(6px);}
 
   /* ── Buttons ────────────────────────────────────── */
-  .btn{position:relative;overflow:hidden;background:linear-gradient(135deg,#ff6b35 0%,#ff9a3c 50%,#ffd166 100%);background-size:200% 100%;color:#140800;border:none;border-radius:12px;padding:11px 26px;font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s,box-shadow .22s,background-position .4s;letter-spacing:.2px;box-shadow:0 4px 28px rgba(255,107,53,.32);}
-  .btn::after{content:'';position:absolute;top:0;left:-80%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);animation:shine 2.8s infinite;}
-  .btn:hover{transform:translateY(-2px);box-shadow:0 14px 44px rgba(255,107,53,.48);background-position:100% 0;}
+  .btn{position:relative;overflow:hidden;background:linear-gradient(135deg,#ff6b35 0%,#ff9040 50%,#ffd166 100%);background-size:200% 100%;color:#130600;border:none;border-radius:13px;padding:12px 28px;font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s,box-shadow .25s,background-position .45s;letter-spacing:.3px;box-shadow:0 4px 32px rgba(255,107,53,.35);}
+  .btn::after{content:'';position:absolute;top:0;left:-80%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.32),transparent);animation:shine 3s infinite;}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 16px 52px rgba(255,107,53,.54);background-position:100% 0;}
   .btn:active{transform:translateY(0);}
-  .btn:disabled{opacity:.38;cursor:not-allowed;transform:none;box-shadow:none;}
+  .btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none;}
   .btn:disabled::after{display:none;}
-  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.38);cursor:pointer;border-radius:12px;padding:11px 22px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;transition:all .2s;display:inline-flex;align-items:center;}
-  .btn-ghost:hover{border-color:rgba(255,255,255,.28);color:rgba(255,255,255,.78);background:rgba(255,255,255,.04);}
+  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.36);cursor:pointer;border-radius:13px;padding:12px 24px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;transition:all .22s;display:inline-flex;align-items:center;}
+  .btn-ghost:hover{border-color:rgba(255,255,255,.28);color:rgba(255,255,255,.82);background:rgba(255,255,255,.04);}
 
   /* ── Inputs ─────────────────────────────────────── */
-  .inp{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:#e8e4e0;padding:12px 16px;font-size:14px;width:100%;outline:none;transition:border-color .2s,background .2s,box-shadow .2s;}
-  .inp:focus{border-color:rgba(255,107,53,.52);background:rgba(255,255,255,.05);box-shadow:0 0 0 3px rgba(255,107,53,.1);}
-  .inp::placeholder{color:rgba(255,255,255,.18);}
+  .inp{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:13px;color:#ddd8d2;padding:13px 17px;font-size:14px;width:100%;outline:none;transition:border-color .22s,background .22s,box-shadow .22s;}
+  .inp:focus{border-color:rgba(255,107,53,.55);background:rgba(255,255,255,.05);box-shadow:0 0 0 3px rgba(255,107,53,.1);}
+  .inp::placeholder{color:rgba(255,255,255,.16);}
 
   /* ── Skeleton ───────────────────────────────────── */
-  .skel{background:linear-gradient(90deg,#100d0b 25%,#1c1510 50%,#100d0b 75%);background-size:700px 100%;animation:shimmer 2s infinite;border-radius:10px;}
+  .skel{background:linear-gradient(90deg,#0f0d18 25%,#1a1726 50%,#0f0d18 75%);background-size:700px 100%;animation:shimmer 2.2s infinite;border-radius:10px;}
 
   /* ── Nav ────────────────────────────────────────── */
-  .nav-btn{background:transparent;border:none;padding:8px 18px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;cursor:pointer;transition:color .18s;color:rgba(255,255,255,.3);letter-spacing:.1px;position:relative;}
-  .nav-btn::after{content:'';position:absolute;bottom:-2px;left:50%;right:50%;height:2px;background:linear-gradient(90deg,#ff6b35,#ffd166);border-radius:2px;transition:left .26s cubic-bezier(.4,0,.2,1),right .26s cubic-bezier(.4,0,.2,1),opacity .18s;opacity:0;}
-  .nav-btn:hover{color:rgba(255,255,255,.65);}
+  .nav-btn{background:transparent;border:none;padding:9px 20px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:color .2s;color:rgba(255,255,255,.26);letter-spacing:.2px;position:relative;}
+  .nav-btn::after{content:'';position:absolute;bottom:-2px;left:50%;right:50%;height:2px;background:linear-gradient(90deg,#ff6b35,#ffd166);border-radius:2px;transition:left .28s cubic-bezier(.4,0,.2,1),right .28s cubic-bezier(.4,0,.2,1),opacity .2s;opacity:0;}
+  .nav-btn:hover{color:rgba(255,255,255,.7);}
   .nav-btn.active{color:#fff;}
-  .nav-btn.active::after{left:18px;right:18px;opacity:1;}
+  .nav-btn.active::after{left:20px;right:20px;opacity:1;}
 
   /* ── Chips & Tags ───────────────────────────────── */
-  .chip{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:99px;padding:5px 16px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.28);white-space:nowrap;}
-  .chip:hover{border-color:rgba(255,107,53,.38);color:#ff6b35;background:rgba(255,107,53,.06);}
-  .chip.on{background:linear-gradient(135deg,rgba(255,107,53,.14),rgba(255,209,102,.08));border-color:rgba(255,107,53,.42);color:#ffd166;box-shadow:0 0 18px rgba(255,107,53,.14);}
-
-  .tag{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.065);border-radius:11px;padding:10px 18px;font-size:13px;font-weight:600;font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.28);position:relative;overflow:hidden;}
-  .tag::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,107,53,.08),rgba(255,209,102,.04));opacity:0;transition:opacity .2s;}
-  .tag:hover{border-color:rgba(255,107,53,.3);color:#ff9a3c;transform:translateY(-1px);}
+  .chip{background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.068);border-radius:99px;padding:5px 16px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all .22s;color:rgba(255,255,255,.26);white-space:nowrap;}
+  .chip:hover{border-color:rgba(255,107,53,.4);color:#ff6b35;background:rgba(255,107,53,.07);}
+  .chip.on{background:linear-gradient(135deg,rgba(255,107,53,.15),rgba(255,209,102,.08));border-color:rgba(255,107,53,.44);color:#ffd166;box-shadow:0 0 20px rgba(255,107,53,.15);}
+  .tag{background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.062);border-radius:12px;padding:10px 18px;font-size:13px;font-weight:600;font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all .22s;color:rgba(255,255,255,.26);position:relative;overflow:hidden;}
+  .tag::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,107,53,.08),rgba(255,209,102,.04));opacity:0;transition:opacity .22s;}
+  .tag:hover{border-color:rgba(255,107,53,.32);color:#ff9a3c;transform:translateY(-2px);}
   .tag:hover::after{opacity:1;}
-  .tag.on{background:linear-gradient(135deg,rgba(255,107,53,.12),rgba(255,209,102,.07));border-color:rgba(255,107,53,.42);color:#ffd166;box-shadow:0 4px 22px rgba(255,107,53,.1),inset 0 1px 0 rgba(255,255,255,.07);}
+  .tag.on{background:linear-gradient(135deg,rgba(255,107,53,.13),rgba(255,209,102,.07));border-color:rgba(255,107,53,.44);color:#ffd166;box-shadow:0 4px 24px rgba(255,107,53,.1),inset 0 1px 0 rgba(255,255,255,.07);}
   .tag.on::after{opacity:1;}
 
-  .spin{width:18px;height:18px;border:2px solid rgba(255,107,53,.15);border-top-color:#ff6b35;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
-
-  .status-btn{border:none;border-radius:11px;padding:9px 17px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;cursor:pointer;transition:all .22s;display:flex;align-items:center;gap:6px;letter-spacing:.1px;}
-  .status-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3);}
+  .spin{width:18px;height:18px;border:2px solid rgba(255,107,53,.14);border-top-color:#ff6b35;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+  .status-btn{border:none;border-radius:12px;padding:9px 17px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;cursor:pointer;transition:all .22s;display:flex;align-items:center;gap:6px;letter-spacing:.1px;}
+  .status-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.35);}
 
   /* ── Section headers ────────────────────────────── */
   .section-label{font-size:10px;color:rgba(255,107,53,.6);font-weight:700;font-family:'Space Grotesk',sans-serif;letter-spacing:3.5px;text-transform:uppercase;margin-bottom:8px;}
   .section-title{font-family:'Syne',sans-serif;font-weight:800;font-size:34px;color:#fff;letter-spacing:-1.2px;line-height:1.02;}
+  .sect-h{display:flex;align-items:center;gap:14px;}
+  .sect-h::before{content:'';width:3px;height:26px;background:linear-gradient(to bottom,#ff6b35,#ffd166);border-radius:99px;flex-shrink:0;box-shadow:0 0 14px rgba(255,107,53,.55);}
 
-  /* ── Sect-h : section with vertical ember bar ───── */
-  .sect-h{display:flex;align-items:center;gap:13px;}
-  .sect-h::before{content:'';width:3px;height:22px;background:linear-gradient(to bottom,#ff6b35,#ffd166);border-radius:99px;flex-shrink:0;box-shadow:0 0 10px rgba(255,107,53,.5);}
+  /* ── Horizontal scroll cards ─────────────────────── */
+  .hcard{flex-shrink:0;width:152px;cursor:pointer;transition:transform .3s cubic-bezier(.34,1.4,.64,1);}
+  .hcard:hover{transform:translateY(-8px);}
+  .hcard-img{border-radius:14px;overflow:hidden;aspect-ratio:3/4;background:rgba(255,255,255,.04);margin-bottom:10px;box-shadow:0 10px 32px rgba(0,0,0,.55);position:relative;}
+  .hcard:hover .hcard-img{box-shadow:0 22px 56px rgba(0,0,0,.75),0 0 24px rgba(255,107,53,.1);}
+
+  /* ── Section divider ─────────────────────────────── */
+  .sect-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06) 20%,rgba(255,255,255,.06) 80%,transparent);margin:64px 0;}
 
   /* ── Gradient text ──────────────────────────────── */
   .grad-text{background:linear-gradient(135deg,#fff 0%,#ff6b35 38%,#ffd166 72%,#ffe5a0 100%);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradText 5s ease infinite;}
+  @keyframes gradText{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
 
-  /* ── Genre marquee tape ─────────────────────────── */
+  /* ── Marquee ────────────────────────────────────── */
   .marquee-wrap{overflow:hidden;white-space:nowrap;}
   .marquee-track{display:inline-flex;gap:28px;animation:marquee 80s linear infinite;will-change:transform;}
   .marquee-track-r{display:inline-flex;gap:28px;animation:marqueeR 95s linear infinite;will-change:transform;}
@@ -513,34 +519,30 @@ const CSS = `
 
   /* ── Cinematic game page ────────────────────────── */
   .cinematic-hero{position:relative;height:100vh;min-height:620px;overflow:hidden;display:flex;align-items:flex-end;}
-  .cinematic-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.28) saturate(1.5);transform:scale(1.05);transition:transform 8s ease;}
-  .cinematic-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(6,5,5,1) 0%,rgba(6,5,5,.82) 35%,rgba(6,5,5,.08) 72%,transparent 100%);}
-  .cinematic-overlay-2{position:absolute;inset:0;background:linear-gradient(to right,rgba(6,5,5,.92) 0%,rgba(6,5,5,.12) 60%,transparent 100%);}
+  .cinematic-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.3) saturate(1.5);transform:scale(1.05);transition:transform 8s ease;}
+  .cinematic-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(9,8,14,1) 0%,rgba(9,8,14,.82) 35%,rgba(9,8,14,.08) 72%,transparent 100%);}
+  .cinematic-overlay-2{position:absolute;inset:0;background:linear-gradient(to right,rgba(9,8,14,.92) 0%,rgba(9,8,14,.12) 60%,transparent 100%);}
   .yt-bg-wrap{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
   .yt-bg-wrap iframe{position:absolute;top:50%;left:50%;width:177.78vh;height:100vh;min-width:100%;min-height:56.25vw;transform:translate(-50%,-50%);border:none;opacity:.62;}
 
-  /* ── Stat card ──────────────────────────────────── */
-  .stat-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.055);border-radius:16px;padding:20px 24px;min-width:120px;transition:all .26s;position:relative;overflow:hidden;}
-  .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,107,53,.4),transparent);opacity:0;transition:opacity .26s;}
-  .stat-card:hover{background:rgba(255,107,53,.04);border-color:rgba(255,107,53,.15);transform:translateY(-3px);}
+  /* ── Stat cards ─────────────────────────────────── */
+  .stat-card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.052);border-radius:18px;padding:22px 26px;min-width:120px;transition:all .28s;position:relative;overflow:hidden;}
+  .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,107,53,.4),transparent);opacity:0;transition:opacity .28s;}
+  .stat-card:hover{background:rgba(255,107,53,.04);border-color:rgba(255,107,53,.15);transform:translateY(-4px);box-shadow:0 20px 52px rgba(0,0,0,.4);}
   .stat-card:hover::before{opacity:1;}
+  .stat-mini{background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.055);border-radius:16px;padding:18px 22px;text-align:center;transition:all .26s;cursor:default;}
+  .stat-mini:hover{background:rgba(255,107,53,.06);border-color:rgba(255,107,53,.2);transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,0,0,.32);}
 
-  /* ── Hero stat mini cards ───────────────────────── */
-  .stat-mini{background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px 20px;text-align:center;transition:all .24s;cursor:default;}
-  .stat-mini:hover{background:rgba(255,107,53,.06);border-color:rgba(255,107,53,.2);transform:translateY(-2px);}
-
-  /* ── Profile banner ─────────────────────────────── */
-  .profile-banner{position:relative;border-radius:20px;overflow:hidden;background:linear-gradient(135deg,rgba(255,107,53,.08) 0%,rgba(255,209,102,.04) 50%,rgba(167,139,250,.04) 100%);border:1px solid rgba(255,255,255,.07);padding:32px 28px 28px;}
+  /* ── Profile ────────────────────────────────────── */
+  .profile-banner{position:relative;border-radius:22px;overflow:hidden;background:linear-gradient(135deg,rgba(255,107,53,.07) 0%,rgba(255,209,102,.03) 50%,rgba(167,139,250,.04) 100%);border:1px solid rgba(255,255,255,.07);padding:34px 30px 30px;}
   .profile-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#ff6b35,#ffd166 55%,#a78bfa);}
-
-  /* ── Scroll bounce ──────────────────────────────── */
   .bounce{animation:bounceY 2s ease-in-out infinite;}
+  .glass-panel{background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.065);border-radius:22px;backdrop-filter:blur(14px);}
+  .gp-grid{display:grid;grid-template-columns:260px 1fr;gap:36px;align-items:start;}
 
-  /* ── Glass panel ────────────────────────────────── */
-  .glass-panel{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:20px;backdrop-filter:blur(12px);}
-
-  /* ── gp-grid ────────────────────────────────────── */
-  .gp-grid{display:grid;grid-template-columns:260px 1fr;gap:32px;align-items:start;}
+  /* ── Activity feed ──────────────────────────────── */
+  .activity-item{display:flex;gap:14px;padding:16px;border-radius:16px;border:1px solid rgba(255,255,255,.045);background:rgba(255,255,255,.016);transition:all .22s;cursor:pointer;}
+  .activity-item:hover{background:rgba(255,107,53,.04);border-color:rgba(255,107,53,.15);transform:translateX(4px);}
 
   @media(max-width:900px){.gp-grid{grid-template-columns:1fr!important;}}
   @media(max-width:768px){
@@ -662,24 +664,32 @@ const JacketWall = ({ covers }) => {
 
 /* ── HORIZONTAL SCROLL SECTION ───────────────────────────── */
 const HScrollSection = ({ games, onClick, accent = "#ff6b35", showDate = false }) => (
-  <div style={{ display:"flex", gap:11, overflowX:"auto", paddingBottom:8, scrollbarWidth:"none", msOverflowStyle:"none" }}>
+  <div style={{ display:"flex", gap:14, overflowX:"auto", paddingBottom:12, scrollbarWidth:"none", msOverflowStyle:"none" }}>
     {games.map(g => (
-      <div key={g.id} onClick={()=>onClick(g)} style={{ flexShrink:0, width:120, cursor:"pointer" }}
-        onMouseEnter={e=>e.currentTarget.style.transform="translateY(-5px)"}
-        onMouseLeave={e=>e.currentTarget.style.transform="translateY(0)"}
-        className="hscroll-card">
-        <div style={{ borderRadius:12, overflow:"hidden", aspectRatio:"3/4", background:"rgba(255,255,255,.04)", marginBottom:8, boxShadow:"0 8px 24px rgba(0,0,0,.5)" }}>
-          {g.cover && <img src={g.cover} alt={g.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />}
+      <div key={g.id} className="hcard" onClick={()=>onClick(g)}>
+        <div className="hcard-img">
+          {g.cover
+            ? <img src={g.cover} alt={g.title} style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} />
+            : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:32 }}>🎮</div>
+          }
+          {/* Bottom gradient */}
+          <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 55%)", pointerEvents:"none" }} />
+          {/* Rating pill */}
+          {!showDate && g.rating && (
+            <div style={{ position:"absolute", bottom:8, left:8, background:"rgba(0,0,0,.6)", backdropFilter:"blur(8px)", borderRadius:6, padding:"2px 8px", fontSize:10, fontWeight:800, color:accent, fontFamily:"'Syne',sans-serif", border:`1px solid ${accent}44` }}>
+              ★ {g.rating}
+            </div>
+          )}
+          {showDate && g.year && (
+            <div style={{ position:"absolute", bottom:8, left:8, background:"rgba(0,0,0,.6)", backdropFilter:"blur(8px)", borderRadius:6, padding:"2px 8px", fontSize:10, fontWeight:700, color:"rgba(255,255,255,.6)", fontFamily:"'Space Grotesk',sans-serif" }}>
+              {g.year}
+            </div>
+          )}
         </div>
-        <div style={{ fontSize:11, fontWeight:700, color:"rgba(255,255,255,.78)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.3, marginBottom:3 }}>
+        <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.82)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.35 }}>
           {g.title.length>22?g.title.slice(0,22)+"…":g.title}
         </div>
-        {showDate
-          ? <div style={{ fontSize:10, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif" }}>{g.year||"—"}</div>
-          : g.rating
-            ? <div style={{ fontSize:10, color:accent, fontWeight:700, fontFamily:"'Space Grotesk',sans-serif" }}>★ {g.rating}</div>
-            : null
-        }
+        {g.genre && <div style={{ fontSize:10, color:"rgba(255,255,255,.26)", fontFamily:"'Plus Jakarta Sans',sans-serif", marginTop:3 }}>{g.genre}</div>}
       </div>
     ))}
   </div>
@@ -1796,7 +1806,7 @@ export default function JoystickLog() {
     : [...topGames, ...exploreGames].filter((g,i,arr) => userRatings[g.id] && arr.findIndex(x=>x.id===g.id)===i);
 
   return (
-    <div style={{ minHeight:"100vh", background:"#0a080f", color:"#e8e4e0", fontFamily:"'DM Sans',sans-serif" }}>
+    <div style={{ minHeight:"100vh", background:"#09080e", color:"#ddd8d2", fontFamily:"'Plus Jakarta Sans',sans-serif" }}>
       <style>{CSS}</style>
 
       {/* Game cover ambient background (color blobs) */}
@@ -2055,10 +2065,15 @@ export default function JoystickLog() {
 
             {/* ── TRENDING ── */}
             {trendingGames.length > 0 && (
-              <div style={{ marginTop:56 }}>
-                <div style={{ marginBottom:20 }}>
-                  <div style={{ fontSize:10, color:"rgba(255,107,53,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>{t("trendingTag")}</div>
-                  <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:"#fff", letterSpacing:-.5, lineHeight:1 }}>{t("trendingTitle")}</h2>
+              <div style={{ marginTop:72 }}>
+                <div className="sect-divider" style={{ marginTop:0, marginBottom:40 }} />
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:24 }}>
+                  <div className="sect-h">
+                    <div>
+                      <div style={{ fontSize:10, color:"rgba(255,107,53,.6)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3.5, textTransform:"uppercase", marginBottom:5 }}>{t("trendingTag")}</div>
+                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:"#fff", letterSpacing:-.6, lineHeight:1 }}>{t("trendingTitle")}</h2>
+                    </div>
+                  </div>
                 </div>
                 <HScrollSection games={trendingGames} onClick={setSelected} accent="#ff6b35" />
               </div>
@@ -2066,10 +2081,14 @@ export default function JoystickLog() {
 
             {/* ── UPCOMING ── */}
             {upcomingGames.length > 0 && (
-              <div style={{ marginTop:56 }}>
-                <div style={{ marginBottom:20 }}>
-                  <div style={{ fontSize:10, color:"rgba(167,139,250,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>{t("upcomingTag")}</div>
-                  <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:"#fff", letterSpacing:-.5, lineHeight:1 }}>{t("upcomingTitle")}</h2>
+              <div style={{ marginTop:64 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:24 }}>
+                  <div className="sect-h" style={{ "--bar-color":"#a78bfa" }}>
+                    <div>
+                      <div style={{ fontSize:10, color:"rgba(167,139,250,.65)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3.5, textTransform:"uppercase", marginBottom:5 }}>{t("upcomingTag")}</div>
+                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:"#fff", letterSpacing:-.6, lineHeight:1 }}>{t("upcomingTitle")}</h2>
+                    </div>
+                  </div>
                 </div>
                 <HScrollSection games={upcomingGames} onClick={setSelected} accent="#a78bfa" showDate />
               </div>
@@ -2077,10 +2096,14 @@ export default function JoystickLog() {
 
             {/* ── HIDDEN GEMS ── */}
             {gemGames.length > 0 && (
-              <div style={{ marginTop:56 }}>
-                <div style={{ marginBottom:20 }}>
-                  <div style={{ fontSize:10, color:"rgba(255,209,102,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>{t("gemsTag")}</div>
-                  <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:"#fff", letterSpacing:-.5, lineHeight:1 }}>{t("gemsTitle")}</h2>
+              <div style={{ marginTop:64 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:24 }}>
+                  <div className="sect-h">
+                    <div>
+                      <div style={{ fontSize:10, color:"rgba(255,209,102,.65)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3.5, textTransform:"uppercase", marginBottom:5 }}>{t("gemsTag")}</div>
+                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:"#fff", letterSpacing:-.6, lineHeight:1 }}>{t("gemsTitle")}</h2>
+                    </div>
+                  </div>
                 </div>
                 <HScrollSection games={gemGames} onClick={setSelected} accent="#ffd166" />
               </div>
@@ -2088,10 +2111,15 @@ export default function JoystickLog() {
 
             {/* ── POPULAR ON JOYSTICKLOG ── */}
             {popularGames.length > 0 && (
-              <div style={{ marginTop:56 }}>
-                <div style={{ marginBottom:20 }}>
-                  <div style={{ fontSize:10, color:"rgba(255,209,102,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>{t("popularTag")}</div>
-                  <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:"#fff", letterSpacing:-.5, lineHeight:1 }}>{t("popularTitle")}</h2>
+              <div style={{ marginTop:72 }}>
+                <div className="sect-divider" style={{ marginTop:0, marginBottom:40 }} />
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:24 }}>
+                  <div className="sect-h">
+                    <div>
+                      <div style={{ fontSize:10, color:"rgba(255,209,102,.65)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3.5, textTransform:"uppercase", marginBottom:5 }}>{t("popularTag")}</div>
+                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:"#fff", letterSpacing:-.6, lineHeight:1 }}>{t("popularTitle")}</h2>
+                    </div>
+                  </div>
                 </div>
                 <HScrollSection games={popularGames} onClick={g=>setSelected(g)} accent="#ffd166" />
               </div>
@@ -2099,12 +2127,17 @@ export default function JoystickLog() {
 
             {/* ── ACTIVITY FEED ── */}
             {activityFeed.length > 0 && (
-              <div style={{ marginTop:56 }}>
-                <div style={{ marginBottom:20 }}>
-                  <div style={{ fontSize:10, color:"rgba(255,107,53,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>{t("activityTag")}</div>
-                  <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:"#fff", letterSpacing:-.5, lineHeight:1 }}>{t("activityTitle")}</h2>
+              <div style={{ marginTop:72 }}>
+                <div className="sect-divider" style={{ marginTop:0, marginBottom:40 }} />
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:28 }}>
+                  <div className="sect-h">
+                    <div>
+                      <div style={{ fontSize:10, color:"rgba(255,107,53,.6)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3.5, textTransform:"uppercase", marginBottom:5 }}>{t("activityTag")}</div>
+                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:"#fff", letterSpacing:-.6, lineHeight:1 }}>{t("activityTitle")}</h2>
+                    </div>
+                  </div>
                 </div>
-                <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+                <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
                   {activityFeed.slice(0, 10).map((item, i) => (
                     <ActivityItem key={`${item.user_id}-${item.game_id}-${i}`} item={item} onClick={g=>setSelected(g)} />
                   ))}
