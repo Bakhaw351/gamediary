@@ -115,6 +115,10 @@ const TRANSLATIONS = {
     listsTitle:"Mes listes", createList:"Nouvelle liste", listNamePlaceholder:"Nom de la liste…",
     addToList:"Ajouter à une liste", noLists:"Aucune liste créée", listCreated:"Liste créée !", addedToList:"Ajouté !",
     statsDistribution:"Distribution des notes", statsStatus:"Répartition des statuts",
+    forgotPw:"Mot de passe oublié ?", forgotTitle:"Réinitialiser", forgotDesc:"Entrez votre email — on vous envoie un lien.",
+    forgotSent:"Lien envoyé ! Vérifiez votre boîte mail.", backToLogin:"← Retour", sendLink:"Envoyer →",
+    resetPwTitle:"Nouveau mot de passe", resetPwDesc:"Choisissez un nouveau mot de passe pour votre compte.",
+    resetPwConfirm:"Confirmer le mot de passe", resetPwMismatch:"Les mots de passe ne correspondent pas.", resetPwDone:"Mot de passe mis à jour !", savePw:"Enregistrer",
   },
   en: {
     s_wishlist:"Want to play", s_playing:"Playing", s_completed:"Completed", s_dropped:"Dropped",
@@ -172,6 +176,10 @@ const TRANSLATIONS = {
     listsTitle:"My lists", createList:"New list", listNamePlaceholder:"List name…",
     addToList:"Add to a list", noLists:"No lists yet", listCreated:"List created!", addedToList:"Added!",
     statsDistribution:"Rating distribution", statsStatus:"Status breakdown",
+    forgotPw:"Forgot password?", forgotTitle:"Reset password", forgotDesc:"Enter your email — we'll send you a reset link.",
+    forgotSent:"Link sent! Check your inbox.", backToLogin:"← Back", sendLink:"Send →",
+    resetPwTitle:"New password", resetPwDesc:"Choose a new password for your account.",
+    resetPwConfirm:"Confirm password", resetPwMismatch:"Passwords don't match.", resetPwDone:"Password updated!", savePw:"Save",
   },
   de: {
     s_wishlist:"Möchte spielen", s_playing:"Spiele gerade", s_completed:"Abgeschlossen", s_dropped:"Abgebrochen",
@@ -476,6 +484,7 @@ const CSS = `
   .nav-btn:hover{color:rgba(255,255,255,.7);}
   .nav-btn.active{color:#fff;}
   .nav-btn.active::after{left:20px;right:20px;opacity:1;}
+  .nav-center{display:flex;}
 
   /* ── Chips & Tags ───────────────────────────────── */
   .chip{background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.068);border-radius:99px;padding:5px 16px;font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all .22s;color:rgba(255,255,255,.26);white-space:nowrap;}
@@ -545,12 +554,40 @@ const CSS = `
   .activity-item:hover{background:rgba(255,107,53,.04);border-color:rgba(255,107,53,.15);transform:translateX(4px);}
 
   @media(max-width:900px){.gp-grid{grid-template-columns:1fr!important;}}
+
+  /* ── Mobile bottom nav ───────────────────────────────────── */
+  .mob-nav-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(6,5,5,.96);backdrop-filter:blur(28px) saturate(180%);border-top:1px solid rgba(255,255,255,.07);padding-bottom:env(safe-area-inset-bottom,0);}
+  .mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;padding:8px 4px;color:rgba(255,255,255,.28);transition:color .18s;font-family:'Space Grotesk',sans-serif;}
+  .mob-nav-btn.active{color:#ff6b35;}
+  .mob-nav-btn svg{display:block;margin-bottom:1px;}
+  .mob-nav-btn span{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+
   @media(max-width:768px){
     .hide-m{display:none!important;}
     .g2{grid-template-columns:repeat(2,1fr)!important;}
-    .hero-t{font-size:38px!important;}
-    .nav-center{gap:0!important;}
+    /* ── Nav ── */
+    .nav-center{display:none!important;}
     .nav-btn{padding:8px 10px!important;font-size:12px!important;}
+    .mob-nav-bar{display:flex!important;}
+    .top-nav{padding:0 16px!important;height:58px!important;}
+    /* ── Layout ── */
+    .main-container{padding:0 14px 96px!important;}
+    /* ── Hero ── */
+    .hero-txt{padding:48px 5% 52px!important;}
+    .hero-h1{font-size:clamp(34px,9vw,60px)!important;letter-spacing:-1.5px!important;line-height:.9!important;}
+    .hero-btns{flex-direction:column!important;align-items:stretch!important;gap:10px!important;}
+    .hero-btns>*{width:100%!important;text-align:center!important;justify-content:center!important;}
+    .hero-stats{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:8px!important;margin-top:28px!important;}
+    /* ── Cards grid ── */
+    .top-games-grid{grid-template-columns:1fr 1fr!important;}
+    .top-games-grid>:first-child{grid-column:1/-1!important;}
+    /* ── Explore ── */
+    .explore-hdr{flex-direction:column!important;align-items:stretch!important;}
+    .explore-search{width:100%!important;}
+    .explore-search input{width:100%!important;}
+    /* ── Misc ── */
+    .section-title{font-size:24px!important;}
+    .stat-mini{padding:12px 14px!important;}
   }
 `;
 
@@ -786,13 +823,14 @@ const FeaturedCard = ({ game, onClick }) => {
 
 /* ── AUTH MODAL ───────────────────────────────────────────── */
 const AuthModal = ({ onClose, onSuccess, t }) => {
-  const [mode, setMode] = useState("login");
-  const [email, setEmail] = useState("");
-  const [pw, setPw] = useState("");
+  const [mode, setMode]         = useState("login");
+  const [email, setEmail]       = useState("");
+  const [pw, setPw]             = useState("");
   const [username, setUsername] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState("");
-  const [ok, setOk] = useState("");
+  const [loading, setLoading]   = useState(false);
+  const [err, setErr]           = useState("");
+  const [ok, setOk]             = useState("");
+  const [forgotMode, setForgotMode] = useState(false);
 
   const submit = async () => {
     if (!email || !pw) { setErr(t("fillFields")); return; }
@@ -807,7 +845,7 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
         const uname = username.trim() || email.split("@")[0];
         const { data, error } = await supabase.auth.signUp({
           email, password: pw,
-          options: { data: { username: uname } },
+          options: { data: { username: uname }, emailRedirectTo: "https://joystick-log.com" },
         });
         if (error) throw error;
         if (data.user) await supabase.from("profiles").upsert({ id: data.user.id, username: uname });
@@ -819,6 +857,19 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
     setLoading(false);
   };
 
+  const sendResetLink = async () => {
+    if (!email) { setErr(t("fillFields")); return; }
+    setLoading(true); setErr(""); setOk("");
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: "https://joystick-log.com",
+      });
+      if (error) throw error;
+      setOk(t("forgotSent"));
+    } catch (e) { setErr(e.message); }
+    setLoading(false);
+  };
+
   return (
     <div onClick={onClose} style={{ position:"fixed", inset:0, zIndex:9999, background:"rgba(0,0,0,.82)", backdropFilter:"blur(18px)", display:"flex", alignItems:"center", justifyContent:"center", padding:20, animation:"fadeIn .2s" }}>
       <div onClick={e => e.stopPropagation()} style={{ width:"100%", maxWidth:420, borderRadius:22, background:"rgba(9,7,7,.98)", border:"1px solid rgba(255,255,255,.07)", overflow:"hidden", animation:"scaleIn .28s cubic-bezier(.34,1.3,.64,1)", boxShadow:"0 60px 120px rgba(0,0,0,.9), 0 0 80px rgba(255,107,53,.06)" }}>
@@ -827,35 +878,120 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:22 }}>
             <div>
               <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:21, color:"#fff", marginBottom:3 }}>
-                {mode === "login" ? t("welcomeBack") : t("joinJoystickLog")}
+                {forgotMode ? t("forgotTitle") : mode === "login" ? t("welcomeBack") : t("joinJoystickLog")}
               </h2>
               <p style={{ color:"rgba(255,255,255,.28)", fontSize:13 }}>
-                {mode === "login" ? t("accessCollection") : t("freeForever")}
+                {forgotMode ? t("forgotDesc") : mode === "login" ? t("accessCollection") : t("freeForever")}
               </p>
             </div>
             <button onClick={onClose} style={{ background:"rgba(255,255,255,.06)", border:"none", borderRadius:8, width:32, height:32, display:"flex", alignItems:"center", justifyContent:"center", color:"rgba(255,255,255,.4)", cursor:"pointer" }}>✕</button>
           </div>
 
-          <div style={{ display:"flex", gap:5, marginBottom:18, background:"rgba(255,255,255,.04)", borderRadius:10, padding:4 }}>
-            {[["login",t("loginTab")],["signup",t("signupTab")]].map(([m,l]) => (
-              <button key={m} onClick={() => { setMode(m); setErr(""); setOk(""); }}
-                style={{ flex:1, background:mode===m?"rgba(255,107,53,.13)":"transparent", color:mode===m?"#ffd166":"rgba(255,255,255,.32)", border:mode===m?"1px solid rgba(255,107,53,.28)":"1px solid transparent", borderRadius:7, padding:"8px", fontSize:13, fontFamily:"'Syne',sans-serif", fontWeight:700, cursor:"pointer", transition:"all .15s" }}>{l}</button>
-            ))}
-          </div>
+          {!forgotMode && (
+            <div style={{ display:"flex", gap:5, marginBottom:18, background:"rgba(255,255,255,.04)", borderRadius:10, padding:4 }}>
+              {[["login",t("loginTab")],["signup",t("signupTab")]].map(([m,l]) => (
+                <button key={m} onClick={() => { setMode(m); setErr(""); setOk(""); }}
+                  style={{ flex:1, background:mode===m?"rgba(255,107,53,.13)":"transparent", color:mode===m?"#ffd166":"rgba(255,255,255,.32)", border:mode===m?"1px solid rgba(255,107,53,.28)":"1px solid transparent", borderRadius:7, padding:"8px", fontSize:13, fontFamily:"'Syne',sans-serif", fontWeight:700, cursor:"pointer", transition:"all .15s" }}>{l}</button>
+              ))}
+            </div>
+          )}
 
           <div style={{ display:"flex", flexDirection:"column", gap:9 }}>
-            {mode === "signup" && <input className="inp" placeholder={t("usernamePlaceholder")} value={username} onChange={e => setUsername(e.target.value)} />}
-            <input className="inp" type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} onKeyDown={e => e.key==="Enter" && submit()} />
-            <input className="inp" type="password" placeholder={t("passwordPlaceholder")} value={pw} onChange={e => setPw(e.target.value)} onKeyDown={e => e.key==="Enter" && submit()} />
+            {!forgotMode && mode === "signup" && (
+              <input className="inp" placeholder={t("usernamePlaceholder")} value={username} onChange={e => setUsername(e.target.value)} />
+            )}
+            <input className="inp" type="email" placeholder="Email" value={email}
+              onChange={e => setEmail(e.target.value)}
+              onKeyDown={e => e.key==="Enter" && (forgotMode ? sendResetLink() : submit())} />
+            {!forgotMode && (
+              <>
+                <input className="inp" type="password" placeholder={t("passwordPlaceholder")} value={pw}
+                  onChange={e => setPw(e.target.value)}
+                  onKeyDown={e => e.key==="Enter" && submit()} />
+                {mode === "login" && (
+                  <button onClick={() => { setForgotMode(true); setErr(""); setOk(""); }}
+                    style={{ background:"none", border:"none", color:"rgba(255,107,53,.6)", cursor:"pointer", fontSize:12, fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, textAlign:"left", padding:0, transition:"color .15s" }}
+                    onMouseEnter={e=>e.currentTarget.style.color="#ff6b35"}
+                    onMouseLeave={e=>e.currentTarget.style.color="rgba(255,107,53,.6)"}>
+                    {t("forgotPw")}
+                  </button>
+                )}
+              </>
+            )}
           </div>
 
           {err && <div style={{ color:"#ff6b6b", fontSize:13, marginTop:10, padding:"9px 12px", background:"rgba(255,77,77,.07)", borderRadius:8, border:"1px solid rgba(255,77,77,.14)" }}>{err}</div>}
-          {ok  && <div style={{ color:"#ffd166", fontSize:13, marginTop:10, padding:"9px 12px", background:"rgba(118,255,71,.07)", borderRadius:8, border:"1px solid rgba(118,255,71,.14)" }}>{ok}</div>}
+          {ok  && <div style={{ color:"#4ade80", fontSize:13, marginTop:10, padding:"9px 12px", background:"rgba(74,222,128,.07)", borderRadius:8, border:"1px solid rgba(74,222,128,.18)" }}>{ok}</div>}
 
-          {!ok && <button className="btn" onClick={submit} disabled={loading} style={{ marginTop:16, width:"100%", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
-            {loading && <div className="spin" style={{ width:15, height:15, borderWidth:2 }} />}
-            {loading ? "..." : mode === "login" ? t("loginSubmit") : t("signupSubmit")}
-          </button>}
+          {forgotMode ? (
+            <div style={{ display:"flex", flexDirection:"column", gap:8, marginTop:16 }}>
+              {!ok && (
+                <button className="btn" onClick={sendResetLink} disabled={loading} style={{ width:"100%", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
+                  {loading && <div className="spin" style={{ width:15, height:15, borderWidth:2 }} />}
+                  {loading ? "…" : t("sendLink")}
+                </button>
+              )}
+              <button onClick={() => { setForgotMode(false); setErr(""); setOk(""); }}
+                style={{ background:"none", border:"none", color:"rgba(255,255,255,.28)", cursor:"pointer", fontSize:13, fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, padding:"6px 0", transition:"color .15s", textAlign:"left" }}
+                onMouseEnter={e=>e.currentTarget.style.color="rgba(255,255,255,.65)"}
+                onMouseLeave={e=>e.currentTarget.style.color="rgba(255,255,255,.28)"}>
+                {t("backToLogin")}
+              </button>
+            </div>
+          ) : (
+            !ok && <button className="btn" onClick={submit} disabled={loading} style={{ marginTop:16, width:"100%", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
+              {loading && <div className="spin" style={{ width:15, height:15, borderWidth:2 }} />}
+              {loading ? "…" : mode === "login" ? t("loginSubmit") : t("signupSubmit")}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── RESET PASSWORD MODAL ─────────────────────────────────── */
+const ResetPasswordModal = ({ onClose, t }) => {
+  const [pw, setPw]   = useState("");
+  const [pw2, setPw2] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+  const [ok, setOk]   = useState(false);
+
+  const submit = async () => {
+    if (pw.length < 6) { setErr(t("pwShort")); return; }
+    if (pw !== pw2)    { setErr(t("resetPwMismatch")); return; }
+    setLoading(true); setErr("");
+    const { error } = await supabase.auth.updateUser({ password: pw });
+    if (error) { setErr(error.message); setLoading(false); return; }
+    setOk(true);
+    setTimeout(() => onClose(), 2200);
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ position:"fixed", inset:0, zIndex:9999, background:"rgba(0,0,0,.82)", backdropFilter:"blur(18px)", display:"flex", alignItems:"center", justifyContent:"center", padding:20, animation:"fadeIn .2s" }}>
+      <div style={{ width:"100%", maxWidth:420, borderRadius:22, background:"rgba(9,7,7,.98)", border:"1px solid rgba(255,255,255,.07)", overflow:"hidden", animation:"scaleIn .28s cubic-bezier(.34,1.3,.64,1)", boxShadow:"0 60px 120px rgba(0,0,0,.9)" }}>
+        <div style={{ height:3, background:"linear-gradient(90deg,#ff6b35 0%,#ffd166 55%,#a78bfa 100%)" }} />
+        <div style={{ padding:"26px 26px 30px" }}>
+          <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:21, color:"#fff", marginBottom:6 }}>{t("resetPwTitle")}</h2>
+          <p style={{ color:"rgba(255,255,255,.28)", fontSize:13, marginBottom:22 }}>{t("resetPwDesc")}</p>
+          {ok ? (
+            <div style={{ textAlign:"center", padding:"20px 0" }}>
+              <div style={{ width:52, height:52, borderRadius:14, background:"rgba(74,222,128,.1)", border:"1px solid rgba(74,222,128,.25)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, margin:"0 auto 14px" }}>✓</div>
+              <div style={{ color:"#4ade80", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:15 }}>{t("resetPwDone")}</div>
+            </div>
+          ) : (
+            <div style={{ display:"flex", flexDirection:"column", gap:9 }}>
+              <input className="inp" type="password" placeholder={t("passwordPlaceholder")} value={pw} onChange={e => setPw(e.target.value)} />
+              <input className="inp" type="password" placeholder={t("resetPwConfirm")} value={pw2} onChange={e => setPw2(e.target.value)} onKeyDown={e => e.key==="Enter" && submit()} />
+              {err && <div style={{ color:"#ff6b6b", fontSize:13, padding:"9px 12px", background:"rgba(255,77,77,.07)", borderRadius:8, border:"1px solid rgba(255,77,77,.14)" }}>{err}</div>}
+              <button className="btn" onClick={submit} disabled={loading} style={{ marginTop:4, width:"100%", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
+                {loading && <div className="spin" style={{ width:15, height:15, borderWidth:2 }} />}
+                {loading ? "…" : t("savePw")}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -1616,11 +1752,15 @@ export default function JoystickLog() {
   const [userLists, setUserLists]           = useState([]);
   const [showCreateList, setShowCreateList] = useState(false);
   const [newListName, setNewListName]       = useState("");
+  const [showResetPw, setShowResetPw]       = useState(false);
 
   /* Auth */
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => { if (data.session?.user) setUser(data.session.user); });
-    const { data:{ subscription } } = supabase.auth.onAuthStateChange((_,s) => setUser(s?.user||null));
+    const { data:{ subscription } } = supabase.auth.onAuthStateChange((event, s) => {
+      setUser(s?.user || null);
+      if (event === "PASSWORD_RECOVERY") setShowResetPw(true);
+    });
     return () => subscription.unsubscribe();
   }, []);
 
@@ -1829,7 +1969,7 @@ export default function JoystickLog() {
       <div style={{ position:"fixed", top:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent 10%,rgba(255,107,53,.4) 50%,transparent 90%)", pointerEvents:"none", zIndex:200 }} />
 
       {/* ── NAV ── */}
-      <nav style={{ position:"sticky", top:0, zIndex:100, height:68, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 32px", background:"rgba(6,5,5,.9)", backdropFilter:"blur(32px) saturate(180%)", borderBottom:"1px solid rgba(255,255,255,.05)" }}>
+      <nav className="top-nav" style={{ position:"sticky", top:0, zIndex:100, height:68, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 32px", background:"rgba(6,5,5,.9)", backdropFilter:"blur(32px) saturate(180%)", borderBottom:"1px solid rgba(255,255,255,.05)" }}>
         {/* Animated bottom border */}
         <div style={{ position:"absolute", bottom:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent 0%,rgba(255,107,53,.22) 30%,rgba(255,209,102,.3) 50%,rgba(255,107,53,.22) 70%,transparent 100%)", pointerEvents:"none" }} />
 
@@ -1859,7 +1999,7 @@ export default function JoystickLog() {
         </div>
 
         {/* Center nav */}
-        <div className="nav-center" style={{ display:"flex", gap:0, borderBottom:"1px solid rgba(255,255,255,.07)", paddingBottom:2 }}>
+        <div className="nav-center" style={{ gap:0, borderBottom:"1px solid rgba(255,255,255,.07)", paddingBottom:2 }}>
           {[["home",t("home")],["explore",t("explore")],["discover",t("discover")],["profile",t("profile")]].map(([id,label]) => (
             <button key={id} className={`nav-btn ${tab===id?"active":""}`} onClick={()=>setTab(id)}>{label}</button>
           ))}
@@ -1897,13 +2037,13 @@ export default function JoystickLog() {
           <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(9,8,14,1) 0%,rgba(9,8,14,.18) 42%,transparent 100%)", zIndex:1 }} />
 
           {/* Left: text content */}
-          <div style={{ position:"relative", zIndex:2, flex:1, display:"flex", flexDirection:"column", justifyContent:"center", padding:"80px 6% 100px", maxWidth:680 }}>
+          <div className="hero-txt" style={{ position:"relative", zIndex:2, flex:1, display:"flex", flexDirection:"column", justifyContent:"center", padding:"80px 6% 100px", maxWidth:680 }}>
             <div className="fu" style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,107,53,.08)", border:"1px solid rgba(255,107,53,.22)", borderRadius:99, padding:"6px 16px", marginBottom:30, width:"fit-content" }}>
               <div style={{ width:6, height:6, borderRadius:"50%", background:"#ff6b35", animation:"pulse 2s infinite" }} />
               <span style={{ fontSize:11, color:"rgba(255,107,53,.85)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:1.5, textTransform:"uppercase" }}>{t("badge")}</span>
             </div>
 
-            <h1 className="fu2" style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:"clamp(52px,6.8vw,96px)", lineHeight:.87, letterSpacing:"-3.5px", marginBottom:26 }}>
+            <h1 className="fu2 hero-h1" style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:"clamp(52px,6.8vw,96px)", lineHeight:.87, letterSpacing:"-3.5px", marginBottom:26 }}>
               <span className="grad-text">{t("heroRate")}</span><span style={{ color:"rgba(255,107,53,.5)" }}>.</span><br/>
               <span style={{ color:"rgba(255,255,255,.9)" }}>{t("heroCritic")}</span><span style={{ color:"rgba(255,255,255,.1)" }}>.</span><br/>
               <span style={{ color:"rgba(255,255,255,.42)" }}>{t("heroShare")}</span><span style={{ color:"rgba(255,255,255,.06)" }}>.</span>
@@ -1913,7 +2053,7 @@ export default function JoystickLog() {
               {t("heroDesc")}
             </p>
 
-            <div className="fu4" style={{ display:"flex", alignItems:"center", gap:14, flexWrap:"wrap" }}>
+            <div className="fu4 hero-btns" style={{ display:"flex", alignItems:"center", gap:14, flexWrap:"wrap" }}>
               {!user && <button className="btn" onClick={()=>setShowAuth(true)} style={{ padding:"14px 34px", fontSize:15 }}>{t("startFree")}</button>}
               <button onClick={()=>setTab("explore")} style={{ background:"none", border:"1px solid rgba(255,255,255,.11)", borderRadius:11, color:"rgba(255,255,255,.38)", cursor:"pointer", fontSize:14, padding:"13px 22px", fontFamily:"'Syne',sans-serif", fontWeight:600, transition:"all .2s" }}
                 onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.28)";e.currentTarget.style.color="rgba(255,255,255,.75)";}}
@@ -1922,7 +2062,7 @@ export default function JoystickLog() {
               </button>
             </div>
 
-            <div style={{ display:"flex", gap:10, marginTop:52, flexWrap:"wrap" }}>
+            <div className="hero-stats" style={{ display:"flex", gap:10, marginTop:52, flexWrap:"wrap" }}>
               {[
                 {n:"∞", l:t("igdbGames"), hot:true},
                 {n:"100%", l:t("free"), hot:true},
@@ -2026,7 +2166,7 @@ export default function JoystickLog() {
         </div>
       )}
 
-      <div style={{ maxWidth:1180, margin:"0 auto", padding:"0 22px 80px", position:"relative", zIndex:1 }}>
+      <div className="main-container" style={{ maxWidth:1180, margin:"0 auto", padding:"0 22px 80px", position:"relative", zIndex:1 }}>
 
         {/* ══ HOME GRID ══ */}
         {tab==="home" && (
@@ -2045,12 +2185,12 @@ export default function JoystickLog() {
               </button>
             </div>
             {loadingTop ? (
-              <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr 1fr", gap:11 }}>
+              <div className="top-games-grid" style={{ display:"grid", gridTemplateColumns:"2fr 1fr 1fr", gap:11 }}>
                 <div className="skel" style={{ height:290, borderRadius:18 }} />
                 <Skel /><Skel />
               </div>
             ) : topGames.length>0 ? (
-              <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr 1fr", gap:11 }}>
+              <div className="top-games-grid" style={{ display:"grid", gridTemplateColumns:"2fr 1fr 1fr", gap:11 }}>
                 {topGames.slice(0,3).map((g,i)=> i===0 ? <FeaturedCard key={g.id} game={g} onClick={setSelected}/> : <GameCard key={g.id} game={g} onClick={setSelected} rank={i+1} userRating={userRatings[g.id]?.rating}/>)}
               </div>
             ) : <div style={{ textAlign:"center", padding:"50px 0", color:"rgba(255,255,255,.2)", fontFamily:"'Syne',sans-serif" }}>{t("loadError")}</div>}
@@ -2152,7 +2292,7 @@ export default function JoystickLog() {
           <div className="fu" style={{ paddingTop:42 }}>
             {/* Header */}
             <div style={{ marginBottom:32, paddingBottom:28, borderBottom:"1px solid rgba(255,255,255,.05)" }}>
-              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:20, marginBottom:20 }}>
+              <div className="explore-hdr" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", flexWrap:"wrap", gap:20, marginBottom:20 }}>
                 <div className="sect-h">
                   <div>
                     <div style={{ fontSize:10, color:"rgba(255,107,53,.55)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:4 }}>{t("igdbTag")}</div>
@@ -2160,7 +2300,7 @@ export default function JoystickLog() {
                   </div>
                 </div>
                 {/* Search bar */}
-                <div style={{ position:"relative", flexShrink:0 }}>
+                <div className="explore-search" style={{ position:"relative", flexShrink:0 }}>
                   <input value={searchQ} onChange={e=>setSearchQ(e.target.value)}
                     placeholder={t("searchPlaceholder")}
                     style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.09)", borderRadius:14, color:"rgba(255,255,255,.88)", padding:"12px 46px 12px 46px", fontSize:14, width:320, outline:"none", transition:"all .22s" }}
@@ -2495,7 +2635,28 @@ export default function JoystickLog() {
           t={t}
         />
       )}
+      {/* ── MOBILE BOTTOM NAV ── */}
+      <nav className="mob-nav-bar">
+        <button className={`mob-nav-btn${tab==="home"?" active":""}`} onClick={()=>setTab("home")}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>{t("home")}</span>
+        </button>
+        <button className={`mob-nav-btn${tab==="explore"?" active":""}`} onClick={()=>setTab("explore")}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>{t("explore")}</span>
+        </button>
+        <button className={`mob-nav-btn${tab==="discover"?" active":""}`} onClick={()=>setTab("discover")}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+          <span>{t("discover")}</span>
+        </button>
+        <button className={`mob-nav-btn${tab==="profile"?" active":""}`} onClick={()=>setTab("profile")}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>{t("profile")}</span>
+        </button>
+      </nav>
+
       {showAuth && <AuthModal onClose={()=>setShowAuth(false)} onSuccess={u=>{ setUser(u); setShowAuth(false); }} t={t}/>}
+      {showResetPw && <ResetPasswordModal onClose={()=>setShowResetPw(false)} t={t}/>}
     </div>
   );
 }
