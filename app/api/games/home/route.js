@@ -15,7 +15,7 @@ export async function GET() {
   const twelveMonthsAgo = now - 365 * 24 * 3600;
   const fields = 'fields name,cover.url,first_release_date,rating,total_rating_count,genres.name,platforms.name,summary,videos.video_id;';
 
-  const [trending, upcoming, gems] = await Promise.all([
+  const [trending, upcoming, gems, top] = await Promise.all([
     // Trending: games released in last 12 months with decent ratings
     fetch('https://api.igdb.com/v4/games', {
       method: 'POST',
@@ -36,11 +36,19 @@ export async function GET() {
       headers,
       body: `${fields} where cover != null & parent_game = null & rating > 82 & total_rating_count >= 5 & total_rating_count < 300; sort rating desc; limit 20;`,
     }).then(r => r.json()),
+
+    // Top all-time: highest total_rating_count with good rating
+    fetch('https://api.igdb.com/v4/games', {
+      method: 'POST',
+      headers,
+      body: `${fields} where cover != null & parent_game = null & rating > 75 & total_rating_count > 200; sort total_rating_count desc; limit 12;`,
+    }).then(r => r.json()),
   ]);
 
   return Response.json({
     trending: Array.isArray(trending) ? trending : [],
     upcoming: Array.isArray(upcoming) ? upcoming : [],
     gems:     Array.isArray(gems)     ? gems     : [],
+    top:      Array.isArray(top)      ? top      : [],
   });
 }

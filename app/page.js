@@ -31,7 +31,7 @@ const PLATFORMS_FILTER = [
   // Other
   "Neo Geo","TurboGrafx-16","3DO","Commodore 64","Amiga","Arcade",
 ];
-const ALL_TAGS = ["Open World","RPG","Action","Aventure","Platformer","Roguelike","Metroidvania","Souls-like","Simulation","Rétro","Difficile","Narratif","Multijoueur","Indie","Horreur","Sport","FPS","Puzzle"];
+const ALL_TAGS = ["Open World","RPG","Action","Aventure","Platformer","Roguelike","Souls-like","Simulation","Rétro","Difficile","Narratif","Multijoueur","Indie","Horreur","Sport","FPS","Puzzle"];
 
 const STATUS_CONFIG = {
   wishlist:  { label: "Envie de jouer", icon: "🔖", color: "#a78bfa" },
@@ -358,17 +358,18 @@ const formatRating = r => r ? Math.min(10, Math.round(r / 10)) : null;
 const formatCover  = url => url ? `https:${url.replace("t_thumb","t_cover_big_2x")}` : null;
 const formatYear   = ts  => ts  ? new Date(ts * 1000).getFullYear() : "—";
 const formatGame   = g   => ({
-  id:       g.id,
-  title:    g.name || "Inconnu",
-  platform: g.platforms?.[0]?.name || "Multi",
-  year:     formatYear(g.first_release_date),
-  genre:    g.genres?.[0]?.name || "Jeu vidéo",
-  cover:    formatCover(g.cover?.url),
-  rating:   formatRating(g.rating),
-  reviews:  g.total_rating_count || 0,
-  tags:     g.genres?.map(x => x.name).slice(0,4) || [],
-  summary:  g.summary || "",
-  videoId:  g.videos?.[0]?.video_id || null,
+  id:          g.id,
+  title:       g.name || "Inconnu",
+  platform:    g.platforms?.[0]?.name || "Multi",
+  allPlatforms:g.platforms?.map(p => p.name) || [],
+  year:        formatYear(g.first_release_date),
+  genre:       g.genres?.[0]?.name || "Jeu vidéo",
+  cover:       formatCover(g.cover?.url),
+  rating:      formatRating(g.rating),
+  reviews:     g.total_rating_count || 0,
+  tags:        g.genres?.map(x => x.name).slice(0,4) || [],
+  summary:     g.summary || "",
+  videoId:     g.videos?.[0]?.video_id || null,
 });
 
 const timeAgo = ts => {
@@ -554,6 +555,14 @@ const CSS = `
   .activity-item:hover{background:rgba(255,107,53,.04);border-color:rgba(255,107,53,.15);transform:translateX(4px);}
 
   @media(max-width:900px){.gp-grid{grid-template-columns:1fr!important;}}
+
+  /* ── Footer ──────────────────────────────────────────────── */
+  .site-footer{border-top:1px solid rgba(255,255,255,.055);padding:48px 0 40px;margin-top:80px;}
+  .site-footer a,.site-footer button{color:rgba(255,255,255,.3);background:none;border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;letter-spacing:.2px;text-decoration:none;transition:color .18s;padding:0;}
+  .site-footer a:hover,.site-footer button:hover{color:rgba(255,255,255,.7);}
+  .legal-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(12px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .legal-modal{background:linear-gradient(160deg,#131020,#0e0c18);border:1px solid rgba(255,255,255,.09);border-radius:22px;max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:36px 38px;}
+  @media(max-width:640px){.site-footer{margin-bottom:80px;}.legal-modal{padding:24px 20px;}}
 
   /* ── Mobile bottom nav ───────────────────────────────────── */
   .mob-nav-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(6,5,5,.96);backdrop-filter:blur(28px) saturate(180%);border-top:1px solid rgba(255,255,255,.07);padding-bottom:env(safe-area-inset-bottom,0);}
@@ -999,7 +1008,7 @@ const ResetPasswordModal = ({ onClose, t }) => {
 };
 
 /* ── CINEMATIC GAME PAGE ──────────────────────────────────── */
-const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired, username, userLists, t }) => {
+const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired, username, userLists, lang, t }) => {
   const [myR, setMyR] = useState(userRatings[game.id]?.rating || 0);
   const [hovR, setHovR] = useState(0);
   const [txt, setTxt] = useState(userRatings[game.id]?.comment || "");
@@ -1018,6 +1027,8 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
   const [series, setSeries] = useState([]);
   const [showListMenu, setShowListMenu] = useState(false);
   const [addedToList, setAddedToList] = useState(null);
+  const [translatedSummary, setTranslatedSummary] = useState(null);
+  const [translating, setTranslating] = useState(false);
 
   const DLC_LABELS = { 1:t("dlcDLC"), 2:t("dlcExpansion"), 4:t("dlcStandalone") };
 
@@ -1029,6 +1040,20 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
       }
     });
   }, [game.id]);
+
+  useEffect(() => {
+    if (!game.summary || lang === "en") { setTranslatedSummary(null); return; }
+    setTranslating(true);
+    setTranslatedSummary(null);
+    fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${lang}&dt=t&q=${encodeURIComponent(game.summary)}`)
+      .then(r => r.json())
+      .then(data => {
+        const translated = data?.[0]?.map(s => s?.[0]).filter(Boolean).join("") || null;
+        setTranslatedSummary(translated);
+      })
+      .catch(() => {})
+      .finally(() => setTranslating(false));
+  }, [game.id, lang]);
 
   const EMOJIS = ["❤️","🔥","💯","😂","👏","😮"];
 
@@ -1209,7 +1234,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
           {/* Summary */}
           {game.summary && (
             <p style={{ fontSize:15, color:"rgba(255,255,255,.5)", maxWidth:560, lineHeight:1.75, fontFamily:"'DM Sans',sans-serif", marginBottom:28 }}>
-              {game.summary.length > 240 ? game.summary.slice(0,240)+"…" : game.summary}
+              {(() => { const s = translatedSummary || game.summary; return s.length > 240 ? s.slice(0,240)+"…" : s; })()}
             </p>
           )}
 
@@ -1460,11 +1485,14 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
             {/* ── SYNOPSIS ── */}
             {game.summary && (
               <div style={{ background:"rgba(255,255,255,.022)", border:"1px solid rgba(255,255,255,.07)", borderRadius:20, padding:"22px 26px" }}>
-                <div style={{ fontSize:10, color:"rgba(255,107,53,.65)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:3, textTransform:"uppercase", marginBottom:14 }}>{t("synopsis")}</div>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}>
+                  <div style={{ fontSize:10, color:"rgba(255,107,53,.65)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:3, textTransform:"uppercase" }}>{t("synopsis")}</div>
+                  {translating && <div className="spin" style={{ width:12, height:12, borderWidth:1.5 }} />}
+                </div>
                 <p style={{ color:"rgba(255,255,255,.52)", fontSize:14, lineHeight:1.85, fontFamily:"'DM Sans',sans-serif", margin:0 }}>
-                  {expanded || game.summary.length <= 300 ? game.summary : game.summary.slice(0,300)+"…"}
+                  {(() => { const s = translatedSummary || game.summary; return expanded || s.length <= 300 ? s : s.slice(0,300)+"…"; })()}
                 </p>
-                {game.summary.length > 300 && (
+                {(translatedSummary || game.summary).length > 300 && (
                   <button onClick={() => setExpanded(!expanded)} style={{ background:"none", border:"none", color:"rgba(255,107,53,.7)", cursor:"pointer", fontSize:13, padding:"10px 0 0", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600 }}>
                     {expanded ? t("readLess") : t("readMore")}
                   </button>
@@ -1475,7 +1503,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
             {/* ── INFO GRID ── */}
             <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:10 }}>
               {[
-                { icon:"🖥", label:t("platform"), value:game.platform.split("(")[0].trim() },
+                { icon:"🖥", label:t("platform"), value: (() => { const p = game.allPlatforms?.length > 0 ? game.allPlatforms : [game.platform]; const shown = p.slice(0,5).map(x=>x.split("(")[0].trim()).join(", "); return p.length > 5 ? shown + ` +${p.length-5}` : shown; })() },
                 { icon:"📅", label:t("releaseYear"), value:game.year },
                 { icon:"🎭", label:t("mainGenre"), value:game.genre },
                 { icon:"💬", label:t("communityCount"), value:communityReviews.length > 0 ? `${communityReviews.length} ${t("avisCount")}` : t("beFirst") },
@@ -1679,6 +1707,107 @@ const UsernameEdit = ({ user, profileUsername, setProfileUsername, t }) => {
   );
 };
 
+/* ── LEGAL MODAL ──────────────────────────────────────────── */
+const LEGAL_CONTENT = {
+  tos: {
+    title: "Terms of Service",
+    body: `Last updated: April 2026
+
+1. ACCEPTANCE
+By accessing JoystickLog you agree to these terms. If you do not agree, do not use the service.
+
+2. SERVICE
+JoystickLog is a free platform allowing users to rate, review and track video games. We reserve the right to modify or discontinue the service at any time.
+
+3. USER ACCOUNTS
+You are responsible for maintaining the confidentiality of your account. You must not create accounts via automated means or share misleading information.
+
+4. USER CONTENT
+You retain ownership of content you submit (reviews, ratings). By submitting content you grant JoystickLog a non-exclusive, royalty-free licence to display it. You must not post content that is illegal, abusive or infringing third-party rights.
+
+5. GAME DATA
+Game information (titles, covers, descriptions) is provided by IGDB (Internet Game Database) under their terms. JoystickLog is not responsible for inaccuracies in third-party data.
+
+6. INTELLECTUAL PROPERTY
+The JoystickLog name, logo and interface are the property of their respective owners. Unauthorized reproduction is prohibited.
+
+7. LIMITATION OF LIABILITY
+JoystickLog is provided "as is" without warranties. We shall not be liable for any indirect or consequential damages arising from use of the service.
+
+8. GOVERNING LAW
+These terms are governed by the laws of France. Any dispute shall be subject to the jurisdiction of French courts.
+
+Contact: support@joysticklog.app`,
+  },
+  privacy: {
+    title: "Privacy Policy",
+    body: `Last updated: April 2026
+
+1. DATA COLLECTED
+- Account data: email address, username (required for registration)
+- Usage data: game ratings, reviews, wishlist and status entries you create
+- Technical data: browser type, approximate timezone (for language detection)
+We do not collect payment data. We do not sell your personal data.
+
+2. HOW WE USE YOUR DATA
+- Provide and improve the service
+- Display your public profile and ratings to other users
+- Send transactional emails (password reset, account confirmation)
+
+3. DATA STORAGE
+Your data is stored securely via Supabase (EU region). We apply industry-standard security measures.
+
+4. THIRD-PARTY SERVICES
+- IGDB / Twitch API: game data (no personal data shared)
+- Google Translate API: synopsis translation (text only, no account data)
+- Supabase: database and authentication
+
+5. YOUR RIGHTS (GDPR)
+You have the right to: access, rectify, delete your data, and object to processing. To exercise these rights contact us at: privacy@joysticklog.app
+
+6. COOKIES
+We use only technically necessary cookies for session management. No advertising or tracking cookies.
+
+7. CONTACT
+Data controller: JoystickLog — privacy@joysticklog.app`,
+  },
+  legal: {
+    title: "Legal Notices",
+    body: `PUBLISHER
+JoystickLog
+Contact: support@joysticklog.app
+
+HOSTING
+Vercel Inc. — 340 Pine Street, Suite 701, San Francisco, CA 94104, USA
+Supabase Inc. (database) — EU region servers
+
+INTELLECTUAL PROPERTY
+The JoystickLog platform, its design and original content are protected by copyright. Game data is provided by IGDB (Twitch Interactive, Inc.) under their API terms of service.
+
+DISCLAIMER
+JoystickLog makes no warranty as to the accuracy or completeness of game information sourced from IGDB. Users are responsible for the content they submit.
+
+CONTACT
+For any enquiry: support@joysticklog.app`,
+  },
+};
+
+const LegalModal = ({ type, onClose }) => {
+  const content = LEGAL_CONTENT[type];
+  if (!content) return null;
+  return (
+    <div className="legal-modal-overlay" onClick={onClose}>
+      <div className="legal-modal" onClick={e=>e.stopPropagation()}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
+          <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:"#fff" }}>{content.title}</div>
+          <button onClick={onClose} style={{ background:"rgba(255,255,255,.06)", border:"1px solid rgba(255,255,255,.1)", borderRadius:8, color:"rgba(255,255,255,.5)", cursor:"pointer", width:32, height:32, display:"flex", alignItems:"center", justifyContent:"center", fontSize:16 }}>✕</button>
+        </div>
+        <pre style={{ whiteSpace:"pre-wrap", fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:13, color:"rgba(255,255,255,.45)", lineHeight:1.85, margin:0 }}>{content.body}</pre>
+      </div>
+    </div>
+  );
+};
+
 /* ── ACTIVITY ITEM ────────────────────────────────────────── */
 const ActivityItem = ({ item, onClick }) => {
   const col = rc(item.rating);
@@ -1746,13 +1875,14 @@ export default function JoystickLog() {
   const [trendingGames, setTrendingGames] = useState([]);
   const [upcomingGames, setUpcomingGames] = useState([]);
   const [gemGames, setGemGames]           = useState([]);
-  const [communityStats, setCommunityStats] = useState({ ratings: 0, tracked: 0 });
+  const [communityStats, setCommunityStats] = useState(null);
   const [activityFeed, setActivityFeed]     = useState([]);
   const [popularGames, setPopularGames]     = useState([]);
   const [userLists, setUserLists]           = useState([]);
   const [showCreateList, setShowCreateList] = useState(false);
   const [newListName, setNewListName]       = useState("");
   const [showResetPw, setShowResetPw]       = useState(false);
+  const [legalModal, setLegalModal]         = useState(null);
 
   /* Auth */
   useEffect(() => {
@@ -1801,27 +1931,23 @@ export default function JoystickLog() {
     });
   }, [user]);
 
-  /* Top games */
-  useEffect(() => {
-    Promise.all(POPULAR_QUERIES.slice(0,3).map(q => fetch(`/api/games?q=${q}`).then(r=>r.json())))
-      .then(results => {
-        const all = results.flat().map(formatGame).filter(g => g.cover && g.rating);
-        const unique = [...new Map(all.map(g=>[g.id,g])).values()].sort((a,b)=>(b.rating||0)-(a.rating||0)).slice(0,9);
-        setTopGames(unique); setLoadingTop(false);
-      }).catch(()=>setLoadingTop(false));
-  }, []);
-
-  /* Home extra sections: trending, upcoming, gems + community stats */
+  /* Home extra sections: trending, upcoming, gems, top + community stats */
   useEffect(() => {
     fetch('/api/games/home').then(r=>r.json()).then(data => {
       if (data.trending) setTrendingGames((data.trending||[]).map(formatGame).filter(g=>g.cover));
       if (data.upcoming) setUpcomingGames((data.upcoming||[]).map(formatGame).filter(g=>g.cover));
       if (data.gems)     setGemGames((data.gems||[]).map(formatGame).filter(g=>g.cover));
-    }).catch(()=>{});
+      if (data.top) {
+        const top = (data.top||[]).map(formatGame).filter(g=>g.cover && g.rating);
+        setTopGames(top);
+      }
+      setLoadingTop(false);
+    }).catch(()=>setLoadingTop(false));
     Promise.all([
       supabase.from('ratings').select('*', { count:'exact', head:true }),
       supabase.from('game_status').select('*', { count:'exact', head:true }),
-    ]).then(([r, s]) => setCommunityStats({ ratings: r.count||0, tracked: s.count||0 })).catch(()=>{});
+    ]).then(([r, s]) => setCommunityStats({ ratings: r.count ?? 0, tracked: s.count ?? 0 }))
+      .catch(() => setCommunityStats({ ratings: 0, tracked: 0 }));
   }, []);
 
   /* Activity feed + popular on platform */
@@ -1830,7 +1956,7 @@ export default function JoystickLog() {
       .select("user_id, game_id, rating, comment, user_display, game_title, game_cover, updated_at")
       .order("updated_at", { ascending: false })
       .limit(20)
-      .then(({ data }) => { if (data) setActivityFeed(data.filter(d => d.game_title && d.user_display)); })
+      .then(({ data }) => { if (data) setActivityFeed(data.filter(d => d.game_title)); })
       .catch(() => {});
     supabase.from("ratings")
       .select("game_id, game_title, game_cover, rating")
@@ -2066,10 +2192,10 @@ export default function JoystickLog() {
               {[
                 {n:"∞", l:t("igdbGames"), hot:true},
                 {n:"100%", l:t("free"), hot:true},
-                {n: communityStats.ratings > 0 ? communityStats.ratings.toLocaleString() : "…", l:t("communityRatings"), hot:false},
-                {n: communityStats.tracked > 0 ? communityStats.tracked.toLocaleString() : "…", l:t("communityTracked"), hot:false},
-                {n:user?Object.keys(userRatings).length:"—", l:t("myRatings"), hot:false},
-                {n:user?Object.keys(userStatus).length:"—", l:t("myList"), hot:false},
+                {n: communityStats === null ? "…" : communityStats.ratings.toLocaleString(), l:t("communityRatings"), hot:false},
+                {n: communityStats === null ? "…" : communityStats.tracked.toLocaleString(), l:t("communityTracked"), hot:false},
+                {n: user ? Object.keys(userRatings).length : "—", l:t("myRatings"), hot:false},
+                {n: user ? Object.keys(userStatus).length : "—", l:t("myList"), hot:false},
               ].map((s,i)=>(
                 <div key={i} className="stat-mini">
                   <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:26, color: s.hot ? "#ff6b35" : "rgba(255,255,255,.8)", lineHeight:1, marginBottom:5, textShadow: s.hot ? "0 0 28px rgba(255,107,53,.5)" : "none" }}>{s.n}</div>
@@ -2632,9 +2758,29 @@ export default function JoystickLog() {
           onAuthRequired={()=>{ setSelected(null); setShowAuth(true); }}
           username={profileUsername}
           userLists={userLists}
+          lang={lang}
           t={t}
         />
       )}
+      {/* ── FOOTER ── */}
+      {!selected && (
+        <footer className="site-footer main-container">
+          <div style={{ display:"flex", flexWrap:"wrap", alignItems:"center", justifyContent:"space-between", gap:16 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+              <span style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:15, color:"rgba(255,255,255,.55)", letterSpacing:"-.3px" }}>JoystickLog</span>
+              <span style={{ color:"rgba(255,255,255,.12)", fontSize:12 }}>·</span>
+              <span style={{ fontSize:11, color:"rgba(255,255,255,.18)", fontFamily:"'Space Grotesk',sans-serif" }}>© {new Date().getFullYear()}</span>
+            </div>
+            <div style={{ display:"flex", gap:20, flexWrap:"wrap" }}>
+              <button className="site-footer" onClick={()=>setLegalModal("tos")}>Terms of Service</button>
+              <button className="site-footer" onClick={()=>setLegalModal("privacy")}>Privacy Policy</button>
+              <button className="site-footer" onClick={()=>setLegalModal("legal")}>Legal Notices</button>
+              <a className="site-footer" href="mailto:support@joysticklog.app">Contact</a>
+            </div>
+          </div>
+        </footer>
+      )}
+
       {/* ── MOBILE BOTTOM NAV ── */}
       <nav className="mob-nav-bar">
         <button className={`mob-nav-btn${tab==="home"?" active":""}`} onClick={()=>setTab("home")}>
@@ -2657,6 +2803,7 @@ export default function JoystickLog() {
 
       {showAuth && <AuthModal onClose={()=>setShowAuth(false)} onSuccess={u=>{ setUser(u); setShowAuth(false); }} t={t}/>}
       {showResetPw && <ResetPasswordModal onClose={()=>setShowResetPw(false)} t={t}/>}
+      {legalModal && <LegalModal type={legalModal} onClose={()=>setLegalModal(null)}/>}
     </div>
   );
 }
