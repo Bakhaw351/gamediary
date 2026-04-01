@@ -1843,10 +1843,10 @@ export default function JoystickLog() {
         <div style={{ position:"relative", minHeight:"92vh", display:"flex", overflow:"hidden" }}>
           {/* Blurred background from #1 game cover */}
           {!loadingTop && topGames[0]?.cover && (
-            <div style={{ position:"absolute", inset:0, backgroundImage:`url(${topGames[0].cover})`, backgroundSize:"cover", backgroundPosition:"center", filter:"brightness(.18) saturate(1.6) blur(28px)", transform:"scale(1.1)", zIndex:0 }} />
+            <div style={{ position:"absolute", inset:0, backgroundImage:`url(${topGames[0].cover})`, backgroundSize:"cover", backgroundPosition:"center", filter:"brightness(.28) saturate(1.8) blur(24px)", transform:"scale(1.1)", zIndex:0 }} />
           )}
-          <div style={{ position:"absolute", inset:0, background:"linear-gradient(120deg,rgba(6,7,8,.98) 0%,rgba(6,7,8,.82) 40%,rgba(6,7,8,.35) 100%)", zIndex:1 }} />
-          <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(6,7,8,1) 0%,rgba(6,7,8,.3) 50%,transparent 100%)", zIndex:1 }} />
+          <div style={{ position:"absolute", inset:0, background:"linear-gradient(120deg,rgba(9,8,14,.97) 0%,rgba(9,8,14,.78) 42%,rgba(9,8,14,.22) 100%)", zIndex:1 }} />
+          <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(9,8,14,1) 0%,rgba(9,8,14,.25) 45%,transparent 100%)", zIndex:1 }} />
 
           {/* Left: text content */}
           <div style={{ position:"relative", zIndex:2, flex:1, display:"flex", flexDirection:"column", justifyContent:"center", padding:"80px 6% 100px", maxWidth:680 }}>
@@ -1891,59 +1891,51 @@ export default function JoystickLog() {
             </div>
           </div>
 
-          {/* Right: stacked top 3 covers */}
-          {!loadingTop && topGames.length>=3 && (
-            <div className="hide-m fu" style={{ position:"relative", zIndex:2, flex:1, display:"flex", alignItems:"center", justifyContent:"center", padding:"80px 6% 100px 0" }}>
-              <div style={{ position:"relative", width:340, height:460 }}>
-                {/* #3 — back left, rotated + floating */}
-                <div className="hf2" style={{ position:"absolute", top:30, left:0, zIndex:1 }}>
-                  <div onClick={()=>setSelected(topGames[2])} style={{ width:185, borderRadius:16, overflow:"hidden", border:"1px solid rgba(255,255,255,.09)", boxShadow:"0 28px 70px rgba(0,0,0,.75)", cursor:"pointer", transform:"rotate(-7deg)", transition:"transform .32s cubic-bezier(.34,1.4,.64,1)" }}
-                    onMouseEnter={e=>e.currentTarget.style.transform="rotate(-7deg) translateY(-10px) scale(1.04)"}
-                    onMouseLeave={e=>e.currentTarget.style.transform="rotate(-7deg)"}>
-                    <div style={{ position:"relative", paddingBottom:"140%" }}>
-                      <img src={topGames[2].cover} alt={topGames[2].title} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }} />
-                      <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.7) 0%,transparent 55%)" }} />
-                      <div style={{ position:"absolute", bottom:11, left:11, right:11 }}>
-                        <div style={{ fontSize:9, color:"#ffd166", fontWeight:800, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:1.2, marginBottom:3 }}>#3</div>
-                        <div style={{ fontSize:11, color:"#fff", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2 }}>{topGames[2].title.length>15?topGames[2].title.slice(0,15)+"…":topGames[2].title}</div>
-                      </div>
-                    </div>
+          {/* Right: 3D cover grid */}
+          {!loadingTop && topGames.length>=6 && (
+            <div className="hide-m fu" style={{ position:"relative", zIndex:2, flex:"0 0 52%", display:"flex", alignItems:"center", justifyContent:"flex-end", padding:"60px 4% 80px 0", maskImage:"linear-gradient(to right,transparent 0%,rgba(0,0,0,.5) 14%,black 38%)", WebkitMaskImage:"linear-gradient(to right,transparent 0%,rgba(0,0,0,.5) 14%,black 38%)" }}>
+              <div style={{ display:"flex", gap:10, transform:"perspective(1600px) rotateY(-10deg) rotateX(4deg)", transformOrigin:"right center" }}>
+                {[0,1,2].map(col => (
+                  <div key={col} style={{ display:"flex", flexDirection:"column", gap:10, marginTop: col===0 ? 60 : col===1 ? 20 : 0 }}>
+                    {[0,1,2].map(row => {
+                      const idx = col * 3 + row;
+                      const game = topGames[idx % topGames.length];
+                      if (!game?.cover) return null;
+                      const isHero = idx === 0;
+                      return (
+                        <div key={row} onClick={()=>setSelected(game)}
+                          style={{ width: isHero ? 168 : 148, borderRadius:14, overflow:"hidden", cursor:"pointer",
+                            boxShadow: isHero ? "0 28px 64px rgba(0,0,0,.85), 0 0 40px rgba(255,107,53,.18)" : "0 14px 38px rgba(0,0,0,.7)",
+                            border: isHero ? "1px solid rgba(255,107,53,.35)" : "1px solid rgba(255,255,255,.07)",
+                            transition:"transform .3s cubic-bezier(.34,1.4,.64,1), box-shadow .3s", flexShrink:0 }}
+                          onMouseEnter={e=>{ e.currentTarget.style.transform="translateY(-8px) scale(1.04)"; e.currentTarget.style.boxShadow="0 32px 72px rgba(0,0,0,.9), 0 0 30px rgba(255,107,53,.22)"; }}
+                          onMouseLeave={e=>{ e.currentTarget.style.transform=""; e.currentTarget.style.boxShadow= isHero ? "0 28px 64px rgba(0,0,0,.85), 0 0 40px rgba(255,107,53,.18)" : "0 14px 38px rgba(0,0,0,.7)"; }}>
+                          <div style={{ position:"relative", paddingBottom:"140%" }}>
+                            <img src={game.cover} alt={game.title} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }} />
+                            <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.72) 0%,transparent 52%)" }} />
+                            {isHero && (
+                              <>
+                                <div style={{ position:"absolute", top:9, left:9 }}>
+                                  <span style={{ background:"linear-gradient(135deg,#ff6b35,#ffd166)", color:"#030401", borderRadius:6, padding:"3px 10px", fontSize:9, fontWeight:800, fontFamily:"'Space Grotesk',sans-serif", boxShadow:"0 2px 12px rgba(255,107,53,.5)" }}>#1</span>
+                                </div>
+                                <div style={{ position:"absolute", top:7, right:7 }}><Ring value={game.rating} size={38} /></div>
+                              </>
+                            )}
+                            {!isHero && idx < 6 && (
+                              <div style={{ position:"absolute", top:7, left:7 }}>
+                                <span style={{ background:"rgba(0,0,0,.55)", backdropFilter:"blur(6px)", border:"1px solid rgba(255,255,255,.1)", color:"rgba(255,209,102,.8)", borderRadius:5, padding:"2px 8px", fontSize:8, fontWeight:800, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:.8 }}>#{idx+1}</span>
+                              </div>
+                            )}
+                            <div style={{ position:"absolute", bottom:9, left:9, right:9 }}>
+                              <div style={{ fontSize: isHero ? 13 : 10, color:"#fff", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2, textShadow:"0 1px 8px rgba(0,0,0,.9)" }}>{game.title.length>16?game.title.slice(0,16)+"…":game.title}</div>
+                              {isHero && <div style={{ fontSize:9, color:"rgba(255,255,255,.35)", fontFamily:"'DM Sans',sans-serif", marginTop:2 }}>{game.year} · {game.genre}</div>}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                </div>
-                {/* #2 — back right, rotated + floating */}
-                <div className="hf3" style={{ position:"absolute", top:10, right:0, zIndex:2 }}>
-                  <div onClick={()=>setSelected(topGames[1])} style={{ width:190, borderRadius:16, overflow:"hidden", border:"1px solid rgba(255,255,255,.09)", boxShadow:"0 28px 70px rgba(0,0,0,.75)", cursor:"pointer", transform:"rotate(6deg)", transition:"transform .32s cubic-bezier(.34,1.4,.64,1)" }}
-                    onMouseEnter={e=>e.currentTarget.style.transform="rotate(6deg) translateY(-10px) scale(1.04)"}
-                    onMouseLeave={e=>e.currentTarget.style.transform="rotate(6deg)"}>
-                    <div style={{ position:"relative", paddingBottom:"140%" }}>
-                      <img src={topGames[1].cover} alt={topGames[1].title} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }} />
-                      <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.7) 0%,transparent 55%)" }} />
-                      <div style={{ position:"absolute", bottom:11, left:11, right:11 }}>
-                        <div style={{ fontSize:9, color:"#ffd166", fontWeight:800, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:1.2, marginBottom:3 }}>#2</div>
-                        <div style={{ fontSize:11, color:"#fff", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2 }}>{topGames[1].title.length>15?topGames[1].title.slice(0,15)+"…":topGames[1].title}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* #1 — front center, upright + floating */}
-                <div className="hf1" style={{ position:"absolute", bottom:0, left:"50%", transform:"translateX(-50%)", zIndex:3 }}>
-                  <div onClick={()=>setSelected(topGames[0])} style={{ width:210, borderRadius:18, overflow:"hidden", border:"1px solid rgba(255,107,53,.3)", boxShadow:"0 44px 96px rgba(0,0,0,.88),0 0 60px rgba(255,107,53,.12)", cursor:"pointer", transition:"transform .32s cubic-bezier(.34,1.4,.64,1)" }}
-                    onMouseEnter={e=>e.currentTarget.style.transform="translateY(-13px) scale(1.04)"}
-                    onMouseLeave={e=>e.currentTarget.style.transform=""}>
-                    <div style={{ position:"relative", paddingBottom:"140%" }}>
-                      <img src={topGames[0].cover} alt={topGames[0].title} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }} />
-                      <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.75) 0%,transparent 55%)" }} />
-                      <div style={{ position:"absolute", top:11, left:11 }}>
-                        <span style={{ background:"linear-gradient(135deg,#ff6b35,#ffd166)", color:"#030401", borderRadius:7, padding:"3px 10px", fontSize:10, fontWeight:800, fontFamily:"'Space Grotesk',sans-serif", boxShadow:"0 2px 14px rgba(255,107,53,.45)" }}>#1</span>
-                      </div>
-                      <div style={{ position:"absolute", top:9, right:9 }}><Ring value={topGames[0].rating} size={42} /></div>
-                      <div style={{ position:"absolute", bottom:13, left:13, right:13 }}>
-                        <div style={{ fontSize:14, color:"#fff", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2, marginBottom:4, textShadow:"0 1px 12px rgba(0,0,0,.9)" }}>{topGames[0].title.length>18?topGames[0].title.slice(0,18)+"…":topGames[0].title}</div>
-                        <div style={{ fontSize:10, color:"rgba(255,255,255,.38)", fontFamily:"'DM Sans',sans-serif" }}>{topGames[0].year} · {topGames[0].genre}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           )}
