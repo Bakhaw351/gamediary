@@ -119,6 +119,7 @@ const TRANSLATIONS = {
     forgotSent:"Lien envoyé ! Vérifiez votre boîte mail.", backToLogin:"← Retour", sendLink:"Envoyer →",
     resetPwTitle:"Nouveau mot de passe", resetPwDesc:"Choisissez un nouveau mot de passe pour votre compte.",
     resetPwConfirm:"Confirmer le mot de passe", resetPwMismatch:"Les mots de passe ne correspondent pas.", resetPwDone:"Mot de passe mis à jour !", savePw:"Enregistrer",
+    share:"Partager", shareX:"Partager sur X", copyLink:"Copier le lien", linkCopied:"Lien copié !",
   },
   en: {
     s_wishlist:"Want to play", s_playing:"Playing", s_completed:"Completed", s_dropped:"Dropped",
@@ -180,6 +181,7 @@ const TRANSLATIONS = {
     forgotSent:"Link sent! Check your inbox.", backToLogin:"← Back", sendLink:"Send →",
     resetPwTitle:"New password", resetPwDesc:"Choose a new password for your account.",
     resetPwConfirm:"Confirm password", resetPwMismatch:"Passwords don't match.", resetPwDone:"Password updated!", savePw:"Save",
+    share:"Share", shareX:"Share on X", copyLink:"Copy link", linkCopied:"Link copied!",
   },
   de: {
     s_wishlist:"Möchte spielen", s_playing:"Spiele gerade", s_completed:"Abgeschlossen", s_dropped:"Abgebrochen",
@@ -1027,6 +1029,8 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
   const [series, setSeries] = useState([]);
   const [showListMenu, setShowListMenu] = useState(false);
   const [addedToList, setAddedToList] = useState(null);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const [translatedSummary, setTranslatedSummary] = useState(null);
   const [translating, setTranslating] = useState(false);
 
@@ -1297,6 +1301,40 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
                 )}
               </div>
             )}
+
+            {/* ── SHARE BUTTON ── */}
+            <div style={{ position:"relative" }}>
+              <button
+                onClick={() => {
+                  const url = `${window.location.origin}?game=${game.id}`;
+                  if (navigator.share) {
+                    navigator.share({ title: game.title, text: `${game.title} — JoystickLog`, url }).catch(()=>{});
+                  } else {
+                    setShowShareMenu(m => !m);
+                  }
+                }}
+                style={{ background:"rgba(255,255,255,.07)", border:"1px solid rgba(255,255,255,.12)", borderRadius:11, padding:"9px 17px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:12, cursor:"pointer", color:"rgba(255,255,255,.5)", display:"flex", alignItems:"center", gap:6, transition:"all .2s" }}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(255,107,53,.4)";e.currentTarget.style.color="#ffd166";}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.12)";e.currentTarget.style.color="rgba(255,255,255,.5)";}}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                {t("share")}
+              </button>
+              {showShareMenu && (
+                <div style={{ position:"absolute", top:"calc(100% + 8px)", right:0, zIndex:50, background:"#161210", border:"1px solid rgba(255,255,255,.1)", borderRadius:12, padding:6, minWidth:190, boxShadow:"0 20px 50px rgba(0,0,0,.7)" }}>
+                  {[
+                    { icon:"𝕏", label: t("shareX"), action: () => { window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${game.title} — ${window.location.origin}?game=${game.id}`)}`,'_blank'); setShowShareMenu(false); }},
+                    { icon:"🔗", label: linkCopied ? t("linkCopied") : t("copyLink"), action: () => { navigator.clipboard.writeText(`${window.location.origin}?game=${game.id}`); setLinkCopied(true); setTimeout(()=>setLinkCopied(false),2000); setShowShareMenu(false); }},
+                  ].map(item => (
+                    <button key={item.label} onClick={item.action}
+                      style={{ display:"flex", alignItems:"center", gap:10, width:"100%", textAlign:"left", background:"none", border:"none", color:"rgba(255,255,255,.7)", padding:"9px 14px", borderRadius:8, cursor:"pointer", fontSize:13, fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, transition:"all .15s" }}
+                      onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,107,53,.1)";e.currentTarget.style.color="#fff";}}
+                      onMouseLeave={e=>{e.currentTarget.style.background="none";e.currentTarget.style.color="rgba(255,255,255,.7)";}}>
+                      <span style={{ fontSize:15 }}>{item.icon}</span>{item.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
