@@ -1982,10 +1982,11 @@ export default function JoystickLog() {
       }
       setLoadingTop(false);
     }).catch(()=>setLoadingTop(false));
-    Promise.all([
-      supabase.from('ratings').select('*', { count:'exact', head:true }),
-      supabase.from('game_status').select('*', { count:'exact', head:true }),
-    ]).then(([r, s]) => setCommunityStats({ ratings: r.count ?? 0, tracked: s.count ?? 0 }))
+    supabase.rpc('get_community_stats')
+      .then(({ data }) => {
+        if (data) setCommunityStats({ ratings: data.ratings ?? 0, tracked: data.tracked ?? 0 });
+        else setCommunityStats({ ratings: 0, tracked: 0 });
+      })
       .catch(() => setCommunityStats({ ratings: 0, tracked: 0 }));
   }, []);
 
