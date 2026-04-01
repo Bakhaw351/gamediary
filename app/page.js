@@ -2085,6 +2085,10 @@ export default function JoystickLog() {
   const [showResetPw, setShowResetPw]       = useState(false);
   const [legalModal, setLegalModal]         = useState(null);
   const [publicProfile, setPublicProfile]   = useState(null);
+  const [notifications, setNotifications]   = useState([]);
+  const [showNotifs, setShowNotifs]         = useState(false);
+  const [topReviews, setTopReviews]         = useState([]);
+  const notifRef = useRef(null);
 
   /* ── URL state: restore tab + game on load, sync on change ── */
   const openUserProfile = (uname) => {
@@ -2229,6 +2233,37 @@ export default function JoystickLog() {
           .map(g => ({ ...g, avgRating: Math.round(g.ratings.reduce((a,r)=>a+r,0)/g.ratings.length), platform:"Multi", year:"—", genre:"", tags:[], summary:"", videoId:null }));
         setPopularGames(popular);
       }).catch(() => {});
+  }, []);
+
+  /* Notifications */
+  useEffect(() => {
+    if (!user) { setNotifications([]); return; }
+    supabase.from('notifications').select('*').eq('user_id', user.id)
+      .order('created_at', { ascending: false }).limit(20)
+      .then(({ data }) => { if (data) setNotifications(data); });
+    const channel = supabase.channel('notifs').on('postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
+      payload => setNotifications(p => [payload.new, ...p])
+    ).subscribe();
+    return () => supabase.removeChannel(channel);
+  }, [user]);
+
+  /* Close notif dropdown on outside click */
+  useEffect(() => {
+    const handler = e => { if (notifRef.current && !notifRef.current.contains(e.target)) setShowNotifs(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const markNotifsRead = async () => {
+    if (!user) return;
+    setNotifications(p => p.map(n => ({ ...n, read: true })));
+    await supabase.from('notifications').update({ read: true }).eq('user_id', user.id).eq('read', false);
+  };
+
+  /* Top reviews */
+  useEffect(() => {
+    supabase.rpc('get_top_reviews').then(({ data }) => { if (data) setTopReviews(data); }).catch(() => {});
   }, []);
 
   /* User lists */
@@ -2414,6 +2449,48 @@ export default function JoystickLog() {
         <div style={{ display:"flex", alignItems:"center", gap:10 }}>
           {user ? (
             <>
+              {/* 🔔 Notifications bell */}
+              <div ref={notifRef} style={{ position:"relative" }}>
+                <button onClick={()=>{ setShowNotifs(v=>!v); if(!showNotifs) markNotifsRead(); }}
+                  style={{ position:"relative", width:36, height:36, borderRadius:10, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", transition:"all .18s", color:"rgba(255,255,255,.5)" }}
+                  onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(255,107,53,.35)";e.currentTarget.style.color="#ff6b35";}}
+                  onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.08)";e.currentTarget.style.color="rgba(255,255,255,.5)";}}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                  {notifications.filter(n=>!n.read).length > 0 && (
+                    <span style={{ position:"absolute", top:6, right:6, width:8, height:8, borderRadius:"50%", background:"#ff6b35", border:"2px solid #09080e" }} />
+                  )}
+                </button>
+                {showNotifs && (
+                  <div style={{ position:"absolute", top:"calc(100% + 8px)", right:0, width:300, background:"#131020", border:"1px solid rgba(255,255,255,.09)", borderRadius:16, zIndex:300, boxShadow:"0 24px 60px rgba(0,0,0,.75)", overflow:"hidden" }}>
+                    <div style={{ padding:"14px 16px 10px", borderBottom:"1px solid rgba(255,255,255,.06)", fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:14, color:"#fff" }}>Notifications</div>
+                    {notifications.length === 0 ? (
+                      <div style={{ padding:"24px 16px", textAlign:"center", color:"rgba(255,255,255,.22)", fontFamily:"'Space Grotesk',sans-serif", fontSize:13 }}>Aucune notification</div>
+                    ) : (
+                      <div style={{ maxHeight:340, overflowY:"auto" }}>
+                        {notifications.map(n => (
+                          <div key={n.id} onClick={()=>{ if(n.game_id) setSelected({ id:n.game_id, title:n.game_title||"", cover:n.game_cover||null, platform:"Multi", year:"—", genre:"", rating:null, reviews:0, tags:[], summary:"", allPlatforms:[], videoId:null }); setShowNotifs(false); }}
+                            style={{ display:"flex", gap:10, alignItems:"center", padding:"11px 16px", cursor:n.game_id?"pointer":"default", background:n.read?"transparent":"rgba(255,107,53,.04)", borderBottom:"1px solid rgba(255,255,255,.04)", transition:"background .15s" }}
+                            onMouseEnter={e=>{if(n.game_id)e.currentTarget.style.background="rgba(255,107,53,.07)";}}
+                            onMouseLeave={e=>{e.currentTarget.style.background=n.read?"transparent":"rgba(255,107,53,.04)";}}>
+                            {n.game_cover
+                              ? <img src={n.game_cover} alt="" style={{ width:30, height:40, borderRadius:5, objectFit:"cover", flexShrink:0 }} />
+                              : <div style={{ width:30, height:40, borderRadius:5, background:"rgba(255,255,255,.06)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14 }}>❤️</div>}
+                            <div style={{ flex:1, minWidth:0 }}>
+                              <div style={{ fontSize:12, color:"rgba(255,255,255,.7)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, lineHeight:1.4 }}>
+                                <span style={{ color:"#ff6b35" }}>{n.from_user || "Quelqu'un"}</span> a liké ta critique
+                              </div>
+                              {n.game_title && <div style={{ fontSize:11, color:"rgba(255,255,255,.3)", fontFamily:"'DM Sans',sans-serif", marginTop:2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{n.game_title}</div>}
+                              <div style={{ fontSize:10, color:"rgba(255,255,255,.18)", fontFamily:"'DM Sans',sans-serif", marginTop:2 }}>{timeAgo(n.created_at)}</div>
+                            </div>
+                            {!n.read && <div style={{ width:6, height:6, borderRadius:"50%", background:"#ff6b35", flexShrink:0 }} />}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div onClick={()=>setTab("profile")} style={{ width:36, height:36, borderRadius:10, background:"linear-gradient(135deg,#ff6b35,#ffd166)", display:"flex", alignItems:"center", justifyContent:"center", color:"#140800", fontWeight:800, fontSize:13, fontFamily:"'Syne',sans-serif", cursor:"pointer", boxShadow:"0 0 18px rgba(255,107,53,.3)", letterSpacing:.5, transition:"box-shadow .2s" }}
                 onMouseEnter={e=>e.currentTarget.style.boxShadow="0 0 28px rgba(255,107,53,.55)"}
                 onMouseLeave={e=>e.currentTarget.style.boxShadow="0 0 18px rgba(255,107,53,.3)"}>
@@ -2686,6 +2763,69 @@ export default function JoystickLog() {
                   {activityFeed.slice(0, 10).map((item, i) => (
                     <ActivityItem key={`${item.user_id}-${item.game_id}-${i}`} item={item} onClick={g=>setSelected(g)} onUserClick={openUserProfile} />
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* ── TOP REVIEWS ── */}
+            {topReviews.length > 0 && (
+              <div style={{ marginTop:72 }}>
+                <div className="sect-divider" style={{ marginTop:0, marginBottom:40 }} />
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:28 }}>
+                  <div className="sect-h">
+                    <div>
+                      <div style={{ fontSize:10, color:"rgba(239,68,68,.65)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3.5, textTransform:"uppercase", marginBottom:5 }}>Communauté</div>
+                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:"#fff", letterSpacing:-.6, lineHeight:1 }}>Top critiques ❤️</h2>
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                  {topReviews.map((rv, i) => {
+                    const liked = myLikes.has(rv.reviewer_id);
+                    return (
+                      <div key={rv.reviewer_id + rv.game_id} style={{ display:"flex", gap:16, padding:"18px 20px", borderRadius:18, border:"1px solid rgba(255,255,255,.048)", background:"rgba(255,255,255,.016)", transition:"all .22s", alignItems:"flex-start" }}>
+                        {/* Rank */}
+                        <div style={{ flexShrink:0, width:28, textAlign:"center", paddingTop:4 }}>
+                          <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:900, fontSize:15, color: i === 0 ? "#ffd166" : i === 1 ? "rgba(255,255,255,.45)" : i === 2 ? "#cd7f32" : "rgba(255,255,255,.2)" }}>
+                            {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `#${i + 1}`}
+                          </span>
+                        </div>
+                        {/* Cover */}
+                        <div style={{ flexShrink:0, width:44, height:58, borderRadius:8, overflow:"hidden", background:"rgba(255,255,255,.06)", cursor:"pointer" }}
+                          onClick={() => rv.game_id && fetch(`/api/games?id=${rv.game_id}`).then(r=>r.json()).then(d=>{ if(d?.games?.[0]) setSelected(d.games[0]); })}>
+                          {rv.game_cover && <img src={rv.game_cover.replace("t_thumb","t_cover_small")} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} />}
+                        </div>
+                        {/* Content */}
+                        <div style={{ flex:1, minWidth:0 }}>
+                          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:6, flexWrap:"wrap" }}>
+                            <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.75)", cursor:"pointer", textDecoration:"none" }}
+                              onClick={() => openUserProfile(rv.reviewer_username)}>
+                              {rv.reviewer_username || "Joueur"}
+                            </span>
+                            <span style={{ color:"rgba(255,255,255,.18)", fontSize:11 }}>sur</span>
+                            <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.55)", cursor:"pointer" }}
+                              onClick={() => rv.game_id && fetch(`/api/games?id=${rv.game_id}`).then(r=>r.json()).then(d=>{ if(d?.games?.[0]) setSelected(d.games[0]); })}>
+                              {rv.game_title}
+                            </span>
+                            {rv.rating && (
+                              <span style={{ background:"#ff6b35", borderRadius:7, padding:"2px 9px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:900, fontSize:12, color:"#fff" }}>{rv.rating}/10</span>
+                            )}
+                          </div>
+                          {rv.comment && (
+                            <p style={{ margin:0, fontSize:13, color:"rgba(255,255,255,.42)", lineHeight:1.55, fontFamily:"'DM Sans',sans-serif", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }}>
+                              {rv.comment}
+                            </p>
+                          )}
+                        </div>
+                        {/* Like */}
+                        <button onClick={() => toggleLike(rv.reviewer_id)}
+                          style={{ flexShrink:0, background: liked ? "rgba(239,68,68,.14)" : "rgba(255,255,255,.03)", border:`1px solid ${liked ? "rgba(239,68,68,.45)" : "rgba(255,255,255,.07)"}`, borderRadius:20, padding:"5px 13px", cursor:"pointer", fontSize:13, display:"flex", alignItems:"center", gap:5, transition:"all .18s", color: liked ? "#ef4444" : "rgba(255,255,255,.35)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>
+                          <span style={{ fontSize:15 }}>{liked ? "❤️" : "🤍"}</span>
+                          <span>{rv.like_count || 0}</span>
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
