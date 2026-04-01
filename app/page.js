@@ -642,8 +642,8 @@ const JacketWall = ({ covers }) => {
         if (!src) return null;
         const s = {
           position:'absolute', width:p.w,
-          opacity:0.08,
-          filter:'blur(2px)',
+          opacity:0.16,
+          filter:'blur(1px)',
           '--rot': p.rot,
           animation:`jacketDrift ${p.dur} ease-in-out infinite ${p.delay}`,
           transform:`rotate(${p.rot})`,
@@ -1815,12 +1815,12 @@ export default function JoystickLog() {
       <JacketWall covers={[...topGames, ...trendingGames, ...gemGames, ...exploreGames].filter(g=>g.cover).map(g=>g.cover).slice(0,12)} />
 
       {/* Ambient gradient mesh */}
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 85% 48% at 50% 0%,rgba(255,107,53,.18) 0%,transparent 65%)", pointerEvents:"none" }} />
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 60% 60% at 92% 92%,rgba(210,80,20,.15) 0%,transparent 65%)", pointerEvents:"none" }} />
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 55% 65% at 4% 78%,rgba(167,139,250,.13) 0%,transparent 65%)", pointerEvents:"none" }} />
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 65% 40% at 50% 105%,rgba(255,209,102,.10) 0%,transparent 60%)", pointerEvents:"none" }} />
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 45% 40% at 12% 12%,rgba(90,70,210,.10) 0%,transparent 65%)", pointerEvents:"none" }} />
-      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 50% 45% at 88% 10%,rgba(255,107,53,.09) 0%,transparent 60%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 90% 55% at 50% 0%,rgba(255,107,53,.26) 0%,transparent 65%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 65% 65% at 94% 90%,rgba(220,80,20,.22) 0%,transparent 65%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 60% 70% at 3% 80%,rgba(167,139,250,.20) 0%,transparent 65%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 70% 45% at 50% 108%,rgba(255,209,102,.15) 0%,transparent 60%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 50% 45% at 10% 10%,rgba(110,80,230,.16) 0%,transparent 65%)", pointerEvents:"none" }} />
+      <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 55% 50% at 90% 8%,rgba(255,107,53,.14) 0%,transparent 60%)", pointerEvents:"none" }} />
       {/* Subtle grid overlay */}
       <div style={{ position:"fixed", inset:0, backgroundImage:"linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px)", backgroundSize:"88px 88px", pointerEvents:"none" }} />
       {/* Noise grain */}
@@ -1834,7 +1834,7 @@ export default function JoystickLog() {
         <div style={{ position:"absolute", bottom:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent 0%,rgba(255,107,53,.22) 30%,rgba(255,209,102,.3) 50%,rgba(255,107,53,.22) 70%,transparent 100%)", pointerEvents:"none" }} />
 
         {/* Logo */}
-        <div style={{ display:"flex", alignItems:"center", gap:11 }}>
+        <div onClick={()=>setTab("home")} style={{ display:"flex", alignItems:"center", gap:11, cursor:"pointer" }}>
           <div style={{ width:36, height:36, borderRadius:11, background:"linear-gradient(135deg,#ff6b35 0%,#c84400 100%)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 0 24px rgba(255,107,53,.45), 0 0 0 1px rgba(255,255,255,.15) inset", flexShrink:0 }}>
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
               {/* Controller body */}
@@ -1893,8 +1893,8 @@ export default function JoystickLog() {
           {!loadingTop && topGames[0]?.cover && (
             <div style={{ position:"absolute", inset:0, backgroundImage:`url(${topGames[0].cover})`, backgroundSize:"cover", backgroundPosition:"center", filter:"brightness(.28) saturate(1.8) blur(24px)", transform:"scale(1.1)", zIndex:0 }} />
           )}
-          <div style={{ position:"absolute", inset:0, background:"linear-gradient(120deg,rgba(9,8,14,.97) 0%,rgba(9,8,14,.78) 42%,rgba(9,8,14,.22) 100%)", zIndex:1 }} />
-          <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(9,8,14,1) 0%,rgba(9,8,14,.25) 45%,transparent 100%)", zIndex:1 }} />
+          <div style={{ position:"absolute", inset:0, background:"linear-gradient(120deg,rgba(9,8,14,.88) 0%,rgba(9,8,14,.62) 45%,rgba(9,8,14,.08) 100%)", zIndex:1 }} />
+          <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(9,8,14,1) 0%,rgba(9,8,14,.18) 42%,transparent 100%)", zIndex:1 }} />
 
           {/* Left: text content */}
           <div style={{ position:"relative", zIndex:2, flex:1, display:"flex", flexDirection:"column", justifyContent:"center", padding:"80px 6% 100px", maxWidth:680 }}>
