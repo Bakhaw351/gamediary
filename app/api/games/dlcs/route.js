@@ -1,8 +1,13 @@
 import { getIgdbToken } from '../igdb-token.js';
 
+function sanitizeId(id) {
+  const n = parseInt(id, 10);
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  const gameId = searchParams.get('id');
+  const gameId = sanitizeId(searchParams.get('id'));
   if (!gameId) return Response.json({ dlcs: [], series: [] });
 
   const access_token = await getIgdbToken();
@@ -12,47 +17,42 @@ export async function GET(request) {
     'Content-Type': 'text/plain',
   };
 
-  // Step 1: fetch the game's dlcs, expansions, and collection (series)
   const gameRes = await fetch('https://api.igdb.com/v4/games', {
-    method: 'POST',
-    headers,
+    method: 'POST', headers,
     body: `fields dlcs,expansions,collection; where id = ${gameId};`,
-  });
-  const [gameData] = await gameRes.json();
+  }).catch(e => { console.error('IGDB dlcs game fetch:', e); return null; });
+
+  if (!gameRes) return Response.json({ dlcs: [], series: [] });
+  const [gameData] = await gameRes.json().catch(() => [{}]);
 
   const dlcIds = [
     ...(gameData?.dlcs || []),
     ...(gameData?.expansions || []),
-  ];
-  const collectionId = gameData?.collection;
+  ].filter(id => Number.isFinite(id) && id > 0).slice(0, 30);
 
-  // Run DLC fetch and series fetch in parallel
+  const collectionId = Number.isFinite(gameData?.collection) ? gameData.collection : null;
+
   const [dlcData, seriesData] = await Promise.all([
-    // DLCs
     dlcIds.length > 0
       ? fetch('https://api.igdb.com/v4/games', {
-          method: 'POST',
-          headers,
+          method: 'POST', headers,
           body: `fields name,cover.url,first_release_date,category; where id = (${dlcIds.join(',')}); sort first_release_date asc; limit 20;`,
-        }).then(r => r.json())
+        }).then(r => r.json()).catch(() => [])
       : fetch('https://api.igdb.com/v4/games', {
-          method: 'POST',
-          headers,
+          method: 'POST', headers,
           body: `fields name,cover.url,first_release_date,category; where parent_game = ${gameId} & category = (1,2,4); sort first_release_date asc; limit 20;`,
-        }).then(r => r.json()),
+        }).then(r => r.json()).catch(() => []),
 
-    // Series (other games in the same collection, exclude itself)
     collectionId
       ? fetch('https://api.igdb.com/v4/games', {
-          method: 'POST',
-          headers,
+          method: 'POST', headers,
           body: `fields name,cover.url,first_release_date,rating; where collection = ${collectionId} & id != ${gameId} & category = 0 & cover != null; sort first_release_date asc; limit 12;`,
-        }).then(r => r.json())
+        }).then(r => r.json()).catch(() => [])
       : Promise.resolve([]),
   ]);
 
   return Response.json({
-    dlcs: Array.isArray(dlcData) ? dlcData : [],
+    dlcs:   Array.isArray(dlcData)    ? dlcData    : [],
     series: Array.isArray(seriesData) ? seriesData : [],
   });
 }

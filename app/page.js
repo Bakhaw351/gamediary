@@ -1312,13 +1312,18 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
   const publish = async () => {
     if (!user) { onAuthRequired(); return; }
     if (!myR) return;
+    // Validate rating range
+    if (myR < 1 || myR > 10) return;
+    // Sanitize comment: strip HTML tags, limit length
+    const safeComment = txt.replace(/<[^>]*>/g, '').trim().slice(0, 2000);
+    const safeDisplay = (username || user.user_metadata?.username || user.email?.split("@")[0] || '').replace(/<[^>]*>/g, '').trim().slice(0, 50);
     setLoading(true);
     const { error } = await supabase.from("ratings").upsert(
-      { user_id:user.id, game_id:game.id, rating:myR, comment:txt, user_display: username || user.user_metadata?.username || user.email?.split("@")[0], game_title: game.title, game_cover: game.cover },
+      { user_id:user.id, game_id:game.id, rating:myR, comment:safeComment, user_display: safeDisplay, game_title: game.title?.slice(0,200), game_cover: game.cover },
       { onConflict:"user_id,game_id" }
     );
     if (!error) {
-      setUserRatings(p => ({...p, [game.id]:{rating:myR, comment:txt}}));
+      setUserRatings(p => ({...p, [game.id]:{rating:myR, comment:safeComment}}));
       setSaved(true);
       fetchCommunity();
     }

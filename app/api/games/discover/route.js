@@ -28,10 +28,13 @@ const TAG_MAP = {
 
 import { getIgdbToken } from '../igdb-token.js';
 
+const VALID_TAGS = new Set(Object.keys(TAG_MAP));
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  const tags   = (searchParams.get('tags') || '').split(',').filter(Boolean);
-  const offset = parseInt(searchParams.get('offset') || '0', 10);
+  // Only allow whitelisted tags — no injection possible
+  const tags = (searchParams.get('tags') || '').split(',').filter(t => VALID_TAGS.has(t)).slice(0, 10);
+  const offset = Math.max(0, Math.min(parseInt(searchParams.get('offset') || '0', 10) || 0, 500));
   if (tags.length === 0) return Response.json([]);
 
   const access_token = await getIgdbToken();
