@@ -1910,7 +1910,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
 };
 
 /* ── AVATAR GALLERY ───────────────────────────────────────── */
-const DB = "https://api.dicebear.com/9.x/pixel-art/svg?seed=";
+const DB = "https://api.dicebear.com/9.x/adventurer/svg?backgroundColor=09080e&seed=";
 
 const FREE_AVATARS = [
   { id:"warrior",    seed:"Warrior",      label:"Warrior"     },
