@@ -1910,7 +1910,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
 };
 
 /* ── AVATAR GALLERY ───────────────────────────────────────── */
-const DB = "https://api.dicebear.com/9.x/adventurer/svg?backgroundColor=09080e&seed=";
+const DB = "https://api.dicebear.com/9.x/lorelei/svg?backgroundColor=09080e&seed=";
 
 const FREE_AVATARS = [
   { id:"warrior",    seed:"Warrior",      label:"Warrior"     },
@@ -2014,7 +2014,7 @@ const AvatarGallery = ({ avatarUrl, setAvatarUrl, userRatings, userStatus }) => 
       </div>
 
       {/* Grid */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(8,1fr)", gap:6, maxHeight:280, overflowY:"auto", paddingRight:4 }}>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:8, maxHeight:320, overflowY:"auto", paddingRight:4 }}>
         {list.map(av => {
           const url = `${DB}${av.seed}`;
           const unlocked = tab === "free" || av.cond(userRatings, userStatus);
