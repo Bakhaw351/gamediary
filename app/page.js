@@ -1910,77 +1910,96 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
 };
 
 /* ── AVATAR GALLERY ───────────────────────────────────────── */
-const DB = "https://api.dicebear.com/9.x/lorelei/svg?backgroundColor=09080e&seed=";
+// lorelei-neutral = serious/neutral expression by default
+const DB = "https://api.dicebear.com/9.x/lorelei-neutral/svg?backgroundColor=1a1025&seed=";
+
+// hat emoji per category — shown as overlay on avatar
+const CAT_HAT = {
+  combat:  "⚔️",
+  magic:   "🔮",
+  stealth: "🗡️",
+  ranged:  "🏹",
+  scifi:   "🤖",
+  dark:    "💀",
+  divine:  "✨",
+  sea:     "⚓",
+  // locked categories
+  rank:    "🏅",
+  writer:  "✍️",
+  passion: "❤️",
+  list:    "📋",
+  elite:   "👑",
+};
 
 const FREE_AVATARS = [
-  { id:"warrior",    seed:"Warrior",      label:"Warrior"     },
-  { id:"mage",       seed:"Mage",         label:"Mage"        },
-  { id:"ninja",      seed:"Ninja",        label:"Ninja"       },
-  { id:"knight",     seed:"Knight",       label:"Knight"      },
-  { id:"archer",     seed:"Archer",       label:"Archer"      },
-  { id:"rogue",      seed:"Rogue",        label:"Rogue"       },
-  { id:"healer",     seed:"Healer",       label:"Healer"      },
-  { id:"samurai",    seed:"Samurai",      label:"Samurai"     },
-  { id:"pirate",     seed:"Pirate",       label:"Pirate"      },
-  { id:"viking",     seed:"Viking",       label:"Viking"      },
-  { id:"wizard",     seed:"Wizard",       label:"Wizard"      },
-  { id:"druid",      seed:"Druid",        label:"Druid"       },
-  { id:"bard",       seed:"Bard",         label:"Bard"        },
-  { id:"paladin",    seed:"Paladin",      label:"Paladin"     },
-  { id:"berserker",  seed:"Berserker",    label:"Berserker"   },
-  { id:"ranger",     seed:"Ranger",       label:"Ranger"      },
-  { id:"sorcerer",   seed:"Sorcerer",     label:"Sorcerer"    },
-  { id:"monk",       seed:"Monk",         label:"Monk"        },
-  { id:"thief",      seed:"Thief",        label:"Thief"       },
-  { id:"guard",      seed:"Guard",        label:"Guard"       },
-  { id:"hunter",     seed:"Hunter",       label:"Hunter"      },
-  { id:"spy",        seed:"Spy",          label:"Spy"         },
-  { id:"pilot",      seed:"Pilot",        label:"Pilot"       },
-  { id:"engineer",   seed:"Engineer",     label:"Engineer"    },
-  { id:"cyborg",     seed:"Cyborg",       label:"Cyborg"      },
-  { id:"robot",      seed:"Robot",        label:"Robot"       },
-  { id:"alien",      seed:"Alien",        label:"Alien"       },
-  { id:"zombie",     seed:"Zombie",       label:"Zombie"      },
-  { id:"ghost",      seed:"Ghost",        label:"Ghost"       },
-  { id:"demon",      seed:"Demon",        label:"Demon"       },
-  { id:"angel",      seed:"Angel",        label:"Angel"       },
-  { id:"dragon",     seed:"Dragon",       label:"Dragon"      },
+  { id:"warrior",    seed:"Warrior",      label:"Warrior",    cat:"combat"  },
+  { id:"knight",     seed:"Knight",       label:"Knight",     cat:"combat"  },
+  { id:"berserker",  seed:"Berserker",    label:"Berserker",  cat:"combat"  },
+  { id:"paladin",    seed:"Paladin",      label:"Paladin",    cat:"combat"  },
+  { id:"gladiator",  seed:"Gladiator",    label:"Gladiator",  cat:"combat"  },
+  { id:"guard",      seed:"Guard",        label:"Guard",      cat:"combat"  },
+  { id:"mage",       seed:"Mage",         label:"Mage",       cat:"magic"   },
+  { id:"wizard",     seed:"Wizard",       label:"Wizard",     cat:"magic"   },
+  { id:"druid",      seed:"Druid",        label:"Druid",      cat:"magic"   },
+  { id:"sorcerer",   seed:"Sorcerer",     label:"Sorcerer",   cat:"magic"   },
+  { id:"bard",       seed:"Bard",         label:"Bard",       cat:"magic"   },
+  { id:"monk",       seed:"Monk",         label:"Monk",       cat:"magic"   },
+  { id:"ninja",      seed:"Ninja",        label:"Ninja",      cat:"stealth" },
+  { id:"rogue",      seed:"Rogue",        label:"Rogue",      cat:"stealth" },
+  { id:"thief",      seed:"Thief",        label:"Thief",      cat:"stealth" },
+  { id:"spy",        seed:"Spy",          label:"Spy",        cat:"stealth" },
+  { id:"samurai",    seed:"Samurai",      label:"Samurai",    cat:"stealth" },
+  { id:"archer",     seed:"Archer",       label:"Archer",     cat:"ranged"  },
+  { id:"ranger",     seed:"Ranger",       label:"Ranger",     cat:"ranged"  },
+  { id:"hunter",     seed:"Hunter",       label:"Hunter",     cat:"ranged"  },
+  { id:"pilot",      seed:"Pilot",        label:"Pilot",      cat:"scifi"   },
+  { id:"engineer",   seed:"Engineer",     label:"Engineer",   cat:"scifi"   },
+  { id:"cyborg",     seed:"Cyborg",       label:"Cyborg",     cat:"scifi"   },
+  { id:"robot",      seed:"Robot",        label:"Robot",      cat:"scifi"   },
+  { id:"alien",      seed:"Alien",        label:"Alien",      cat:"scifi"   },
+  { id:"zombie",     seed:"Zombie",       label:"Zombie",     cat:"dark"    },
+  { id:"demon",      seed:"Demon",        label:"Demon",      cat:"dark"    },
+  { id:"ghost",      seed:"Ghost",        label:"Ghost",      cat:"dark"    },
+  { id:"angel",      seed:"Angel",        label:"Angel",      cat:"divine"  },
+  { id:"dragon",     seed:"Dragon",       label:"Dragon",     cat:"divine"  },
+  { id:"pirate",     seed:"Pirate",       label:"Pirate",     cat:"sea"     },
+  { id:"viking",     seed:"Viking",       label:"Viking",     cat:"sea"     },
 ];
 
 const LOCKED_AVATARS = [
-  { id:"rookie",      seed:"Rookie",       label:"Rookie",      cond:(r,s)=>Object.keys(r).length>=1,   hint:"Note ton 1er jeu" },
-  { id:"scout",       seed:"Scout",        label:"Scout",       cond:(r,s)=>Object.keys(r).length>=5,   hint:"Note 5 jeux" },
-  { id:"veteran",     seed:"Veteran",      label:"Veteran",     cond:(r,s)=>Object.keys(r).length>=10,  hint:"Note 10 jeux" },
-  { id:"legend",      seed:"Legend",       label:"Legend",      cond:(r,s)=>Object.keys(r).length>=25,  hint:"Note 25 jeux" },
-  { id:"immortal",    seed:"Immortal",     label:"Immortal",    cond:(r,s)=>Object.keys(r).length>=50,  hint:"Note 50 jeux" },
-  { id:"godlike",     seed:"Godlike",      label:"Godlike",     cond:(r,s)=>Object.keys(r).length>=100, hint:"Note 100 jeux" },
-  { id:"critic",      seed:"CriticPro",    label:"Critic",      cond:(r,s)=>Object.values(r).filter(x=>x.comment?.length>10).length>=1,  hint:"Écris ton 1er avis" },
-  { id:"journalist",  seed:"Journalist",   label:"Journalist",  cond:(r,s)=>Object.values(r).filter(x=>x.comment?.length>10).length>=5,  hint:"Écris 5 avis" },
-  { id:"fanboy",      seed:"Fanboy",       label:"Fanboy",      cond:(r,s)=>Object.values(r).some(x=>x.rating===10),                     hint:"Donne un 10/10" },
-  { id:"hater",       seed:"Hater",        label:"Hater",       cond:(r,s)=>Object.values(r).some(x=>x.rating===1),                      hint:"Donne un 1/10" },
-  { id:"completionist",seed:"Completionist",label:"Completionist",cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=3,   hint:"Termine 3 jeux" },
-  { id:"champion",    seed:"Champion",     label:"Champion",    cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=10,      hint:"Termine 10 jeux" },
-  { id:"dreamer",     seed:"Dreamer",      label:"Dreamer",     cond:(r,s)=>Object.values(s).filter(x=>x==="wishlist").length>=5,        hint:"Ajoute 5 jeux en wishlist" },
-  { id:"collector",   seed:"Collector",    label:"Collector",   cond:(r,s)=>Object.keys(r).length>=10,  hint:"Note 10 jeux" },
-  { id:"curator",     seed:"Curator",      label:"Curator",     cond:(r,s)=>Object.keys(r).length>=20,  hint:"Note 20 jeux" },
-  { id:"speedrunner", seed:"Speedrunner",  label:"Speedrunner", cond:(r,s)=>Object.values(s).filter(x=>x==="playing").length>=3,        hint:"Lance 3 jeux en même temps" },
-  { id:"dropout",     seed:"Dropout",      label:"Dropout",     cond:(r,s)=>Object.values(s).filter(x=>x==="dropped").length>=3,        hint:"Abandonne 3 jeux" },
-  { id:"devotee",     seed:"Devotee",      label:"Devotee",     cond:(r,s)=>Object.values(r).filter(x=>x.rating>=9).length>=5,          hint:"Note 5 jeux 9 ou 10" },
-  { id:"pessimist",   seed:"Pessimist",    label:"Pessimist",   cond:(r,s)=>Object.values(r).filter(x=>x.rating<=3).length>=5,          hint:"Note 5 jeux 3 ou moins" },
-  { id:"balanced",    seed:"Balanced",     label:"Balanced",    cond:(r,s)=>Object.values(r).filter(x=>x.rating===5||x.rating===6).length>=10, hint:"Note 10 jeux entre 5 et 6" },
-  { id:"explorer2",   seed:"Explorer2",    label:"Explorer",    cond:(r,s)=>Object.keys(s).length>=5,   hint:"Ajoute 5 jeux à ta liste" },
-  { id:"wanderer",    seed:"Wanderer",     label:"Wanderer",    cond:(r,s)=>Object.keys(s).length>=15,  hint:"Ajoute 15 jeux à ta liste" },
-  { id:"nomad",       seed:"Nomad",        label:"Nomad",       cond:(r,s)=>Object.keys(s).length>=30,  hint:"Ajoute 30 jeux à ta liste" },
-  { id:"hardcore",    seed:"Hardcore",     label:"Hardcore",    cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=5,      hint:"Termine 5 jeux" },
-  { id:"perfectionist",seed:"Perfectionist",label:"Perfectionist",cond:(r,s)=>Object.values(r).filter(x=>x.rating===10).length>=3,    hint:"3 notes parfaites 10/10" },
-  { id:"retrogamer",  seed:"Retrogamer",   label:"Retrogamer",  cond:(r,s)=>Object.keys(r).length>=15,  hint:"Note 15 jeux" },
-  { id:"indie",       seed:"IndieHero",    label:"Indie Hero",  cond:(r,s)=>Object.values(r).filter(x=>x.comment?.length>10).length>=3, hint:"Écris 3 avis" },
-  { id:"marathon",    seed:"Marathon",     label:"Marathon",    cond:(r,s)=>Object.values(s).filter(x=>x==="playing").length>=5,        hint:"5 jeux en cours en même temps" },
-  { id:"archivist",   seed:"Archivist",    label:"Archivist",   cond:(r,s)=>Object.keys(r).length>=30,  hint:"Note 30 jeux" },
-  { id:"oracle",      seed:"Oracle",       label:"Oracle",      cond:(r,s)=>Object.keys(r).length>=75,  hint:"Note 75 jeux" },
-  { id:"overlord",    seed:"Overlord",     label:"Overlord",    cond:(r,s)=>Object.keys(r).length>=200, hint:"Note 200 jeux" },
-  { id:"phantom",     seed:"Phantom",      label:"Phantom",     cond:(r,s)=>Object.values(r).filter(x=>x.rating>=8).length>=10,         hint:"Note 10 jeux 8 ou plus" },
-  { id:"titan",       seed:"Titan",        label:"Titan",       cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=20,     hint:"Termine 20 jeux" },
+  { id:"rookie",       seed:"Rookie",        label:"Rookie",        cat:"rank",    cond:(r,s)=>Object.keys(r).length>=1,   hint:"Note ton 1er jeu" },
+  { id:"scout",        seed:"Scout",         label:"Scout",         cat:"rank",    cond:(r,s)=>Object.keys(r).length>=5,   hint:"Note 5 jeux" },
+  { id:"veteran",      seed:"Veteran",       label:"Veteran",       cat:"rank",    cond:(r,s)=>Object.keys(r).length>=10,  hint:"Note 10 jeux" },
+  { id:"legend",       seed:"Legend",        label:"Legend",        cat:"rank",    cond:(r,s)=>Object.keys(r).length>=25,  hint:"Note 25 jeux" },
+  { id:"immortal",     seed:"Immortal",      label:"Immortal",      cat:"elite",   cond:(r,s)=>Object.keys(r).length>=50,  hint:"Note 50 jeux" },
+  { id:"godlike",      seed:"Godlike",       label:"Godlike",       cat:"elite",   cond:(r,s)=>Object.keys(r).length>=100, hint:"Note 100 jeux" },
+  { id:"critic",       seed:"CriticPro",     label:"Critic",        cat:"writer",  cond:(r,s)=>Object.values(r).filter(x=>x.comment?.length>10).length>=1,  hint:"Écris ton 1er avis" },
+  { id:"journalist",   seed:"Journalist",    label:"Journalist",    cat:"writer",  cond:(r,s)=>Object.values(r).filter(x=>x.comment?.length>10).length>=5,  hint:"Écris 5 avis" },
+  { id:"fanboy",       seed:"Fanboy",        label:"Fanboy",        cat:"passion", cond:(r,s)=>Object.values(r).some(x=>x.rating===10),                     hint:"Donne un 10/10" },
+  { id:"hater",        seed:"Hater",         label:"Hater",         cat:"dark",    cond:(r,s)=>Object.values(r).some(x=>x.rating===1),                      hint:"Donne un 1/10" },
+  { id:"completionist",seed:"Completionist", label:"Completionist", cat:"elite",   cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=3,       hint:"Termine 3 jeux" },
+  { id:"champion",     seed:"Champion",      label:"Champion",      cat:"elite",   cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=10,      hint:"Termine 10 jeux" },
+  { id:"dreamer",      seed:"Dreamer",       label:"Dreamer",       cat:"list",    cond:(r,s)=>Object.values(s).filter(x=>x==="wishlist").length>=5,        hint:"Ajoute 5 jeux en wishlist" },
+  { id:"collector",    seed:"Collector",     label:"Collector",     cat:"list",    cond:(r,s)=>Object.keys(r).length>=10,  hint:"Note 10 jeux" },
+  { id:"curator",      seed:"Curator",       label:"Curator",       cat:"list",    cond:(r,s)=>Object.keys(r).length>=20,  hint:"Note 20 jeux" },
+  { id:"speedrunner",  seed:"Speedrunner",   label:"Speedrunner",   cat:"rank",    cond:(r,s)=>Object.values(s).filter(x=>x==="playing").length>=3,         hint:"Lance 3 jeux en même temps" },
+  { id:"dropout",      seed:"Dropout",       label:"Dropout",       cat:"dark",    cond:(r,s)=>Object.values(s).filter(x=>x==="dropped").length>=3,         hint:"Abandonne 3 jeux" },
+  { id:"devotee",      seed:"Devotee",       label:"Devotee",       cat:"passion", cond:(r,s)=>Object.values(r).filter(x=>x.rating>=9).length>=5,           hint:"Note 5 jeux 9 ou 10" },
+  { id:"pessimist",    seed:"Pessimist",     label:"Pessimist",     cat:"dark",    cond:(r,s)=>Object.values(r).filter(x=>x.rating<=3).length>=5,           hint:"Note 5 jeux 3 ou moins" },
+  { id:"balanced",     seed:"Balanced",      label:"Balanced",      cat:"writer",  cond:(r,s)=>Object.values(r).filter(x=>x.rating===5||x.rating===6).length>=10, hint:"Note 10 jeux entre 5 et 6" },
+  { id:"explorer2",    seed:"Explorer2",     label:"Explorer",      cat:"list",    cond:(r,s)=>Object.keys(s).length>=5,   hint:"Ajoute 5 jeux à ta liste" },
+  { id:"wanderer",     seed:"Wanderer",      label:"Wanderer",      cat:"list",    cond:(r,s)=>Object.keys(s).length>=15,  hint:"Ajoute 15 jeux à ta liste" },
+  { id:"nomad",        seed:"Nomad",         label:"Nomad",         cat:"list",    cond:(r,s)=>Object.keys(s).length>=30,  hint:"Ajoute 30 jeux à ta liste" },
+  { id:"hardcore",     seed:"Hardcore",      label:"Hardcore",      cat:"elite",   cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=5,       hint:"Termine 5 jeux" },
+  { id:"perfectionist",seed:"Perfectionist2",label:"Perfectionist", cat:"elite",   cond:(r,s)=>Object.values(r).filter(x=>x.rating===10).length>=3,         hint:"3 notes parfaites 10/10" },
+  { id:"retrogamer",   seed:"Retrogamer",    label:"Retrogamer",    cat:"passion", cond:(r,s)=>Object.keys(r).length>=15,  hint:"Note 15 jeux" },
+  { id:"indie",        seed:"IndieHero",     label:"Indie Hero",    cat:"passion", cond:(r,s)=>Object.values(r).filter(x=>x.comment?.length>10).length>=3,  hint:"Écris 3 avis" },
+  { id:"marathon",     seed:"Marathon",      label:"Marathon",      cat:"rank",    cond:(r,s)=>Object.values(s).filter(x=>x==="playing").length>=5,         hint:"5 jeux en cours en même temps" },
+  { id:"archivist",    seed:"Archivist",     label:"Archivist",     cat:"writer",  cond:(r,s)=>Object.keys(r).length>=30,  hint:"Note 30 jeux" },
+  { id:"oracle",       seed:"Oracle",        label:"Oracle",        cat:"elite",   cond:(r,s)=>Object.keys(r).length>=75,  hint:"Note 75 jeux" },
+  { id:"overlord",     seed:"Overlord",      label:"Overlord",      cat:"elite",   cond:(r,s)=>Object.keys(r).length>=200, hint:"Note 200 jeux" },
+  { id:"phantom",      seed:"Phantom",       label:"Phantom",       cat:"dark",    cond:(r,s)=>Object.values(r).filter(x=>x.rating>=8).length>=10,          hint:"Note 10 jeux 8 ou plus" },
+  { id:"titan",        seed:"Titan",         label:"Titan",         cat:"elite",   cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=20,      hint:"Termine 20 jeux" },
 ];
 
 const AvatarGallery = ({ avatarUrl, setAvatarUrl, userRatings, userStatus }) => {
@@ -2014,22 +2033,34 @@ const AvatarGallery = ({ avatarUrl, setAvatarUrl, userRatings, userStatus }) => 
       </div>
 
       {/* Grid */}
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(6,1fr)", gap:8, maxHeight:320, overflowY:"auto", paddingRight:4 }}>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:10, maxHeight:340, overflowY:"auto", paddingRight:4 }}>
         {list.map(av => {
           const url = `${DB}${av.seed}`;
           const unlocked = tab === "free" || av.cond(userRatings, userStatus);
           const selected = avatarUrl === url;
+          const hat = CAT_HAT[av.cat] || "🎮";
           return (
             <div key={av.id} title={unlocked ? av.label : `🔒 ${av.hint}`}
               onClick={() => unlocked && setAvatarUrl(url)}
-              style={{ position:"relative", borderRadius:10, overflow:"hidden", border:selected?"2px solid #ff6b35":"2px solid transparent", cursor:unlocked?"pointer":"not-allowed", background:"rgba(255,255,255,.05)", aspectRatio:"1", transition:"border-color .15s, transform .15s", transform:selected?"scale(1.08)":"scale(1)" }}>
-              <img src={url} alt={av.label} style={{ width:"100%", height:"100%", display:"block", filter:unlocked?"none":"grayscale(1) brightness(.4)" }} loading="lazy" />
-              {!unlocked && (
-                <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14 }}>🔒</div>
-              )}
-              {selected && (
-                <div style={{ position:"absolute", bottom:2, right:2, width:10, height:10, borderRadius:"50%", background:"#ff6b35", boxShadow:"0 0 6px #ff6b35" }} />
-              )}
+              style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:4, cursor:unlocked?"pointer":"not-allowed" }}>
+              <div style={{ position:"relative", borderRadius:12, overflow:"hidden", border:selected?"2px solid #ff6b35":"2px solid rgba(255,255,255,.08)", background:"#1a1025", width:"100%", aspectRatio:"1", transition:"border-color .15s, transform .15s, box-shadow .15s", transform:selected?"scale(1.06)":"scale(1)", boxShadow:selected?"0 0 16px rgba(255,107,53,.4)":"none" }}>
+                <img src={url} alt={av.label} style={{ width:"100%", height:"100%", display:"block", filter:unlocked?"none":"grayscale(1) brightness(.35)" }} loading="lazy" />
+                {/* Category hat badge */}
+                {unlocked && (
+                  <div style={{ position:"absolute", top:4, left:4, fontSize:13, lineHeight:1, background:"rgba(0,0,0,.55)", borderRadius:6, padding:"2px 4px", backdropFilter:"blur(4px)" }}>
+                    {hat}
+                  </div>
+                )}
+                {!unlocked && (
+                  <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, background:"rgba(0,0,0,.3)" }}>🔒</div>
+                )}
+                {selected && (
+                  <div style={{ position:"absolute", bottom:4, right:4, width:10, height:10, borderRadius:"50%", background:"#ff6b35", boxShadow:"0 0 8px #ff6b35" }} />
+                )}
+              </div>
+              <span style={{ fontSize:10, color:selected?"#ffd166":"rgba(255,255,255,.35)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, textAlign:"center", letterSpacing:.3, transition:"color .15s" }}>
+                {av.label}
+              </span>
             </div>
           );
         })}
