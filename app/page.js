@@ -1338,6 +1338,12 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
                 <div>
                   <div style={{ fontSize:12, color:"rgba(255,255,255,.3)", fontFamily:"'DM Sans',sans-serif" }}>Score presse</div>
                   <div style={{ fontSize:13, color:"rgba(255,255,255,.55)", fontFamily:"'DM Sans',sans-serif" }}>{game.pressCount} média{game.pressCount > 1 ? "s" : ""}</div>
+                  <a href={`https://www.metacritic.com/search/${encodeURIComponent(game.title)}/`} target="_blank" rel="noopener noreferrer"
+                    style={{ fontSize:11, color:"rgba(255,107,53,.7)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, textDecoration:"none", display:"inline-flex", alignItems:"center", gap:3, marginTop:3, transition:"color .15s" }}
+                    onMouseEnter={e=>e.currentTarget.style.color="#ff6b35"}
+                    onMouseLeave={e=>e.currentTarget.style.color="rgba(255,107,53,.7)"}>
+                    Voir sur Metacritic →
+                  </a>
                 </div>
               </div>
             )}
