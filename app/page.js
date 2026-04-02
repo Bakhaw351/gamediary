@@ -756,8 +756,9 @@ const HScrollSection = ({ games, onClick, accent = "#ff6b35", showDate = false }
               }
               <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 55%)", pointerEvents:"none" }} />
               {!showDate && g.rating && (
-                <div style={{ position:"absolute", bottom:8, left:8, background:"rgba(0,0,0,.6)", backdropFilter:"blur(8px)", borderRadius:6, padding:"2px 8px", fontSize:10, fontWeight:800, color:accent, fontFamily:"'Syne',sans-serif", border:`1px solid ${accent}44` }}>
-                  ★ {g.rating}
+                <div style={{ position:"absolute", bottom:8, left:8, background:"rgba(0,0,0,.6)", backdropFilter:"blur(8px)", borderRadius:6, padding:"2px 8px", fontSize:10, fontWeight:800, color:accent, fontFamily:"'Syne',sans-serif", border:`1px solid ${accent}44`, display:"flex", alignItems:"center", gap:4 }}>
+                  <span>★ {g.rating}</span>
+                  <span style={{ fontSize:8, color:"rgba(255,255,255,.35)", fontWeight:700, letterSpacing:.5 }}>IGDB</span>
                 </div>
               )}
               {showDate && g.year && (
