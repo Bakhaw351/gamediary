@@ -2428,7 +2428,7 @@ export default function JoystickLog() {
     : [...topGames, ...exploreGames].filter((g,i,arr) => userRatings[g.id] && arr.findIndex(x=>x.id===g.id)===i);
 
   return (
-    <div data-theme={theme} style={{ minHeight:"100vh", background:th.bg, color:th.text, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>
+    <div data-theme={theme} suppressHydrationWarning style={{ minHeight:"100vh", background:th.bg, color:th.text, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>
       <style>{CSS}</style>
 
       {/* Game cover ambient background (color blobs) */}
@@ -2490,7 +2490,7 @@ export default function JoystickLog() {
         {/* Right side */}
         <div style={{ display:"flex", alignItems:"center", gap:10 }}>
           {/* 🌙/☀️ Theme toggle */}
-          <button onClick={() => setTheme(t => t === "dark" ? "light" : "dark")}
+          <button onClick={() => setTheme(prev => prev === "dark" ? "light" : "dark")}
             title={theme === "dark" ? "Mode jour" : "Mode nuit"}
             style={{ width:36, height:36, borderRadius:10, background:th.bgEl, border:`1px solid ${th.borderS}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", transition:"all .18s", color:th.textMid, flexShrink:0 }}
             onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(255,107,53,.35)"; e.currentTarget.style.color="#ff6b35"; }}
