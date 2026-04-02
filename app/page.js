@@ -373,6 +373,8 @@ const formatGame   = g   => ({
   genre:       g.genres?.[0]?.name || "Jeu vidéo",
   cover:       formatCover(g.cover?.url),
   rating:      formatRating(g.rating),
+  pressRating: g.aggregated_rating ? Math.round(g.aggregated_rating) : null,
+  pressCount:  g.aggregated_rating_count || 0,
   reviews:     g.total_rating_count || 0,
   tags:        g.genres?.map(x => x.name).slice(0,4) || [],
   summary:     g.summary || "",
@@ -730,37 +732,56 @@ const JacketWall = ({ covers }) => {
 };
 
 /* ── HORIZONTAL SCROLL SECTION ───────────────────────────── */
-const HScrollSection = ({ games, onClick, accent = "#ff6b35", showDate = false }) => (
-  <div style={{ display:"flex", gap:14, overflowX:"auto", paddingBottom:12, scrollbarWidth:"none", msOverflowStyle:"none" }}>
-    {games.map(g => (
-      <div key={g.id} className="hcard" onClick={()=>onClick(g)}>
-        <div className="hcard-img">
-          {g.cover
-            ? <img src={g.cover} alt={g.title} style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} />
-            : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:32 }}>🎮</div>
-          }
-          {/* Bottom gradient */}
-          <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 55%)", pointerEvents:"none" }} />
-          {/* Rating pill */}
-          {!showDate && g.rating && (
-            <div style={{ position:"absolute", bottom:8, left:8, background:"rgba(0,0,0,.6)", backdropFilter:"blur(8px)", borderRadius:6, padding:"2px 8px", fontSize:10, fontWeight:800, color:accent, fontFamily:"'Syne',sans-serif", border:`1px solid ${accent}44` }}>
-              ★ {g.rating}
+const HScrollSection = ({ games, onClick, accent = "#ff6b35", showDate = false }) => {
+  const scrollRef = useRef(null);
+  const scroll = dir => {
+    if (scrollRef.current) scrollRef.current.scrollBy({ left: dir * 480, behavior: "smooth" });
+  };
+  return (
+    <div style={{ position:"relative" }}>
+      {/* Arrow left */}
+      <button onClick={() => scroll(-1)} style={{ position:"absolute", left:-18, top:"38%", transform:"translateY(-50%)", zIndex:10, width:34, height:34, borderRadius:"50%", background:"rgba(15,12,24,.92)", border:"1px solid rgba(255,255,255,.12)", color:"rgba(255,255,255,.7)", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 4px 18px rgba(0,0,0,.6)", transition:"all .18s" }}
+        onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(255,107,53,.5)";e.currentTarget.style.color="#ff6b35";}}
+        onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.12)";e.currentTarget.style.color="rgba(255,255,255,.7)";}}>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      {/* Scroll track */}
+      <div ref={scrollRef} style={{ display:"flex", gap:14, overflowX:"auto", paddingBottom:12, scrollbarWidth:"none", msOverflowStyle:"none" }}>
+        {games.map(g => (
+          <div key={g.id} className="hcard" onClick={()=>onClick(g)}>
+            <div className="hcard-img">
+              {g.cover
+                ? <img src={g.cover} alt={g.title} style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} />
+                : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:32 }}>🎮</div>
+              }
+              <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 55%)", pointerEvents:"none" }} />
+              {!showDate && g.rating && (
+                <div style={{ position:"absolute", bottom:8, left:8, background:"rgba(0,0,0,.6)", backdropFilter:"blur(8px)", borderRadius:6, padding:"2px 8px", fontSize:10, fontWeight:800, color:accent, fontFamily:"'Syne',sans-serif", border:`1px solid ${accent}44` }}>
+                  ★ {g.rating}
+                </div>
+              )}
+              {showDate && g.year && (
+                <div style={{ position:"absolute", bottom:8, left:8, background:"rgba(0,0,0,.6)", backdropFilter:"blur(8px)", borderRadius:6, padding:"2px 8px", fontSize:10, fontWeight:700, color:"rgba(255,255,255,.6)", fontFamily:"'Space Grotesk',sans-serif" }}>
+                  {g.year}
+                </div>
+              )}
             </div>
-          )}
-          {showDate && g.year && (
-            <div style={{ position:"absolute", bottom:8, left:8, background:"rgba(0,0,0,.6)", backdropFilter:"blur(8px)", borderRadius:6, padding:"2px 8px", fontSize:10, fontWeight:700, color:"rgba(255,255,255,.6)", fontFamily:"'Space Grotesk',sans-serif" }}>
-              {g.year}
+            <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.82)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.35 }}>
+              {g.title.length>22?g.title.slice(0,22)+"…":g.title}
             </div>
-          )}
-        </div>
-        <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.82)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.35 }}>
-          {g.title.length>22?g.title.slice(0,22)+"…":g.title}
-        </div>
-        {g.genre && <div style={{ fontSize:10, color:"rgba(255,255,255,.26)", fontFamily:"'Plus Jakarta Sans',sans-serif", marginTop:3 }}>{g.genre}</div>}
+            {g.genre && <div style={{ fontSize:10, color:"rgba(255,255,255,.26)", fontFamily:"'Plus Jakarta Sans',sans-serif", marginTop:3 }}>{g.genre}</div>}
+          </div>
+        ))}
       </div>
-    ))}
-  </div>
-);
+      {/* Arrow right */}
+      <button onClick={() => scroll(1)} style={{ position:"absolute", right:-18, top:"38%", transform:"translateY(-50%)", zIndex:10, width:34, height:34, borderRadius:"50%", background:"rgba(15,12,24,.92)", border:"1px solid rgba(255,255,255,.12)", color:"rgba(255,255,255,.7)", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 4px 18px rgba(0,0,0,.6)", transition:"all .18s" }}
+        onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(255,107,53,.5)";e.currentTarget.style.color="#ff6b35";}}
+        onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.12)";e.currentTarget.style.color="rgba(255,255,255,.7)";}}>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  );
+};
 
 /* ── GAME CARD ────────────────────────────────────────────── */
 const GameCard = ({ game, onClick, rank, userRating }) => {
@@ -830,7 +851,6 @@ const FeaturedCard = ({ game, onClick }) => {
         <div style={{ position:"absolute", top:14, left:14 }}>
           <span style={{ background:"linear-gradient(135deg,#ff6b35,#ffd166)", color:"#030401", borderRadius:9, padding:"4px 13px", fontSize:11, fontWeight:800, fontFamily:"'Space Grotesk',sans-serif", boxShadow:"0 4px 18px rgba(255,107,53,.45)", letterSpacing:"-.1px" }}>#1</span>
         </div>
-        <div style={{ position:"absolute", top:12, right:12 }}><Ring value={game.rating} size={54} /></div>
 
         {/* Content overlay */}
         <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"0 20px 24px" }}>
@@ -1306,6 +1326,17 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
                 <div>
                   <div style={{ fontSize:12, color:"rgba(255,255,255,.3)", fontFamily:"'DM Sans',sans-serif" }}>{t("communityReviews")}</div>
                   <div style={{ fontSize:13, color:"rgba(255,255,255,.55)", fontFamily:"'DM Sans',sans-serif" }}>{t("ofCommunity")}</div>
+                </div>
+              </div>
+            )}
+            {game.pressRating && (
+              <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                <div style={{ width:52, height:52, borderRadius:"50%", background: game.pressRating >= 75 ? "rgba(255,209,102,.08)" : game.pressRating >= 60 ? "rgba(255,107,53,.08)" : "rgba(248,113,113,.08)", border:`1px solid ${game.pressRating >= 75 ? "rgba(255,209,102,.25)" : game.pressRating >= 60 ? "rgba(255,107,53,.25)" : "rgba(248,113,113,.25)"}`, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color: game.pressRating >= 75 ? "#ffd166" : game.pressRating >= 60 ? "#ff9a3c" : "#f87171" }}>
+                  {game.pressRating}
+                </div>
+                <div>
+                  <div style={{ fontSize:12, color:"rgba(255,255,255,.3)", fontFamily:"'DM Sans',sans-serif" }}>Score presse</div>
+                  <div style={{ fontSize:13, color:"rgba(255,255,255,.55)", fontFamily:"'DM Sans',sans-serif" }}>{game.pressCount} média{game.pressCount > 1 ? "s" : ""}</div>
                 </div>
               </div>
             )}

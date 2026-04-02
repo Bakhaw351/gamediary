@@ -13,7 +13,7 @@ export async function GET() {
 
   const now = Math.floor(Date.now() / 1000);
   const twelveMonthsAgo = now - 365 * 24 * 3600;
-  const fields = 'fields name,cover.url,first_release_date,rating,total_rating_count,genres.name,platforms.name,summary,videos.video_id;';
+  const fields = 'fields name,cover.url,first_release_date,rating,total_rating_count,aggregated_rating,aggregated_rating_count,genres.name,platforms.name,summary,videos.video_id;';
 
   const [trending, upcoming, gems, top] = await Promise.all([
     fetch('https://api.igdb.com/v4/games', {

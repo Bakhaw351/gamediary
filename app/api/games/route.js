@@ -14,7 +14,7 @@ export async function GET(request) {
     'Content-Type': 'text/plain',
   };
 
-  const fields = 'fields name,cover.url,first_release_date,genres.name,rating,total_rating_count,platforms.name,summary,videos.video_id;';
+  const fields = 'fields name,cover.url,first_release_date,genres.name,rating,total_rating_count,aggregated_rating,aggregated_rating_count,platforms.name,summary,videos.video_id;';
 
   // Single game fetch by IGDB id
   if (gameId) {
