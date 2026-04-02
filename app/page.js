@@ -2837,52 +2837,46 @@ export default function JoystickLog() {
                   </div>
                 </div>
                 <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-                  {topReviews.map((rv, i) => {
-                    const liked = myLikes.has(rv.reviewer_id);
-                    return (
-                      <div key={rv.reviewer_id + rv.game_id} style={{ display:"flex", gap:16, padding:"18px 20px", borderRadius:18, border:"1px solid rgba(255,255,255,.048)", background:"rgba(255,255,255,.016)", transition:"all .22s", alignItems:"flex-start" }}>
-                        {/* Rank */}
-                        <div style={{ flexShrink:0, width:28, textAlign:"center", paddingTop:4 }}>
-                          <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:900, fontSize:15, color: i === 0 ? "#ffd166" : i === 1 ? "rgba(255,255,255,.45)" : i === 2 ? "#cd7f32" : "rgba(255,255,255,.2)" }}>
-                            {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `#${i + 1}`}
+                  {topReviews.map((rv, i) => (
+                    <div key={rv.reviewer_id + rv.game_id} style={{ display:"flex", gap:16, padding:"18px 20px", borderRadius:18, border:"1px solid rgba(255,255,255,.048)", background:"rgba(255,255,255,.016)", transition:"all .22s", alignItems:"flex-start" }}>
+                      {/* Rank */}
+                      <div style={{ flexShrink:0, width:28, textAlign:"center", paddingTop:4 }}>
+                        <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:900, fontSize:15, color: i === 0 ? "#ffd166" : i === 1 ? "rgba(255,255,255,.45)" : i === 2 ? "#cd7f32" : "rgba(255,255,255,.2)" }}>
+                          {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `#${i + 1}`}
+                        </span>
+                      </div>
+                      {/* Cover */}
+                      <div style={{ flexShrink:0, width:44, height:58, borderRadius:8, overflow:"hidden", background:"rgba(255,255,255,.06)" }}>
+                        {rv.game_cover && <img src={rv.game_cover.replace("t_thumb","t_cover_small")} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} />}
+                      </div>
+                      {/* Content */}
+                      <div style={{ flex:1, minWidth:0 }}>
+                        <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:6, flexWrap:"wrap" }}>
+                          <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.75)", cursor:"pointer" }}
+                            onClick={() => openUserProfile(rv.reviewer_username)}>
+                            {rv.reviewer_username || "Joueur"}
                           </span>
-                        </div>
-                        {/* Cover */}
-                        <div style={{ flexShrink:0, width:44, height:58, borderRadius:8, overflow:"hidden", background:"rgba(255,255,255,.06)", cursor:"pointer" }}
-                          onClick={() => rv.game_id && fetch(`/api/games?id=${rv.game_id}`).then(r=>r.json()).then(d=>{ if(d?.games?.[0]) setSelected(d.games[0]); })}>
-                          {rv.game_cover && <img src={rv.game_cover.replace("t_thumb","t_cover_small")} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} />}
-                        </div>
-                        {/* Content */}
-                        <div style={{ flex:1, minWidth:0 }}>
-                          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:6, flexWrap:"wrap" }}>
-                            <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.75)", cursor:"pointer", textDecoration:"none" }}
-                              onClick={() => openUserProfile(rv.reviewer_username)}>
-                              {rv.reviewer_username || "Joueur"}
-                            </span>
-                            <span style={{ color:"rgba(255,255,255,.18)", fontSize:11 }}>sur</span>
-                            <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.55)", cursor:"pointer" }}
-                              onClick={() => rv.game_id && fetch(`/api/games?id=${rv.game_id}`).then(r=>r.json()).then(d=>{ if(d?.games?.[0]) setSelected(d.games[0]); })}>
-                              {rv.game_title}
-                            </span>
-                            {rv.rating && (
-                              <span style={{ background:"#ff6b35", borderRadius:7, padding:"2px 9px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:900, fontSize:12, color:"#fff" }}>{rv.rating}/10</span>
-                            )}
-                          </div>
-                          {rv.comment && (
-                            <p style={{ margin:0, fontSize:13, color:"rgba(255,255,255,.42)", lineHeight:1.55, fontFamily:"'DM Sans',sans-serif", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }}>
-                              {rv.comment}
-                            </p>
+                          <span style={{ color:"rgba(255,255,255,.18)", fontSize:11 }}>sur</span>
+                          <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.55)" }}>
+                            {rv.game_title}
+                          </span>
+                          {rv.rating && (
+                            <span style={{ background:"#ff6b35", borderRadius:7, padding:"2px 9px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:900, fontSize:12, color:"#fff" }}>{rv.rating}/10</span>
                           )}
                         </div>
-                        {/* Like */}
-                        <button onClick={() => toggleLike(rv.reviewer_id)}
-                          style={{ flexShrink:0, background: liked ? "rgba(239,68,68,.14)" : "rgba(255,255,255,.03)", border:`1px solid ${liked ? "rgba(239,68,68,.45)" : "rgba(255,255,255,.07)"}`, borderRadius:20, padding:"5px 13px", cursor:"pointer", fontSize:13, display:"flex", alignItems:"center", gap:5, transition:"all .18s", color: liked ? "#ef4444" : "rgba(255,255,255,.35)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>
-                          <span style={{ fontSize:15 }}>{liked ? "❤️" : "🤍"}</span>
-                          <span>{rv.like_count || 0}</span>
-                        </button>
+                        {rv.comment && (
+                          <p style={{ margin:0, fontSize:13, color:"rgba(255,255,255,.42)", lineHeight:1.55, fontFamily:"'DM Sans',sans-serif", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }}>
+                            {rv.comment}
+                          </p>
+                        )}
                       </div>
-                    );
-                  })}
+                      {/* Like count (read-only) */}
+                      <div style={{ flexShrink:0, background:"rgba(239,68,68,.08)", border:"1px solid rgba(239,68,68,.2)", borderRadius:20, padding:"5px 13px", fontSize:13, display:"flex", alignItems:"center", gap:5, color:"rgba(239,68,68,.7)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>
+                        <span style={{ fontSize:15 }}>❤️</span>
+                        <span>{rv.like_count || 0}</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
