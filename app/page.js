@@ -2577,6 +2577,13 @@ const ActivityItem = ({ item, onClick, onUserClick }) => {
 export default function JoystickLog() {
   const [lang, setLang] = useState("fr");
   useEffect(() => { setLang(detectLang()); }, []);
+
+  // Register service worker for PWA
+  useEffect(() => {
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+  }, []);
   const t = key => (TRANSLATIONS[lang]?.[key] ?? TRANSLATIONS.fr[key] ?? key);
 
   const [tab, setTab]           = useState("home");
