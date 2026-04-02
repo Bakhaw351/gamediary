@@ -510,7 +510,10 @@ const CSS = `
   @keyframes bounceY  {0%,100%{transform:translateX(-50%) translateY(0);}60%{transform:translateX(-50%) translateY(8px);}}
   @keyframes popIn    {from{transform:scale(0) rotate(-12deg);opacity:0;}to{transform:scale(1) rotate(0);opacity:1;}}
   @keyframes revealLine{from{transform:scaleX(0);}to{transform:scaleX(1);}}
-  .jacket-item,.cover-bg-item{will-change:transform;}
+  .jacket-item,.cover-bg-item{will-change:transform;transform:translateZ(0);}
+  @media (prefers-reduced-motion: reduce) {
+    .jacket-item,.cover-bg-item,.hf1,.hf2,.hf3{animation:none!important;}
+  }
 
   .fu  {animation:fadeUp .65s cubic-bezier(.22,1,.36,1) both;}
   .fu2 {animation:fadeUp .65s .12s cubic-bezier(.22,1,.36,1) both;}
@@ -718,30 +721,30 @@ const Skel = () => (
 
 /* ── COVER BACKGROUND ────────────────────────────────────── */
 const BG_SLOTS = [
-  { top:'-12%',   left:'-16%',   size:480, rot:'-10deg', dur:'32s', delay:'0s'   },
-  { top:'4%',     right:'-15%',  size:420, rot:'7deg',   dur:'40s', delay:'-14s' },
-  { top:'38%',    left:'-10%',   size:380, rot:'5deg',   dur:'50s', delay:'-30s' },
-  { top:'33%',    right:'-10%',  size:360, rot:'-4deg',  dur:'38s', delay:'-18s' },
-  { bottom:'-8%', left:'-14%',   size:440, rot:'4deg',   dur:'36s', delay:'-22s' },
-  { bottom:'-10%',right:'-15%',  size:460, rot:'-6deg',  dur:'44s', delay:'-8s'  },
-  { top:'16%',    left:'28%',    size:300, rot:'2deg',   dur:'55s', delay:'-35s' },
-  { top:'58%',    left:'30%',    size:280, rot:'-3deg',  dur:'48s', delay:'-25s' },
-  { top:'72%',    left:'16%',    size:260, rot:'6deg',   dur:'42s', delay:'-12s' },
-  { top:'68%',    right:'16%',   size:240, rot:'-5deg',  dur:'46s', delay:'-20s' },
+  { top:'-12%',   left:'-16%',   size:380, rot:'-10deg', dur:'32s', delay:'0s'   },
+  { top:'4%',     right:'-15%',  size:340, rot:'7deg',   dur:'40s', delay:'-14s' },
+  { top:'38%',    left:'-10%',   size:300, rot:'5deg',   dur:'50s', delay:'-30s' },
+  { top:'33%',    right:'-10%',  size:280, rot:'-4deg',  dur:'38s', delay:'-18s' },
+  { bottom:'-8%', left:'-14%',   size:340, rot:'4deg',   dur:'36s', delay:'-22s' },
+  { bottom:'-10%',right:'-15%',  size:360, rot:'-6deg',  dur:'44s', delay:'-8s'  },
 ];
 const CoverBackground = ({ covers }) => {
   if (!covers?.length) return null;
   return (
-    <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0, overflow:'hidden' }}>
+    <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0, overflow:'hidden', contain:'strict' }}>
       {BG_SLOTS.map((p, i) => {
         const src = covers[i % covers.length];
         if (!src) return null;
-        const s = { position:'absolute', width:p.size, opacity:0.14, filter:'blur(60px) saturate(2.2)', animation:`bgDrift ${p.dur} ease-in-out infinite ${p.delay}` };
+        const s = { position:'absolute', width:p.size, opacity:0.12, animation:`bgDrift ${p.dur} ease-in-out infinite ${p.delay}`, overflow:'hidden', borderRadius:24 };
         if (p.top)    s.top    = p.top;
         if (p.bottom) s.bottom = p.bottom;
         if (p.left)   s.left   = p.left;
         if (p.right)  s.right  = p.right;
-        return <div key={i} className="cover-bg-item" style={s}><img src={src} alt="" style={{ width:'100%', display:'block', borderRadius:24, transform:`rotate(${p.rot})` }} /></div>;
+        return (
+          <div key={i} className="cover-bg-item" style={s}>
+            <img src={src} alt="" style={{ width:'100%', display:'block', borderRadius:24, transform:`rotate(${p.rot})`, filter:'blur(40px)' }} />
+          </div>
+        );
       })}
     </div>
   );
@@ -750,29 +753,22 @@ const CoverBackground = ({ covers }) => {
 /* ── JACKET WALL — visible covers floating in bg ─────────── */
 const JACKET_SLOTS = [
   { top:'6%',    left:'1%',    w:78,  rot:'-9deg',  dur:'58s', delay:'0s'    },
-  { top:'30%',   left:'0.5%',  w:70,  rot:'5deg',   dur:'50s', delay:'-22s'  },
-  { top:'56%',   left:'1.5%',  w:74,  rot:'-5deg',  dur:'63s', delay:'-37s'  },
-  { top:'76%',   left:'0.8%',  w:66,  rot:'7deg',   dur:'54s', delay:'-14s'  },
+  { top:'38%',   left:'0.5%',  w:70,  rot:'5deg',   dur:'50s', delay:'-22s'  },
+  { top:'70%',   left:'1.5%',  w:74,  rot:'-5deg',  dur:'63s', delay:'-37s'  },
   { top:'5%',    right:'1%',   w:76,  rot:'7deg',   dur:'52s', delay:'-10s'  },
-  { top:'32%',   right:'0.5%', w:72,  rot:'-6deg',  dur:'60s', delay:'-30s'  },
-  { top:'58%',   right:'1.5%', w:68,  rot:'4deg',   dur:'47s', delay:'-42s'  },
-  { top:'78%',   right:'0.8%', w:78,  rot:'-4deg',  dur:'55s', delay:'-7s'   },
-  { top:'3%',    left:'14%',   w:58,  rot:'3deg',   dur:'68s', delay:'-48s'  },
-  { top:'3%',    right:'15%',  w:56,  rot:'-3deg',  dur:'72s', delay:'-33s'  },
-  { bottom:'2%', left:'13%',   w:62,  rot:'-6deg',  dur:'64s', delay:'-20s'  },
-  { bottom:'2%', right:'13%',  w:60,  rot:'5deg',   dur:'57s', delay:'-27s'  },
+  { top:'40%',   right:'0.5%', w:72,  rot:'-6deg',  dur:'60s', delay:'-30s'  },
+  { top:'72%',   right:'1.5%', w:68,  rot:'4deg',   dur:'47s', delay:'-42s'  },
 ];
 const JacketWall = ({ covers }) => {
   if (!covers?.length) return null;
   return (
-    <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0, overflow:'hidden' }}>
+    <div style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0, overflow:'hidden', contain:'strict' }}>
       {JACKET_SLOTS.map((p, i) => {
         const src = covers[i % covers.length];
         if (!src) return null;
         const s = {
           position:'absolute', width:p.w,
-          opacity:0.16,
-          filter:'blur(1px)',
+          opacity:0.14,
           '--rot': p.rot,
           animation:`jacketDrift ${p.dur} ease-in-out infinite ${p.delay}`,
           transform:`rotate(${p.rot})`,
