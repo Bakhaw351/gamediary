@@ -123,7 +123,7 @@ const TRANSLATIONS = {
     share:"Partager", shareX:"Partager sur X", copyLink:"Copier le lien", linkCopied:"Lien copié !",
     settings_title:"Paramètres", settings_save:"Enregistrer",
     settings_tab_profile:"Profil", settings_tab_account:"Compte", settings_tab_privacy:"Confidentialité", settings_tab_danger:"Danger",
-    settings_username:"Nom d'utilisateur", settings_bio:"Bio", settings_bio_placeholder:"Dis-nous qui tu es en quelques mots…", settings_avatar:"Avatar (URL)",
+    settings_username:"Nom d'utilisateur", settings_bio:"Bio", settings_bio_placeholder:"Dis-nous qui tu es en quelques mots…", settings_avatar:"Avatar",
     settings_current_email:"Email actuel :", settings_new_email:"Nouvel email", settings_change_email:"Changer l'email",
     settings_new_pw:"Nouveau mot de passe", settings_confirm_pw:"Confirmer le mot de passe", settings_change_pw:"Changer le mot de passe",
     settings_phone:"Numéro de téléphone", settings_phone_hint:"Utilisé uniquement pour la récupération de compte.",
@@ -198,7 +198,7 @@ const TRANSLATIONS = {
     share:"Share", shareX:"Share on X", copyLink:"Copy link", linkCopied:"Link copied!",
     settings_title:"Settings", settings_save:"Save",
     settings_tab_profile:"Profile", settings_tab_account:"Account", settings_tab_privacy:"Privacy", settings_tab_danger:"Danger",
-    settings_username:"Username", settings_bio:"Bio", settings_bio_placeholder:"Tell us a bit about yourself…", settings_avatar:"Avatar (URL)",
+    settings_username:"Username", settings_bio:"Bio", settings_bio_placeholder:"Tell us a bit about yourself…", settings_avatar:"Avatar",
     settings_current_email:"Current email:", settings_new_email:"New email", settings_change_email:"Change email",
     settings_new_pw:"New password", settings_confirm_pw:"Confirm password", settings_change_pw:"Change password",
     settings_phone:"Phone number", settings_phone_hint:"Only used for account recovery.",
@@ -266,7 +266,7 @@ const TRANSLATIONS = {
     statsDistribution:"Bewertungsverteilung", statsStatus:"Statusübersicht",
     settings_title:"Einstellungen", settings_save:"Speichern",
     settings_tab_profile:"Profil", settings_tab_account:"Konto", settings_tab_privacy:"Datenschutz", settings_tab_danger:"Gefahr",
-    settings_username:"Benutzername", settings_bio:"Bio", settings_bio_placeholder:"Erzähl uns etwas über dich…", settings_avatar:"Avatar (URL)",
+    settings_username:"Benutzername", settings_bio:"Bio", settings_bio_placeholder:"Erzähl uns etwas über dich…", settings_avatar:"Avatar",
     settings_current_email:"Aktuelle E-Mail:", settings_new_email:"Neue E-Mail", settings_change_email:"E-Mail ändern",
     settings_new_pw:"Neues Passwort", settings_confirm_pw:"Passwort bestätigen", settings_change_pw:"Passwort ändern",
     settings_phone:"Telefonnummer", settings_phone_hint:"Wird nur zur Kontowiederherstellung verwendet.",
@@ -334,7 +334,7 @@ const TRANSLATIONS = {
     statsDistribution:"Distribución de notas", statsStatus:"Desglose de estados",
     settings_title:"Ajustes", settings_save:"Guardar",
     settings_tab_profile:"Perfil", settings_tab_account:"Cuenta", settings_tab_privacy:"Privacidad", settings_tab_danger:"Peligro",
-    settings_username:"Nombre de usuario", settings_bio:"Bio", settings_bio_placeholder:"Cuéntanos algo sobre ti…", settings_avatar:"Avatar (URL)",
+    settings_username:"Nombre de usuario", settings_bio:"Bio", settings_bio_placeholder:"Cuéntanos algo sobre ti…", settings_avatar:"Avatar",
     settings_current_email:"Email actual:", settings_new_email:"Nuevo email", settings_change_email:"Cambiar email",
     settings_new_pw:"Nueva contraseña", settings_confirm_pw:"Confirmar contraseña", settings_change_pw:"Cambiar contraseña",
     settings_phone:"Número de teléfono", settings_phone_hint:"Solo se usa para recuperación de cuenta.",
@@ -402,7 +402,7 @@ const TRANSLATIONS = {
     statsDistribution:"Distribuição das notas", statsStatus:"Divisão por status",
     settings_title:"Configurações", settings_save:"Salvar",
     settings_tab_profile:"Perfil", settings_tab_account:"Conta", settings_tab_privacy:"Privacidade", settings_tab_danger:"Perigo",
-    settings_username:"Nome de usuário", settings_bio:"Bio", settings_bio_placeholder:"Conta um pouco sobre você…", settings_avatar:"Avatar (URL)",
+    settings_username:"Nome de usuário", settings_bio:"Bio", settings_bio_placeholder:"Conta um pouco sobre você…", settings_avatar:"Avatar",
     settings_current_email:"Email atual:", settings_new_email:"Novo email", settings_change_email:"Alterar email",
     settings_new_pw:"Nova senha", settings_confirm_pw:"Confirmar senha", settings_change_pw:"Alterar senha",
     settings_phone:"Número de telefone", settings_phone_hint:"Usado apenas para recuperação de conta.",
@@ -1904,13 +1904,142 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
   );
 };
 
+/* ── AVATAR GALLERY ───────────────────────────────────────── */
+const DB = "https://api.dicebear.com/9.x/pixel-art/svg?seed=";
+
+const FREE_AVATARS = [
+  { id:"warrior",    seed:"Warrior",      label:"Warrior"     },
+  { id:"mage",       seed:"Mage",         label:"Mage"        },
+  { id:"ninja",      seed:"Ninja",        label:"Ninja"       },
+  { id:"knight",     seed:"Knight",       label:"Knight"      },
+  { id:"archer",     seed:"Archer",       label:"Archer"      },
+  { id:"rogue",      seed:"Rogue",        label:"Rogue"       },
+  { id:"healer",     seed:"Healer",       label:"Healer"      },
+  { id:"samurai",    seed:"Samurai",      label:"Samurai"     },
+  { id:"pirate",     seed:"Pirate",       label:"Pirate"      },
+  { id:"viking",     seed:"Viking",       label:"Viking"      },
+  { id:"wizard",     seed:"Wizard",       label:"Wizard"      },
+  { id:"druid",      seed:"Druid",        label:"Druid"       },
+  { id:"bard",       seed:"Bard",         label:"Bard"        },
+  { id:"paladin",    seed:"Paladin",      label:"Paladin"     },
+  { id:"berserker",  seed:"Berserker",    label:"Berserker"   },
+  { id:"ranger",     seed:"Ranger",       label:"Ranger"      },
+  { id:"sorcerer",   seed:"Sorcerer",     label:"Sorcerer"    },
+  { id:"monk",       seed:"Monk",         label:"Monk"        },
+  { id:"thief",      seed:"Thief",        label:"Thief"       },
+  { id:"guard",      seed:"Guard",        label:"Guard"       },
+  { id:"hunter",     seed:"Hunter",       label:"Hunter"      },
+  { id:"spy",        seed:"Spy",          label:"Spy"         },
+  { id:"pilot",      seed:"Pilot",        label:"Pilot"       },
+  { id:"engineer",   seed:"Engineer",     label:"Engineer"    },
+  { id:"cyborg",     seed:"Cyborg",       label:"Cyborg"      },
+  { id:"robot",      seed:"Robot",        label:"Robot"       },
+  { id:"alien",      seed:"Alien",        label:"Alien"       },
+  { id:"zombie",     seed:"Zombie",       label:"Zombie"      },
+  { id:"ghost",      seed:"Ghost",        label:"Ghost"       },
+  { id:"demon",      seed:"Demon",        label:"Demon"       },
+  { id:"angel",      seed:"Angel",        label:"Angel"       },
+  { id:"dragon",     seed:"Dragon",       label:"Dragon"      },
+];
+
+const LOCKED_AVATARS = [
+  { id:"rookie",      seed:"Rookie",       label:"Rookie",      cond:(r,s)=>Object.keys(r).length>=1,   hint:"Note ton 1er jeu" },
+  { id:"scout",       seed:"Scout",        label:"Scout",       cond:(r,s)=>Object.keys(r).length>=5,   hint:"Note 5 jeux" },
+  { id:"veteran",     seed:"Veteran",      label:"Veteran",     cond:(r,s)=>Object.keys(r).length>=10,  hint:"Note 10 jeux" },
+  { id:"legend",      seed:"Legend",       label:"Legend",      cond:(r,s)=>Object.keys(r).length>=25,  hint:"Note 25 jeux" },
+  { id:"immortal",    seed:"Immortal",     label:"Immortal",    cond:(r,s)=>Object.keys(r).length>=50,  hint:"Note 50 jeux" },
+  { id:"godlike",     seed:"Godlike",      label:"Godlike",     cond:(r,s)=>Object.keys(r).length>=100, hint:"Note 100 jeux" },
+  { id:"critic",      seed:"CriticPro",    label:"Critic",      cond:(r,s)=>Object.values(r).filter(x=>x.comment?.length>10).length>=1,  hint:"Écris ton 1er avis" },
+  { id:"journalist",  seed:"Journalist",   label:"Journalist",  cond:(r,s)=>Object.values(r).filter(x=>x.comment?.length>10).length>=5,  hint:"Écris 5 avis" },
+  { id:"fanboy",      seed:"Fanboy",       label:"Fanboy",      cond:(r,s)=>Object.values(r).some(x=>x.rating===10),                     hint:"Donne un 10/10" },
+  { id:"hater",       seed:"Hater",        label:"Hater",       cond:(r,s)=>Object.values(r).some(x=>x.rating===1),                      hint:"Donne un 1/10" },
+  { id:"completionist",seed:"Completionist",label:"Completionist",cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=3,   hint:"Termine 3 jeux" },
+  { id:"champion",    seed:"Champion",     label:"Champion",    cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=10,      hint:"Termine 10 jeux" },
+  { id:"dreamer",     seed:"Dreamer",      label:"Dreamer",     cond:(r,s)=>Object.values(s).filter(x=>x==="wishlist").length>=5,        hint:"Ajoute 5 jeux en wishlist" },
+  { id:"collector",   seed:"Collector",    label:"Collector",   cond:(r,s)=>Object.keys(r).length>=10,  hint:"Note 10 jeux" },
+  { id:"curator",     seed:"Curator",      label:"Curator",     cond:(r,s)=>Object.keys(r).length>=20,  hint:"Note 20 jeux" },
+  { id:"speedrunner", seed:"Speedrunner",  label:"Speedrunner", cond:(r,s)=>Object.values(s).filter(x=>x==="playing").length>=3,        hint:"Lance 3 jeux en même temps" },
+  { id:"dropout",     seed:"Dropout",      label:"Dropout",     cond:(r,s)=>Object.values(s).filter(x=>x==="dropped").length>=3,        hint:"Abandonne 3 jeux" },
+  { id:"devotee",     seed:"Devotee",      label:"Devotee",     cond:(r,s)=>Object.values(r).filter(x=>x.rating>=9).length>=5,          hint:"Note 5 jeux 9 ou 10" },
+  { id:"pessimist",   seed:"Pessimist",    label:"Pessimist",   cond:(r,s)=>Object.values(r).filter(x=>x.rating<=3).length>=5,          hint:"Note 5 jeux 3 ou moins" },
+  { id:"balanced",    seed:"Balanced",     label:"Balanced",    cond:(r,s)=>Object.values(r).filter(x=>x.rating===5||x.rating===6).length>=10, hint:"Note 10 jeux entre 5 et 6" },
+  { id:"explorer2",   seed:"Explorer2",    label:"Explorer",    cond:(r,s)=>Object.keys(s).length>=5,   hint:"Ajoute 5 jeux à ta liste" },
+  { id:"wanderer",    seed:"Wanderer",     label:"Wanderer",    cond:(r,s)=>Object.keys(s).length>=15,  hint:"Ajoute 15 jeux à ta liste" },
+  { id:"nomad",       seed:"Nomad",        label:"Nomad",       cond:(r,s)=>Object.keys(s).length>=30,  hint:"Ajoute 30 jeux à ta liste" },
+  { id:"hardcore",    seed:"Hardcore",     label:"Hardcore",    cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=5,      hint:"Termine 5 jeux" },
+  { id:"perfectionist",seed:"Perfectionist",label:"Perfectionist",cond:(r,s)=>Object.values(r).filter(x=>x.rating===10).length>=3,    hint:"3 notes parfaites 10/10" },
+  { id:"retrogamer",  seed:"Retrogamer",   label:"Retrogamer",  cond:(r,s)=>Object.keys(r).length>=15,  hint:"Note 15 jeux" },
+  { id:"indie",       seed:"IndieHero",    label:"Indie Hero",  cond:(r,s)=>Object.values(r).filter(x=>x.comment?.length>10).length>=3, hint:"Écris 3 avis" },
+  { id:"marathon",    seed:"Marathon",     label:"Marathon",    cond:(r,s)=>Object.values(s).filter(x=>x==="playing").length>=5,        hint:"5 jeux en cours en même temps" },
+  { id:"archivist",   seed:"Archivist",    label:"Archivist",   cond:(r,s)=>Object.keys(r).length>=30,  hint:"Note 30 jeux" },
+  { id:"oracle",      seed:"Oracle",       label:"Oracle",      cond:(r,s)=>Object.keys(r).length>=75,  hint:"Note 75 jeux" },
+  { id:"overlord",    seed:"Overlord",     label:"Overlord",    cond:(r,s)=>Object.keys(r).length>=200, hint:"Note 200 jeux" },
+  { id:"phantom",     seed:"Phantom",      label:"Phantom",     cond:(r,s)=>Object.values(r).filter(x=>x.rating>=8).length>=10,         hint:"Note 10 jeux 8 ou plus" },
+  { id:"titan",       seed:"Titan",        label:"Titan",       cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=20,     hint:"Termine 20 jeux" },
+];
+
+const AvatarGallery = ({ avatarUrl, setAvatarUrl, userRatings, userStatus }) => {
+  const [tab, setTab] = useState("free");
+  const list = tab === "free" ? FREE_AVATARS : LOCKED_AVATARS;
+
+  return (
+    <div style={{ marginBottom:16 }}>
+      {/* Preview */}
+      <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:16 }}>
+        <div style={{ width:64, height:64, borderRadius:16, overflow:"hidden", border:"2px solid rgba(255,107,53,.5)", background:"rgba(255,255,255,.05)", flexShrink:0 }}>
+          {avatarUrl
+            ? <img src={avatarUrl} alt="avatar" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+            : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24 }}>👤</div>
+          }
+        </div>
+        <div>
+          <div style={{ color:"var(--c-text)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13 }}>Avatar actuel</div>
+          <div style={{ color:"var(--c-text-3)", fontSize:11, fontFamily:"'DM Sans',sans-serif", marginTop:2 }}>Clique sur un avatar pour le sélectionner</div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display:"flex", gap:4, marginBottom:12, background:"rgba(255,255,255,.04)", borderRadius:10, padding:4 }}>
+        {[["free","🎮 Gratuits (32)"],["locked","🔒 Débloquables (32)"]].map(([id,label])=>(
+          <button key={id} onClick={()=>setTab(id)}
+            style={{ flex:1, padding:"7px 8px", borderRadius:8, border:tab===id?"1px solid rgba(255,107,53,.3)":"1px solid transparent", background:tab===id?"rgba(255,107,53,.1)":"transparent", color:tab===id?"#ffd166":"var(--c-text-3)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:12, cursor:"pointer", transition:"all .15s" }}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Grid */}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(8,1fr)", gap:6, maxHeight:280, overflowY:"auto", paddingRight:4 }}>
+        {list.map(av => {
+          const url = `${DB}${av.seed}`;
+          const unlocked = tab === "free" || av.cond(userRatings, userStatus);
+          const selected = avatarUrl === url;
+          return (
+            <div key={av.id} title={unlocked ? av.label : `🔒 ${av.hint}`}
+              onClick={() => unlocked && setAvatarUrl(url)}
+              style={{ position:"relative", borderRadius:10, overflow:"hidden", border:selected?"2px solid #ff6b35":"2px solid transparent", cursor:unlocked?"pointer":"not-allowed", background:"rgba(255,255,255,.05)", aspectRatio:"1", transition:"border-color .15s, transform .15s", transform:selected?"scale(1.08)":"scale(1)" }}>
+              <img src={url} alt={av.label} style={{ width:"100%", height:"100%", display:"block", filter:unlocked?"none":"grayscale(1) brightness(.4)" }} loading="lazy" />
+              {!unlocked && (
+                <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14 }}>🔒</div>
+              )}
+              {selected && (
+                <div style={{ position:"absolute", bottom:2, right:2, width:10, height:10, borderRadius:"50%", background:"#ff6b35", boxShadow:"0 0 6px #ff6b35" }} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 /* ── USERNAME EDIT ────────────────────────────────────────── */
 /* ── SETTINGS MODAL ───────────────────────────────────────── */
-const SettingsModal = ({ user, profileUsername, setProfileUsername, onClose, onDeleteAccount, t }) => {
+const SettingsModal = ({ user, profileUsername, setProfileUsername, profileAvatar, setProfileAvatar, onClose, onDeleteAccount, userRatings, userStatus, t }) => {
   const [section, setSection]       = useState("profile");
   const [username, setUsername]     = useState(profileUsername);
   const [bio, setBio]               = useState("");
-  const [avatarUrl, setAvatarUrl]   = useState("");
+  const [avatarUrl, setAvatarUrl]   = useState(profileAvatar || "");
   const [isPublic, setIsPublic]     = useState(true);
   const [newEmail, setNewEmail]     = useState("");
   const [newPw, setNewPw]           = useState("");
@@ -1940,9 +2069,10 @@ const SettingsModal = ({ user, profileUsername, setProfileUsername, onClose, onD
     setSaving(true);
     const uname = username.trim();
     if (!uname) { flash("err", t("settings_err_username")); setSaving(false); return; }
-    await supabase.from("profiles").upsert({ id: user.id, username: uname, bio: bio.trim(), avatar_url: avatarUrl.trim(), is_public: isPublic, phone: phone.trim() });
+    await supabase.from("profiles").upsert({ id: user.id, username: uname, bio: bio.trim(), avatar_url: avatarUrl, is_public: isPublic, phone: phone.trim() });
     await supabase.auth.updateUser({ data: { username: uname } });
     setProfileUsername(uname);
+    setProfileAvatar(avatarUrl);
     flash("ok", t("settings_saved"));
     setSaving(false);
   };
@@ -2050,11 +2180,7 @@ const SettingsModal = ({ user, profileUsername, setProfileUsername, onClose, onD
                 </div>
                 <div style={fieldWrap}>
                   <label style={labelStyle}>{t("settings_avatar")}</label>
-                  <input style={inputStyle} value={avatarUrl} onChange={e=>setAvatarUrl(e.target.value)}
-                    placeholder="https://..."
-                    onFocus={e=>e.target.style.borderColor="rgba(255,107,53,.5)"}
-                    onBlur={e=>e.target.style.borderColor="rgba(255,255,255,.1)"} />
-                  {avatarUrl && <img src={avatarUrl} alt="avatar preview" style={{ width:48, height:48, borderRadius:12, objectFit:"cover", marginTop:8, border:"2px solid rgba(255,107,53,.3)" }} />}
+                  <AvatarGallery avatarUrl={avatarUrl} setAvatarUrl={setAvatarUrl} userRatings={userRatings} userStatus={userStatus} />
                 </div>
                 <button onClick={saveProfile} disabled={saving} className="btn" style={{ width:"100%", justifyContent:"center", display:"flex", alignItems:"center", gap:8 }}>
                   {saving && <div className="spin" style={{ width:14, height:14, borderWidth:2 }} />}
@@ -2494,6 +2620,7 @@ export default function JoystickLog() {
   const activeTagsRef       = useRef([]);
   const [wishlistGames, setWishlistGames] = useState([]);
   const [profileUsername, setProfileUsername] = useState("");
+  const [profileAvatar, setProfileAvatar]     = useState("");
   const [trendingGames, setTrendingGames] = useState([]);
   const [upcomingGames, setUpcomingGames] = useState([]);
   const [gemGames, setGemGames]           = useState([]);
@@ -2596,11 +2723,14 @@ export default function JoystickLog() {
 
   /* Load username from profiles */
   useEffect(() => {
-    if (!user) { setProfileUsername(""); return; }
+    if (!user) { setProfileUsername(""); setProfileAvatar(""); return; }
     const fromMeta = user.user_metadata?.username;
-    if (fromMeta) { setProfileUsername(fromMeta); return; }
-    supabase.from("profiles").select("username").eq("id", user.id).single()
-      .then(({ data }) => { if (data?.username) setProfileUsername(data.username); });
+    supabase.from("profiles").select("username,avatar_url").eq("id", user.id).single()
+      .then(({ data }) => {
+        if (data?.username) setProfileUsername(data.username);
+        else if (fromMeta) setProfileUsername(fromMeta);
+        if (data?.avatar_url) setProfileAvatar(data.avatar_url);
+      });
   }, [user]);
 
   /* Load ratings & status */
@@ -3489,8 +3619,11 @@ export default function JoystickLog() {
                   <div style={{ position:"absolute", top:0, right:0, width:320, height:320, background:"radial-gradient(circle,rgba(255,107,53,.06) 0%,transparent 70%)", pointerEvents:"none" }} />
                   <div style={{ display:"flex", gap:22, alignItems:"center", flexWrap:"wrap", position:"relative", zIndex:1 }}>
                     {/* Avatar */}
-                    <div style={{ width:72, height:72, borderRadius:18, background:"linear-gradient(135deg,#ff6b35,#ffd166)", display:"flex", alignItems:"center", justifyContent:"center", color:"#140800", fontWeight:800, fontSize:26, fontFamily:"'Syne',sans-serif", flexShrink:0, boxShadow:"0 0 28px rgba(255,107,53,.35)" }}>
-                      {(profileUsername || user.email || "??").slice(0,2).toUpperCase()}
+                    <div onClick={()=>setShowSettings(true)} title="Changer l'avatar" style={{ width:72, height:72, borderRadius:18, background:"linear-gradient(135deg,#ff6b35,#ffd166)", display:"flex", alignItems:"center", justifyContent:"center", color:"#140800", fontWeight:800, fontSize:26, fontFamily:"'Syne',sans-serif", flexShrink:0, boxShadow:"0 0 28px rgba(255,107,53,.35)", cursor:"pointer", overflow:"hidden", position:"relative" }}>
+                      {profileAvatar
+                        ? <img src={profileAvatar} alt="avatar" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+                        : (profileUsername || user.email || "??").slice(0,2).toUpperCase()
+                      }
                     </div>
                     <div style={{ flex:1 }}>
                       <div style={{ fontSize:10, color:"rgba(255,107,53,.6)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:5 }}>{t("player")}</div>
@@ -3749,7 +3882,7 @@ export default function JoystickLog() {
       {showAuth && <AuthModal onClose={()=>setShowAuth(false)} onSuccess={u=>{ setUser(u); setShowAuth(false); }} t={t}/>}
       {showResetPw && <ResetPasswordModal onClose={()=>setShowResetPw(false)} t={t}/>}
       {legalModal && <LegalModal type={legalModal} onClose={()=>setLegalModal(null)}/>}
-      {showSettings && user && <SettingsModal user={user} profileUsername={profileUsername} setProfileUsername={setProfileUsername} onClose={()=>setShowSettings(false)} onDeleteAccount={()=>{ setUser(null); setUserRatings({}); setUserStatus({}); setWishlistGames([]); }} t={t}/>}
+      {showSettings && user && <SettingsModal user={user} profileUsername={profileUsername} setProfileUsername={setProfileUsername} profileAvatar={profileAvatar} setProfileAvatar={setProfileAvatar} onClose={()=>setShowSettings(false)} onDeleteAccount={()=>{ setUser(null); setUserRatings({}); setUserStatus({}); setWishlistGames([]); }} userRatings={userRatings} userStatus={userStatus} t={t}/>}
       {publicProfile && (
         <PublicProfile
           username={publicProfile}
