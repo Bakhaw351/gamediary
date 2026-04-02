@@ -56,19 +56,15 @@ export async function GET(request) {
     m.kw.forEach(k => kwTerms.add(k));
   }
 
-  // ── Resolve keyword names → IGDB keyword IDs (parallel) ───
+  // ── Resolve keyword names → IGDB keyword IDs (single batched request) ───
   let kwIds = [];
   if (kwTerms.size > 0) {
-    const kwResults = await Promise.all(
-      [...kwTerms].map(term =>
-        fetch('https://api.igdb.com/v4/keywords', {
-          method: 'POST', headers,
-          body: `search "${term}"; fields id,name; limit 3;`,
-        }).then(r => r.json()).catch(() => [])
-      )
-    );
-    kwIds = [...new Set(kwResults.flat().filter(k => k?.id).map(k => k.id))];
-    if (kwIds.length > 20) kwIds = kwIds.slice(0, 20);
+    const nameConditions = [...kwTerms].map(k => `name ~ *"${k}"*`).join(' | ');
+    const kwData = await fetch('https://api.igdb.com/v4/keywords', {
+      method: 'POST', headers,
+      body: `fields id,name; where ${nameConditions}; limit 20;`,
+    }).then(r => r.json()).catch(e => { console.error('IGDB keywords:', e); return []; });
+    kwIds = (Array.isArray(kwData) ? kwData : []).filter(k => k?.id).map(k => k.id);
   }
 
   // ── Build a single OR clause across all tag types ──────────
@@ -92,7 +88,7 @@ export async function GET(request) {
   const data = await fetch('https://api.igdb.com/v4/games', {
     method: 'POST', headers,
     body: `${fields} where ${base} & ${orClause}; sort rating desc; limit 20; offset ${offset};`,
-  }).then(r => r.json()).catch(() => []);
+  }).then(r => r.json()).catch(e => { console.error('IGDB discover:', e); return []; });
 
   return Response.json(Array.isArray(data) ? data : []);
 }

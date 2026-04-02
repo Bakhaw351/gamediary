@@ -19,22 +19,22 @@ export async function GET() {
     fetch('https://api.igdb.com/v4/games', {
       method: 'POST', headers,
       body: `${fields} where cover != null & parent_game = null & first_release_date > ${twelveMonthsAgo} & first_release_date < ${now} & rating > 60 & total_rating_count > 3; sort total_rating_count desc; limit 20;`,
-    }).then(r => r.json()).catch(() => []),
+    }).then(r => r.json()).catch(e => { console.error('IGDB trending:', e); return []; }),
 
     fetch('https://api.igdb.com/v4/games', {
       method: 'POST', headers,
       body: `fields name,cover.url,first_release_date,hypes,genres.name,platforms.name,summary; where cover != null & parent_game = null & first_release_date > ${now}; sort hypes desc; limit 20;`,
-    }).then(r => r.json()).catch(() => []),
+    }).then(r => r.json()).catch(e => { console.error('IGDB upcoming:', e); return []; }),
 
     fetch('https://api.igdb.com/v4/games', {
       method: 'POST', headers,
       body: `${fields} where cover != null & parent_game = null & rating > 82 & total_rating_count >= 5 & total_rating_count < 300; sort rating desc; limit 20;`,
-    }).then(r => r.json()).catch(() => []),
+    }).then(r => r.json()).catch(e => { console.error('IGDB gems:', e); return []; }),
 
     fetch('https://api.igdb.com/v4/games', {
       method: 'POST', headers,
       body: `${fields} where cover != null & parent_game = null & rating > 75 & total_rating_count > 200; sort total_rating_count desc; limit 12;`,
-    }).then(r => r.json()).catch(() => []),
+    }).then(r => r.json()).catch(e => { console.error('IGDB top:', e); return []; }),
   ]);
 
   return Response.json({

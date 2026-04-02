@@ -62,7 +62,7 @@ const TRANSLATIONS = {
   fr: {
     s_wishlist:"Envie de jouer", s_playing:"En cours", s_completed:"Terminé", s_dropped:"Abandonné",
     r1:"Nul", r2:"Mauvais", r3:"Médiocre", r4:"Décevant", r5:"Correct", r6:"Bien", r7:"Très bien", r8:"Excellent", r9:"Chef-d'œuvre", r10:"Parfait ✦",
-    all:"Tous", unknown:"Inconnu", videogame:"Jeu vidéo",
+    all:"Tous", unknown:"Inconnu", videogame:"Jeu vidéo", multi:"Multi",
     home:"Accueil", explore:"Explorer", discover:"Découvrir", profile:"Profil",
     logout:"Déco", loginBtn:"Connexion",
     badge:"Votre journal JoystickLog",
@@ -89,7 +89,7 @@ const TRANSLATIONS = {
     loginTab:"Connexion", signupTab:"Inscription",
     usernamePlaceholder:"Nom d'utilisateur", passwordPlaceholder:"Mot de passe (6 min)",
     loginSubmit:"Se connecter", signupSubmit:"Créer mon compte",
-    fillFields:"Remplis tous les champs.", pwShort:"Mot de passe trop court (6 min).",
+    fillFields:"Remplis tous les champs.", invalidEmail:"Adresse email invalide.", pwShort:"Mot de passe trop court (6 min).",
     accountCreated:"Compte créé ! Vérifie ton email.", badCreds:"Email ou mot de passe incorrect.",
     myRating:"Ma note", savedLabel:"Publiée", communityReviews:"Avis", ofCommunity:"de la communauté",
     reviewPublished:"Critique publiée", myReview:"Ma critique", rateGame:"Notez ce jeu",
@@ -121,11 +121,23 @@ const TRANSLATIONS = {
     resetPwTitle:"Nouveau mot de passe", resetPwDesc:"Choisissez un nouveau mot de passe pour votre compte.",
     resetPwConfirm:"Confirmer le mot de passe", resetPwMismatch:"Les mots de passe ne correspondent pas.", resetPwDone:"Mot de passe mis à jour !", savePw:"Enregistrer",
     share:"Partager", shareX:"Partager sur X", copyLink:"Copier le lien", linkCopied:"Lien copié !",
+    settings_title:"Paramètres", settings_save:"Enregistrer",
+    settings_tab_profile:"Profil", settings_tab_account:"Compte", settings_tab_privacy:"Confidentialité", settings_tab_danger:"Danger",
+    settings_username:"Nom d'utilisateur", settings_bio:"Bio", settings_bio_placeholder:"Dis-nous qui tu es en quelques mots…", settings_avatar:"Avatar (URL)",
+    settings_current_email:"Email actuel :", settings_new_email:"Nouvel email", settings_change_email:"Changer l'email",
+    settings_new_pw:"Nouveau mot de passe", settings_confirm_pw:"Confirmer le mot de passe", settings_change_pw:"Changer le mot de passe",
+    settings_phone:"Numéro de téléphone", settings_phone_hint:"Utilisé uniquement pour la récupération de compte.",
+    settings_public_profile:"Profil public", settings_public_desc:"Ton profil est visible par les autres joueurs.",
+    settings_delete_title:"Supprimer mon compte", settings_delete_desc:"Cette action est irréversible. Toutes tes notes, avis et listes seront définitivement supprimés.",
+    settings_delete_confirm_label:"Tape SUPPRIMER pour confirmer", settings_delete_btn:"Supprimer définitivement mon compte",
+    settings_saved:"Modifications enregistrées !", settings_email_sent:"Email de confirmation envoyé !",
+    settings_pw_saved:"Mot de passe mis à jour !", settings_err_username:"Le pseudo ne peut pas être vide.",
+    settings_err_pw_match:"Les mots de passe ne correspondent pas.", settings_err_delete_confirm:"Tape exactement SUPPRIMER pour confirmer.",
   },
   en: {
     s_wishlist:"Want to play", s_playing:"Playing", s_completed:"Completed", s_dropped:"Dropped",
     r1:"Terrible", r2:"Bad", r3:"Poor", r4:"Disappointing", r5:"OK", r6:"Good", r7:"Very good", r8:"Excellent", r9:"Masterpiece", r10:"Perfect ✦",
-    all:"All", unknown:"Unknown", videogame:"Video game",
+    all:"All", unknown:"Unknown", videogame:"Video game", multi:"Multi",
     home:"Home", explore:"Explore", discover:"Discover", profile:"Profile",
     logout:"Logout", loginBtn:"Login",
     badge:"Your JoystickLog",
@@ -152,7 +164,7 @@ const TRANSLATIONS = {
     loginTab:"Login", signupTab:"Sign up",
     usernamePlaceholder:"Username", passwordPlaceholder:"Password (6 min)",
     loginSubmit:"Log in", signupSubmit:"Create my account",
-    fillFields:"Please fill in all fields.", pwShort:"Password too short (6 min).",
+    fillFields:"Please fill in all fields.", invalidEmail:"Invalid email address.", pwShort:"Password too short (6 min).",
     accountCreated:"Account created! Check your email.", badCreds:"Incorrect email or password.",
     myRating:"My rating", savedLabel:"Saved", communityReviews:"Reviews", ofCommunity:"from the community",
     reviewPublished:"Review published", myReview:"My review", rateGame:"Rate this game",
@@ -184,11 +196,23 @@ const TRANSLATIONS = {
     resetPwTitle:"New password", resetPwDesc:"Choose a new password for your account.",
     resetPwConfirm:"Confirm password", resetPwMismatch:"Passwords don't match.", resetPwDone:"Password updated!", savePw:"Save",
     share:"Share", shareX:"Share on X", copyLink:"Copy link", linkCopied:"Link copied!",
+    settings_title:"Settings", settings_save:"Save",
+    settings_tab_profile:"Profile", settings_tab_account:"Account", settings_tab_privacy:"Privacy", settings_tab_danger:"Danger",
+    settings_username:"Username", settings_bio:"Bio", settings_bio_placeholder:"Tell us a bit about yourself…", settings_avatar:"Avatar (URL)",
+    settings_current_email:"Current email:", settings_new_email:"New email", settings_change_email:"Change email",
+    settings_new_pw:"New password", settings_confirm_pw:"Confirm password", settings_change_pw:"Change password",
+    settings_phone:"Phone number", settings_phone_hint:"Only used for account recovery.",
+    settings_public_profile:"Public profile", settings_public_desc:"Your profile is visible to other players.",
+    settings_delete_title:"Delete my account", settings_delete_desc:"This action is irreversible. All your ratings, reviews and lists will be permanently deleted.",
+    settings_delete_confirm_label:"Type DELETE to confirm", settings_delete_btn:"Permanently delete my account",
+    settings_saved:"Changes saved!", settings_email_sent:"Confirmation email sent!",
+    settings_pw_saved:"Password updated!", settings_err_username:"Username cannot be empty.",
+    settings_err_pw_match:"Passwords don't match.", settings_err_delete_confirm:"Type exactly DELETE to confirm.",
   },
   de: {
     s_wishlist:"Möchte spielen", s_playing:"Spiele gerade", s_completed:"Abgeschlossen", s_dropped:"Abgebrochen",
     r1:"Schrecklich", r2:"Schlecht", r3:"Schwach", r4:"Enttäuschend", r5:"OK", r6:"Gut", r7:"Sehr gut", r8:"Hervorragend", r9:"Meisterwerk", r10:"Perfekt ✦",
-    all:"Alle", unknown:"Unbekannt", videogame:"Videospiel",
+    all:"Alle", unknown:"Unbekannt", videogame:"Videospiel", multi:"Multi",
     home:"Startseite", explore:"Entdecken", discover:"Empfehlungen", profile:"Profil",
     logout:"Abmelden", loginBtn:"Anmelden",
     badge:"Dein Gaming-Tagebuch",
@@ -214,7 +238,7 @@ const TRANSLATIONS = {
     loginTab:"Anmelden", signupTab:"Registrieren",
     usernamePlaceholder:"Benutzername", passwordPlaceholder:"Passwort (min. 6)",
     loginSubmit:"Anmelden", signupSubmit:"Konto erstellen",
-    fillFields:"Bitte alle Felder ausfüllen.", pwShort:"Passwort zu kurz (min. 6).",
+    fillFields:"Bitte alle Felder ausfüllen.", invalidEmail:"Ungültige E-Mail-Adresse.", pwShort:"Passwort zu kurz (min. 6).",
     accountCreated:"Konto erstellt! E-Mail überprüfen.", badCreds:"Falsche E-Mail oder Passwort.",
     myRating:"Meine Bewertung", savedLabel:"Gespeichert", communityReviews:"Bewertungen", ofCommunity:"der Community",
     reviewPublished:"Rezension veröffentlicht", myReview:"Meine Rezension", rateGame:"Spiel bewerten",
@@ -240,11 +264,23 @@ const TRANSLATIONS = {
     listsTitle:"Meine Listen", createList:"Neue Liste", listNamePlaceholder:"Listenname…",
     addToList:"Zur Liste hinzufügen", noLists:"Noch keine Listen", listCreated:"Liste erstellt!", addedToList:"Hinzugefügt!",
     statsDistribution:"Bewertungsverteilung", statsStatus:"Statusübersicht",
+    settings_title:"Einstellungen", settings_save:"Speichern",
+    settings_tab_profile:"Profil", settings_tab_account:"Konto", settings_tab_privacy:"Datenschutz", settings_tab_danger:"Gefahr",
+    settings_username:"Benutzername", settings_bio:"Bio", settings_bio_placeholder:"Erzähl uns etwas über dich…", settings_avatar:"Avatar (URL)",
+    settings_current_email:"Aktuelle E-Mail:", settings_new_email:"Neue E-Mail", settings_change_email:"E-Mail ändern",
+    settings_new_pw:"Neues Passwort", settings_confirm_pw:"Passwort bestätigen", settings_change_pw:"Passwort ändern",
+    settings_phone:"Telefonnummer", settings_phone_hint:"Wird nur zur Kontowiederherstellung verwendet.",
+    settings_public_profile:"Öffentliches Profil", settings_public_desc:"Dein Profil ist für andere Spieler sichtbar.",
+    settings_delete_title:"Konto löschen", settings_delete_desc:"Diese Aktion ist irreversibel. Alle Bewertungen, Rezensionen und Listen werden dauerhaft gelöscht.",
+    settings_delete_confirm_label:"Gib LÖSCHEN ein, um zu bestätigen", settings_delete_btn:"Konto dauerhaft löschen",
+    settings_saved:"Änderungen gespeichert!", settings_email_sent:"Bestätigungs-E-Mail gesendet!",
+    settings_pw_saved:"Passwort aktualisiert!", settings_err_username:"Benutzername darf nicht leer sein.",
+    settings_err_pw_match:"Passwörter stimmen nicht überein.", settings_err_delete_confirm:"Gib genau LÖSCHEN ein.",
   },
   es: {
     s_wishlist:"Quiero jugar", s_playing:"Jugando", s_completed:"Completado", s_dropped:"Abandonado",
     r1:"Pésimo", r2:"Malo", r3:"Mediocre", r4:"Decepcionante", r5:"Regular", r6:"Bueno", r7:"Muy bueno", r8:"Excelente", r9:"Obra maestra", r10:"Perfecto ✦",
-    all:"Todos", unknown:"Desconocido", videogame:"Videojuego",
+    all:"Todos", unknown:"Desconocido", videogame:"Videojuego", multi:"Multi",
     home:"Inicio", explore:"Explorar", discover:"Descubrir", profile:"Perfil",
     logout:"Salir", loginBtn:"Iniciar sesión",
     badge:"Tu diario gamer",
@@ -270,7 +306,7 @@ const TRANSLATIONS = {
     loginTab:"Iniciar sesión", signupTab:"Registrarse",
     usernamePlaceholder:"Nombre de usuario", passwordPlaceholder:"Contraseña (mín. 6)",
     loginSubmit:"Iniciar sesión", signupSubmit:"Crear mi cuenta",
-    fillFields:"Rellena todos los campos.", pwShort:"Contraseña demasiado corta (mín. 6).",
+    fillFields:"Rellena todos los campos.", invalidEmail:"Dirección de email inválida.", pwShort:"Contraseña demasiado corta (mín. 6).",
     accountCreated:"¡Cuenta creada! Revisa tu email.", badCreds:"Email o contraseña incorrectos.",
     myRating:"Mi valoración", savedLabel:"Guardado", communityReviews:"Reseñas", ofCommunity:"de la comunidad",
     reviewPublished:"Reseña publicada", myReview:"Mi reseña", rateGame:"Valorar este juego",
@@ -296,11 +332,23 @@ const TRANSLATIONS = {
     listsTitle:"Mis listas", createList:"Nueva lista", listNamePlaceholder:"Nombre de la lista…",
     addToList:"Añadir a una lista", noLists:"Sin listas", listCreated:"¡Lista creada!", addedToList:"¡Añadido!",
     statsDistribution:"Distribución de notas", statsStatus:"Desglose de estados",
+    settings_title:"Ajustes", settings_save:"Guardar",
+    settings_tab_profile:"Perfil", settings_tab_account:"Cuenta", settings_tab_privacy:"Privacidad", settings_tab_danger:"Peligro",
+    settings_username:"Nombre de usuario", settings_bio:"Bio", settings_bio_placeholder:"Cuéntanos algo sobre ti…", settings_avatar:"Avatar (URL)",
+    settings_current_email:"Email actual:", settings_new_email:"Nuevo email", settings_change_email:"Cambiar email",
+    settings_new_pw:"Nueva contraseña", settings_confirm_pw:"Confirmar contraseña", settings_change_pw:"Cambiar contraseña",
+    settings_phone:"Número de teléfono", settings_phone_hint:"Solo se usa para recuperación de cuenta.",
+    settings_public_profile:"Perfil público", settings_public_desc:"Tu perfil es visible para otros jugadores.",
+    settings_delete_title:"Eliminar mi cuenta", settings_delete_desc:"Esta acción es irreversible. Todas tus notas, reseñas y listas serán eliminadas permanentemente.",
+    settings_delete_confirm_label:"Escribe ELIMINAR para confirmar", settings_delete_btn:"Eliminar permanentemente mi cuenta",
+    settings_saved:"¡Cambios guardados!", settings_email_sent:"¡Email de confirmación enviado!",
+    settings_pw_saved:"¡Contraseña actualizada!", settings_err_username:"El nombre de usuario no puede estar vacío.",
+    settings_err_pw_match:"Las contraseñas no coinciden.", settings_err_delete_confirm:"Escribe exactamente ELIMINAR para confirmar.",
   },
   pt: {
     s_wishlist:"Quero jogar", s_playing:"Jogando", s_completed:"Completado", s_dropped:"Abandonado",
     r1:"Péssimo", r2:"Mau", r3:"Medíocre", r4:"Decepcionante", r5:"OK", r6:"Bom", r7:"Muito bom", r8:"Excelente", r9:"Obra-prima", r10:"Perfeito ✦",
-    all:"Todos", unknown:"Desconhecido", videogame:"Jogo",
+    all:"Todos", unknown:"Desconhecido", videogame:"Jogo", multi:"Multi",
     home:"Início", explore:"Explorar", discover:"Descobrir", profile:"Perfil",
     logout:"Sair", loginBtn:"Entrar",
     badge:"Seu diário gamer",
@@ -326,7 +374,7 @@ const TRANSLATIONS = {
     loginTab:"Entrar", signupTab:"Cadastrar",
     usernamePlaceholder:"Nome de usuário", passwordPlaceholder:"Senha (mín. 6)",
     loginSubmit:"Entrar", signupSubmit:"Criar minha conta",
-    fillFields:"Preencha todos os campos.", pwShort:"Senha muito curta (mín. 6).",
+    fillFields:"Preencha todos os campos.", invalidEmail:"Endereço de email inválido.", pwShort:"Senha muito curta (mín. 6).",
     accountCreated:"Conta criada! Verifique seu email.", badCreds:"Email ou senha incorretos.",
     myRating:"Minha nota", savedLabel:"Salvo", communityReviews:"Avaliações", ofCommunity:"da comunidade",
     reviewPublished:"Avaliação publicada", myReview:"Minha avaliação", rateGame:"Avaliar este jogo",
@@ -352,6 +400,18 @@ const TRANSLATIONS = {
     listsTitle:"Minhas listas", createList:"Nova lista", listNamePlaceholder:"Nome da lista…",
     addToList:"Adicionar a uma lista", noLists:"Sem listas", listCreated:"Lista criada!", addedToList:"Adicionado!",
     statsDistribution:"Distribuição das notas", statsStatus:"Divisão por status",
+    settings_title:"Configurações", settings_save:"Salvar",
+    settings_tab_profile:"Perfil", settings_tab_account:"Conta", settings_tab_privacy:"Privacidade", settings_tab_danger:"Perigo",
+    settings_username:"Nome de usuário", settings_bio:"Bio", settings_bio_placeholder:"Conta um pouco sobre você…", settings_avatar:"Avatar (URL)",
+    settings_current_email:"Email atual:", settings_new_email:"Novo email", settings_change_email:"Alterar email",
+    settings_new_pw:"Nova senha", settings_confirm_pw:"Confirmar senha", settings_change_pw:"Alterar senha",
+    settings_phone:"Número de telefone", settings_phone_hint:"Usado apenas para recuperação de conta.",
+    settings_public_profile:"Perfil público", settings_public_desc:"Seu perfil é visível para outros jogadores.",
+    settings_delete_title:"Excluir minha conta", settings_delete_desc:"Esta ação é irreversível. Todas as suas notas, avaliações e listas serão excluídas permanentemente.",
+    settings_delete_confirm_label:"Digite EXCLUIR para confirmar", settings_delete_btn:"Excluir permanentemente minha conta",
+    settings_saved:"Alterações salvas!", settings_email_sent:"Email de confirmação enviado!",
+    settings_pw_saved:"Senha atualizada!", settings_err_username:"O nome de usuário não pode estar vazio.",
+    settings_err_pw_match:"As senhas não coincidem.", settings_err_delete_confirm:"Digite exatamente EXCLUIR para confirmar.",
   },
 };
 
@@ -367,10 +427,10 @@ const formatYear   = ts  => ts  ? new Date(ts * 1000).getFullYear() : "—";
 const formatGame   = g   => ({
   id:          g.id,
   title:       g.name || "Inconnu",
-  platform:    g.platforms?.[0]?.name || "Multi",
+  platform:    g.platforms?.[0]?.name || null,
   allPlatforms:g.platforms?.map(p => p.name) || [],
   year:        formatYear(g.first_release_date),
-  genre:       g.genres?.[0]?.name || "Jeu vidéo",
+  genre:       g.genres?.[0]?.name || null,
   cover:       formatCover(g.cover?.url),
   rating:      formatRating(g.rating),
   pressRating: g.aggregated_rating ? Math.round(g.aggregated_rating) : null,
@@ -885,6 +945,7 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
 
   const submit = async () => {
     if (!email || !pw) { setErr(t("fillFields")); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setErr(t("invalidEmail")); return; }
     if (pw.length < 6) { setErr(t("pwShort")); return; }
     setLoading(true); setErr(""); setOk("");
     try {
@@ -990,10 +1051,36 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
               </button>
             </div>
           ) : (
-            !ok && <button className="btn" onClick={submit} disabled={loading} style={{ marginTop:16, width:"100%", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
-              {loading && <div className="spin" style={{ width:15, height:15, borderWidth:2 }} />}
-              {loading ? "…" : mode === "login" ? t("loginSubmit") : t("signupSubmit")}
-            </button>
+            <>
+              {!ok && <button className="btn" onClick={submit} disabled={loading} style={{ marginTop:16, width:"100%", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
+                {loading && <div className="spin" style={{ width:15, height:15, borderWidth:2 }} />}
+                {loading ? "…" : mode === "login" ? t("loginSubmit") : t("signupSubmit")}
+              </button>}
+
+              <div style={{ display:"flex", alignItems:"center", gap:10, margin:"14px 0 2px" }}>
+                <div style={{ flex:1, height:1, background:"var(--c-border)" }} />
+                <span style={{ fontSize:11, color:"var(--c-text-3)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, letterSpacing:1 }}>OU</span>
+                <div style={{ flex:1, height:1, background:"var(--c-border)" }} />
+              </div>
+
+              <div style={{ display:"flex", flexDirection:"column", gap:8, marginTop:2 }}>
+                <button onClick={() => supabase.auth.signInWithOAuth({ provider:"google", options:{ redirectTo: typeof window !== "undefined" ? window.location.origin : "" } })}
+                  style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:10, width:"100%", padding:"11px 16px", background:"var(--c-el)", border:"1px solid var(--c-border)", borderRadius:10, color:"var(--c-text)", fontSize:14, fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, cursor:"pointer", transition:"all .15s" }}
+                  onMouseEnter={e=>e.currentTarget.style.borderColor="#ff6b35"}
+                  onMouseLeave={e=>e.currentTarget.style.borderColor="var(--c-border)"}>
+                  <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.29-8.16 2.29-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                  Continuer avec Google
+                </button>
+
+                <button onClick={() => supabase.auth.signInWithOAuth({ provider:"discord", options:{ redirectTo: typeof window !== "undefined" ? window.location.origin : "" } })}
+                  style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:10, width:"100%", padding:"11px 16px", background:"var(--c-el)", border:"1px solid var(--c-border)", borderRadius:10, color:"var(--c-text)", fontSize:14, fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, cursor:"pointer", transition:"all .15s" }}
+                  onMouseEnter={e=>e.currentTarget.style.borderColor="#5865F2"}
+                  onMouseLeave={e=>e.currentTarget.style.borderColor="var(--c-border)"}>
+                  <svg width="18" height="14" viewBox="0 0 71 55" fill="none"><path d="M60.1 4.9A58.6 58.6 0 0 0 45.7.4a40.8 40.8 0 0 0-1.8 3.7 54.2 54.2 0 0 0-16.2 0A40.5 40.5 0 0 0 25.9.4 58.5 58.5 0 0 0 11.4 4.9C1.6 19.4-1 33.5.3 47.4a59 59 0 0 0 18 9.1 44.5 44.5 0 0 0 3.8-6.2 38.4 38.4 0 0 1-6-2.9l1.5-1.1a42.2 42.2 0 0 0 36 0l1.5 1.1a38.3 38.3 0 0 1-6 2.9 44.4 44.4 0 0 0 3.8 6.2 58.8 58.8 0 0 0 18-9.1c1.5-15.6-2.6-29.6-10.8-42.4ZM23.7 39c-3.5 0-6.4-3.2-6.4-7.1s2.8-7.2 6.4-7.2 6.5 3.2 6.4 7.2c0 3.9-2.9 7.1-6.4 7.1Zm23.5 0c-3.5 0-6.4-3.2-6.4-7.1s2.8-7.2 6.4-7.2 6.5 3.2 6.4 7.2c0 3.9-2.8 7.1-6.4 7.1Z" fill="#5865F2"/></svg>
+                  Continuer avec Discord
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>
@@ -1079,26 +1166,33 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
   const DLC_LABELS = { 1:t("dlcDLC"), 2:t("dlcExpansion"), 4:t("dlcStandalone") };
 
   useEffect(() => {
-    fetch(`/api/games/dlcs?id=${game.id}`).then(r=>r.json()).then(data => {
-      if (data && !Array.isArray(data)) {
-        setDlcs(data.dlcs || []);
-        setSeries(data.series || []);
-      }
-    });
+    const ctrl = new AbortController();
+    fetch(`/api/games/dlcs?id=${game.id}`, { signal: ctrl.signal })
+      .then(r => r.json())
+      .then(data => {
+        if (data && !Array.isArray(data)) {
+          setDlcs(data.dlcs || []);
+          setSeries(data.series || []);
+        }
+      })
+      .catch(e => { if (e.name !== 'AbortError') console.warn('DLC fetch error:', e); });
+    return () => ctrl.abort();
   }, [game.id]);
 
   useEffect(() => {
     if (!game.summary || lang === "en") { setTranslatedSummary(null); return; }
+    const ctrl = new AbortController();
     setTranslating(true);
     setTranslatedSummary(null);
-    fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${lang}&dt=t&q=${encodeURIComponent(game.summary)}`)
+    fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${lang}&dt=t&q=${encodeURIComponent(game.summary)}`, { signal: ctrl.signal })
       .then(r => r.json())
       .then(data => {
         const translated = data?.[0]?.map(s => s?.[0]).filter(Boolean).join("") || null;
         setTranslatedSummary(translated);
       })
-      .catch(() => {})
+      .catch(e => { if (e.name !== 'AbortError') console.warn('Translation error:', e); })
       .finally(() => setTranslating(false));
+    return () => ctrl.abort();
   }, [game.id, lang]);
 
   const EMOJIS = ["❤️","🔥","💯","😂","👏","😮"];
@@ -1289,10 +1383,10 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
           {/* Badges */}
           <div style={{ display:"flex", gap:10, marginBottom:18, flexWrap:"wrap", alignItems:"center" }}>
             <span style={{ background:"rgba(255,107,53,.15)", color:"#ffd166", border:"1px solid rgba(255,107,53,.3)", borderRadius:99, padding:"4px 14px", fontSize:12, fontFamily:"'Syne',sans-serif", fontWeight:700 }}>
-              {game.platform.split("(")[0].trim()}
+              {game.platform ? game.platform.split("(")[0].trim() : t("multi")}
             </span>
             <span style={{ color:"rgba(255,255,255,.4)", fontSize:13, fontFamily:"'DM Sans',sans-serif" }}>{game.year}</span>
-            {game.genre !== "Jeu vidéo" && <span style={{ color:"rgba(255,255,255,.4)", fontSize:13 }}>· {game.genre}</span>}
+            {game.genre && <span style={{ color:"rgba(255,255,255,.4)", fontSize:13 }}>· {game.genre}</span>}
             {game.tags.slice(0,3).map(t => (
               <span key={t} style={{ background:"rgba(255,255,255,.06)", border:"1px solid rgba(255,255,255,.1)", color:"rgba(255,255,255,.45)", borderRadius:6, padding:"3px 10px", fontSize:11 }}>#{t}</span>
             ))}
@@ -1815,6 +1909,267 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
 };
 
 /* ── USERNAME EDIT ────────────────────────────────────────── */
+/* ── SETTINGS MODAL ───────────────────────────────────────── */
+const SettingsModal = ({ user, profileUsername, setProfileUsername, onClose, onDeleteAccount, t }) => {
+  const [section, setSection]       = useState("profile");
+  const [username, setUsername]     = useState(profileUsername);
+  const [bio, setBio]               = useState("");
+  const [avatarUrl, setAvatarUrl]   = useState("");
+  const [isPublic, setIsPublic]     = useState(true);
+  const [newEmail, setNewEmail]     = useState("");
+  const [newPw, setNewPw]           = useState("");
+  const [confirmPw, setConfirmPw]   = useState("");
+  const [phone, setPhone]           = useState("");
+  const [saving, setSaving]         = useState(false);
+  const [msg, setMsg]               = useState(null); // { type: "ok"|"err", text }
+  const [deleteConfirm, setDeleteConfirm] = useState("");
+
+  useEffect(() => {
+    setUsername(profileUsername);
+    // Load extra profile data
+    supabase.from("profiles").select("bio,avatar_url,is_public,phone").eq("id", user.id).single()
+      .then(({ data }) => {
+        if (data) {
+          setBio(data.bio || "");
+          setAvatarUrl(data.avatar_url || "");
+          setIsPublic(data.is_public !== false);
+          setPhone(data.phone || "");
+        }
+      });
+  }, [user.id, profileUsername]);
+
+  const flash = (type, text) => { setMsg({ type, text }); setTimeout(() => setMsg(null), 3500); };
+
+  const saveProfile = async () => {
+    setSaving(true);
+    const uname = username.trim();
+    if (!uname) { flash("err", t("settings_err_username")); setSaving(false); return; }
+    await supabase.from("profiles").upsert({ id: user.id, username: uname, bio: bio.trim(), avatar_url: avatarUrl.trim(), is_public: isPublic, phone: phone.trim() });
+    await supabase.auth.updateUser({ data: { username: uname } });
+    setProfileUsername(uname);
+    flash("ok", t("settings_saved"));
+    setSaving(false);
+  };
+
+  const saveEmail = async () => {
+    if (!newEmail) { flash("err", t("fillFields")); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) { flash("err", t("invalidEmail")); return; }
+    setSaving(true);
+    const { error } = await supabase.auth.updateUser({ email: newEmail });
+    if (error) flash("err", error.message);
+    else flash("ok", t("settings_email_sent"));
+    setSaving(false);
+  };
+
+  const savePassword = async () => {
+    if (!newPw || !confirmPw) { flash("err", t("fillFields")); return; }
+    if (newPw.length < 6) { flash("err", t("pwShort")); return; }
+    if (newPw !== confirmPw) { flash("err", t("settings_err_pw_match")); return; }
+    setSaving(true);
+    const { error } = await supabase.auth.updateUser({ password: newPw });
+    if (error) flash("err", error.message);
+    else { flash("ok", t("settings_pw_saved")); setNewPw(""); setConfirmPw(""); }
+    setSaving(false);
+  };
+
+  const savePrivacy = async () => {
+    setSaving(true);
+    await supabase.from("profiles").upsert({ id: user.id, is_public: isPublic });
+    flash("ok", t("settings_saved"));
+    setSaving(false);
+  };
+
+  const deleteAccount = async () => {
+    if (deleteConfirm !== "SUPPRIMER") { flash("err", t("settings_err_delete_confirm")); return; }
+    setSaving(true);
+    // Delete user data then call onDeleteAccount
+    await supabase.from("game_ratings").delete().eq("user_id", user.id);
+    await supabase.from("game_status").delete().eq("user_id", user.id);
+    await supabase.from("profiles").delete().eq("id", user.id);
+    await supabase.auth.signOut();
+    onDeleteAccount();
+    onClose();
+  };
+
+  const SECTIONS = [
+    { id:"profile", icon:"👤", label:t("settings_tab_profile") },
+    { id:"account", icon:"🔐", label:t("settings_tab_account") },
+    { id:"privacy", icon:"🔒", label:t("settings_tab_privacy") },
+    { id:"danger",  icon:"⚠️", label:t("settings_tab_danger") },
+  ];
+
+  const inputStyle = { width:"100%", background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.1)", borderRadius:10, color:"#fff", padding:"10px 14px", fontSize:14, fontFamily:"'Space Grotesk',sans-serif", outline:"none", boxSizing:"border-box", transition:"border-color .15s" };
+  const labelStyle = { fontSize:11, color:"rgba(255,255,255,.35)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:1.5, textTransform:"uppercase", marginBottom:6, display:"block" };
+  const fieldWrap  = { marginBottom:16 };
+
+  return (
+    <div onClick={onClose} style={{ position:"fixed", inset:0, zIndex:9999, background:"rgba(0,0,0,.85)", backdropFilter:"blur(20px)", display:"flex", alignItems:"center", justifyContent:"center", padding:20, animation:"fadeIn .2s" }}>
+      <div onClick={e=>e.stopPropagation()} style={{ width:"100%", maxWidth:600, maxHeight:"90vh", borderRadius:22, background:"var(--c-modal)", border:"1px solid var(--c-border)", overflow:"hidden", animation:"scaleIn .25s cubic-bezier(.34,1.3,.64,1)", boxShadow:"0 60px 120px rgba(0,0,0,.7)", display:"flex", flexDirection:"column" }}>
+
+        {/* Top bar */}
+        <div style={{ height:3, background:"linear-gradient(90deg,#ff6b35,#ffd166,#a78bfa)", flexShrink:0 }} />
+
+        {/* Header */}
+        <div style={{ padding:"20px 24px 0", display:"flex", justifyContent:"space-between", alignItems:"center", flexShrink:0 }}>
+          <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"var(--c-text)", margin:0 }}>{t("settings_title")}</h2>
+          <button onClick={onClose} style={{ background:"var(--c-el)", border:"none", borderRadius:8, width:32, height:32, display:"flex", alignItems:"center", justifyContent:"center", color:"var(--c-text-3)", cursor:"pointer", fontSize:16 }}>✕</button>
+        </div>
+
+        <div style={{ display:"flex", flex:1, overflow:"hidden" }}>
+          {/* Sidebar */}
+          <div style={{ width:160, flexShrink:0, padding:"16px 12px", borderRight:"1px solid var(--c-border)", display:"flex", flexDirection:"column", gap:4 }}>
+            {SECTIONS.map(s => (
+              <button key={s.id} onClick={()=>setSection(s.id)}
+                style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 12px", borderRadius:10, background:section===s.id?"rgba(255,107,53,.12)":"transparent", border:section===s.id?"1px solid rgba(255,107,53,.25)":"1px solid transparent", color:section===s.id?"#ffd166":"var(--c-text-3)", fontSize:13, fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:"pointer", textAlign:"left", transition:"all .15s", width:"100%" }}>
+                <span>{s.icon}</span> {s.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Content */}
+          <div style={{ flex:1, padding:"20px 24px", overflowY:"auto" }}>
+
+            {/* Flash message */}
+            {msg && (
+              <div style={{ marginBottom:16, padding:"10px 14px", borderRadius:10, fontSize:13, fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, background:msg.type==="ok"?"rgba(74,222,128,.08)":"rgba(255,77,77,.08)", border:`1px solid ${msg.type==="ok"?"rgba(74,222,128,.2)":"rgba(255,77,77,.2)"}`, color:msg.type==="ok"?"#4ade80":"#ff6b6b" }}>
+                {msg.type==="ok" ? "✓ " : "✕ "}{msg.text}
+              </div>
+            )}
+
+            {/* ── PROFILE ── */}
+            {section === "profile" && (
+              <div>
+                <div style={fieldWrap}>
+                  <label style={labelStyle}>{t("settings_username")}</label>
+                  <input style={inputStyle} value={username} onChange={e=>setUsername(e.target.value)}
+                    onFocus={e=>e.target.style.borderColor="rgba(255,107,53,.5)"}
+                    onBlur={e=>e.target.style.borderColor="rgba(255,255,255,.1)"} />
+                </div>
+                <div style={fieldWrap}>
+                  <label style={labelStyle}>{t("settings_bio")}</label>
+                  <textarea style={{ ...inputStyle, minHeight:80, resize:"vertical" }} value={bio} onChange={e=>setBio(e.target.value)}
+                    placeholder={t("settings_bio_placeholder")}
+                    onFocus={e=>e.target.style.borderColor="rgba(255,107,53,.5)"}
+                    onBlur={e=>e.target.style.borderColor="rgba(255,255,255,.1)"} />
+                </div>
+                <div style={fieldWrap}>
+                  <label style={labelStyle}>{t("settings_avatar")}</label>
+                  <input style={inputStyle} value={avatarUrl} onChange={e=>setAvatarUrl(e.target.value)}
+                    placeholder="https://..."
+                    onFocus={e=>e.target.style.borderColor="rgba(255,107,53,.5)"}
+                    onBlur={e=>e.target.style.borderColor="rgba(255,255,255,.1)"} />
+                  {avatarUrl && <img src={avatarUrl} alt="avatar preview" style={{ width:48, height:48, borderRadius:12, objectFit:"cover", marginTop:8, border:"2px solid rgba(255,107,53,.3)" }} />}
+                </div>
+                <button onClick={saveProfile} disabled={saving} className="btn" style={{ width:"100%", justifyContent:"center", display:"flex", alignItems:"center", gap:8 }}>
+                  {saving && <div className="spin" style={{ width:14, height:14, borderWidth:2 }} />}
+                  {saving ? "…" : t("settings_save")}
+                </button>
+              </div>
+            )}
+
+            {/* ── ACCOUNT ── */}
+            {section === "account" && (
+              <div>
+                <div style={{ marginBottom:24 }}>
+                  <div style={{ fontSize:11, color:"rgba(255,255,255,.25)", fontFamily:"'Space Grotesk',sans-serif", marginBottom:16, padding:"10px 14px", background:"rgba(255,255,255,.03)", borderRadius:10, border:"1px solid rgba(255,255,255,.06)" }}>
+                    {t("settings_current_email")} <span style={{ color:"#ffd166", fontWeight:700 }}>{user.email}</span>
+                  </div>
+                  <div style={fieldWrap}>
+                    <label style={labelStyle}>{t("settings_new_email")}</label>
+                    <input style={inputStyle} type="email" value={newEmail} onChange={e=>setNewEmail(e.target.value)} placeholder="nouvelle@email.com"
+                      onFocus={e=>e.target.style.borderColor="rgba(255,107,53,.5)"}
+                      onBlur={e=>e.target.style.borderColor="rgba(255,255,255,.1)"} />
+                  </div>
+                  <button onClick={saveEmail} disabled={saving} className="btn" style={{ width:"100%", justifyContent:"center", display:"flex", alignItems:"center", gap:8 }}>
+                    {saving && <div className="spin" style={{ width:14, height:14, borderWidth:2 }} />}
+                    {saving ? "…" : t("settings_change_email")}
+                  </button>
+                </div>
+
+                <div style={{ height:1, background:"var(--c-border)", margin:"20px 0" }} />
+
+                <div>
+                  <div style={fieldWrap}>
+                    <label style={labelStyle}>{t("settings_new_pw")}</label>
+                    <input style={inputStyle} type="password" value={newPw} onChange={e=>setNewPw(e.target.value)} placeholder="••••••••"
+                      onFocus={e=>e.target.style.borderColor="rgba(255,107,53,.5)"}
+                      onBlur={e=>e.target.style.borderColor="rgba(255,255,255,.1)"} />
+                  </div>
+                  <div style={fieldWrap}>
+                    <label style={labelStyle}>{t("settings_confirm_pw")}</label>
+                    <input style={inputStyle} type="password" value={confirmPw} onChange={e=>setConfirmPw(e.target.value)} placeholder="••••••••"
+                      onFocus={e=>e.target.style.borderColor="rgba(255,107,53,.5)"}
+                      onBlur={e=>e.target.style.borderColor="rgba(255,255,255,.1)"} />
+                  </div>
+                  <button onClick={savePassword} disabled={saving} className="btn" style={{ width:"100%", justifyContent:"center", display:"flex", alignItems:"center", gap:8 }}>
+                    {saving && <div className="spin" style={{ width:14, height:14, borderWidth:2 }} />}
+                    {saving ? "…" : t("settings_change_pw")}
+                  </button>
+                </div>
+
+                <div style={{ height:1, background:"var(--c-border)", margin:"20px 0" }} />
+
+                <div style={fieldWrap}>
+                  <label style={labelStyle}>{t("settings_phone")}</label>
+                  <input style={inputStyle} type="tel" value={phone} onChange={e=>setPhone(e.target.value)} placeholder="+33 6 12 34 56 78"
+                    onFocus={e=>e.target.style.borderColor="rgba(255,107,53,.5)"}
+                    onBlur={e=>e.target.style.borderColor="rgba(255,255,255,.1)"} />
+                  <div style={{ fontSize:11, color:"rgba(255,255,255,.2)", marginTop:6, fontFamily:"'Space Grotesk',sans-serif" }}>{t("settings_phone_hint")}</div>
+                </div>
+                <button onClick={saveProfile} disabled={saving} className="btn" style={{ width:"100%", justifyContent:"center", display:"flex", alignItems:"center", gap:8 }}>
+                  {saving && <div className="spin" style={{ width:14, height:14, borderWidth:2 }} />}
+                  {saving ? "…" : t("settings_save")}
+                </button>
+              </div>
+            )}
+
+            {/* ── PRIVACY ── */}
+            {section === "privacy" && (
+              <div>
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"16px 18px", background:"rgba(255,255,255,.03)", border:"1px solid rgba(255,255,255,.07)", borderRadius:12, marginBottom:16 }}>
+                  <div>
+                    <div style={{ color:"var(--c-text)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:14, marginBottom:3 }}>{t("settings_public_profile")}</div>
+                    <div style={{ color:"var(--c-text-3)", fontSize:12, fontFamily:"'DM Sans',sans-serif" }}>{t("settings_public_desc")}</div>
+                  </div>
+                  <button onClick={()=>setIsPublic(p=>!p)}
+                    style={{ width:44, height:24, borderRadius:99, border:"none", cursor:"pointer", background:isPublic?"#ff6b35":"rgba(255,255,255,.1)", transition:"background .2s", position:"relative", flexShrink:0 }}>
+                    <div style={{ position:"absolute", top:3, left:isPublic?22:3, width:18, height:18, borderRadius:99, background:"white", transition:"left .2s", boxShadow:"0 1px 4px rgba(0,0,0,.3)" }} />
+                  </button>
+                </div>
+                <button onClick={savePrivacy} disabled={saving} className="btn" style={{ width:"100%", justifyContent:"center", display:"flex", alignItems:"center", gap:8 }}>
+                  {saving && <div className="spin" style={{ width:14, height:14, borderWidth:2 }} />}
+                  {saving ? "…" : t("settings_save")}
+                </button>
+              </div>
+            )}
+
+            {/* ── DANGER ZONE ── */}
+            {section === "danger" && (
+              <div>
+                <div style={{ padding:"16px 18px", background:"rgba(255,77,77,.04)", border:"1px solid rgba(255,77,77,.15)", borderRadius:12, marginBottom:20 }}>
+                  <div style={{ color:"#ff6b6b", fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:15, marginBottom:6 }}>{t("settings_delete_title")}</div>
+                  <div style={{ color:"rgba(255,255,255,.4)", fontSize:13, fontFamily:"'DM Sans',sans-serif", lineHeight:1.6 }}>{t("settings_delete_desc")}</div>
+                </div>
+                <div style={fieldWrap}>
+                  <label style={{ ...labelStyle, color:"rgba(255,100,100,.5)" }}>{t("settings_delete_confirm_label")}</label>
+                  <input style={{ ...inputStyle, borderColor:"rgba(255,77,77,.2)" }} value={deleteConfirm} onChange={e=>setDeleteConfirm(e.target.value)} placeholder='SUPPRIMER'
+                    onFocus={e=>e.target.style.borderColor="rgba(255,77,77,.5)"}
+                    onBlur={e=>e.target.style.borderColor="rgba(255,77,77,.2)"} />
+                </div>
+                <button onClick={deleteAccount} disabled={saving || deleteConfirm !== "SUPPRIMER"}
+                  style={{ width:"100%", padding:"12px", borderRadius:10, background:deleteConfirm==="SUPPRIMER"?"rgba(255,77,77,.15)":"rgba(255,255,255,.03)", border:`1px solid ${deleteConfirm==="SUPPRIMER"?"rgba(255,77,77,.4)":"rgba(255,255,255,.06)"}`, color:deleteConfirm==="SUPPRIMER"?"#ff6b6b":"rgba(255,255,255,.2)", fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:14, cursor:deleteConfirm==="SUPPRIMER"?"pointer":"not-allowed", transition:"all .2s" }}>
+                  {saving ? "…" : t("settings_delete_btn")}
+                </button>
+              </div>
+            )}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const UsernameEdit = ({ user, profileUsername, setProfileUsername, t }) => {
   const [uEdit, setUEdit] = useState(profileUsername);
   const [uSaved, setUSaved] = useState(false);
@@ -2019,7 +2374,7 @@ const PublicProfile = ({ username, onClose, onGameClick, t }) => {
             <div style={{ fontSize:10, color:"rgba(255,107,53,.6)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:14 }}>{t("myRatings")}</div>
             <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
               {ratings.slice(0,18).map(r => (
-                <div key={r.game_id} onClick={()=>{ if(r.game_cover) onGameClick({ id:r.game_id, title:r.game_title, cover:r.game_cover, platform:"Multi", year:"—", genre:"", rating:null, reviews:0, tags:[], summary:"", allPlatforms:[], videoId:null }); }}
+                <div key={r.game_id} onClick={()=>{ if(r.game_cover) onGameClick({ id:r.game_id, title:r.game_title, cover:r.game_cover, platform:null, year:"—", genre:null, rating:null, reviews:0, tags:[], summary:"", allPlatforms:[], videoId:null }); }}
                   style={{ width:52, height:72, borderRadius:8, overflow:"hidden", background:"rgba(255,255,255,.05)", cursor:r.game_cover?"pointer":"default", position:"relative", flexShrink:0, border:"1px solid rgba(255,255,255,.07)" }}>
                   {r.game_cover && <img src={r.game_cover} alt={r.game_title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />}
                   <div style={{ position:"absolute", bottom:2, right:2, background:`${rc(r.rating)}cc`, borderRadius:4, padding:"1px 5px", fontSize:9, fontFamily:"'Syne',sans-serif", fontWeight:800, color:"#fff" }}>{r.rating}</div>
@@ -2061,7 +2416,7 @@ const PublicProfile = ({ username, onClose, onGameClick, t }) => {
 /* ── ACTIVITY ITEM ────────────────────────────────────────── */
 const ActivityItem = ({ item, onClick, onUserClick }) => {
   const col = rc(item.rating);
-  const game = { id: item.game_id, title: item.game_title, cover: item.game_cover, platform:"Multi", year:"—", genre:"Jeu vidéo", rating:null, reviews:0, tags:[], summary:"", videoId:null };
+  const game = { id: item.game_id, title: item.game_title, cover: item.game_cover, platform:null, year:"—", genre:null, rating:null, reviews:0, tags:[], summary:"", videoId:null };
   return (
     <div onClick={()=>onClick(game)}
       style={{ display:"flex", gap:12, alignItems:"center", padding:"12px 14px", borderRadius:12, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.04)", cursor:"pointer", transition:"all .18s" }}
@@ -2121,6 +2476,13 @@ export default function JoystickLog() {
   const sentinelRef = useRef(null);
   const platScrollRef = useRef(null);
   const scrollPlat = dir => platScrollRef.current?.scrollBy({ left: dir * 220, behavior:"smooth" });
+  // Refs for IntersectionObserver callbacks (avoid recreating observer on every state change)
+  const hasMoreExRef     = useRef(true);
+  const loadingExRef     = useRef(true);
+  const loadingMoreExRef = useRef(false);
+  const exploreOffsetRef = useRef(0);
+  const searchQRef       = useRef("");
+  const platFilterRef    = useRef("Tous");
   const [activeTags, setActiveTags]         = useState([]);
   const [discoGames, setDiscoGames]         = useState([]);
   const [loadingDisco, setLoadingDisco]     = useState(false);
@@ -2128,6 +2490,12 @@ export default function JoystickLog() {
   const [discoOffset, setDiscoOffset]       = useState(0);
   const [hasMoreDisco, setHasMoreDisco]     = useState(true);
   const discoSentinelRef = useRef(null);
+  // Refs for discover observer
+  const hasMoreDiscoRef     = useRef(true);
+  const loadingDiscoRef     = useRef(false);
+  const loadingMoreDiscoRef = useRef(false);
+  const discoOffsetRef      = useRef(0);
+  const activeTagsRef       = useRef([]);
   const [wishlistGames, setWishlistGames] = useState([]);
   const [profileUsername, setProfileUsername] = useState("");
   const [trendingGames, setTrendingGames] = useState([]);
@@ -2140,6 +2508,7 @@ export default function JoystickLog() {
   const [showCreateList, setShowCreateList] = useState(false);
   const [newListName, setNewListName]       = useState("");
   const [showResetPw, setShowResetPw]       = useState(false);
+  const [showSettings, setShowSettings]     = useState(false);
   const [legalModal, setLegalModal]         = useState(null);
   const [publicProfile, setPublicProfile]   = useState(null);
   const [notifications, setNotifications]   = useState([]);
@@ -2247,7 +2616,7 @@ export default function JoystickLog() {
         const games = [];
         data.forEach(d => {
           r[d.game_id] = { rating:d.rating, comment:d.comment };
-          if (d.game_title) games.push({ id:d.game_id, title:d.game_title, cover:d.game_cover||null, platform:"Multi", year:"—", genre:"Jeu vidéo", rating:null, reviews:0, tags:[], summary:"", videoId:null });
+          if (d.game_title) games.push({ id:d.game_id, title:d.game_title, cover:d.game_cover||null, platform:null, year:"—", genre:null, rating:null, reviews:0, tags:[], summary:"", videoId:null });
         });
         setUserRatings(r);
         if (games.length > 0) setRatedGamesList(games);
@@ -2260,7 +2629,7 @@ export default function JoystickLog() {
         setUserStatus(s);
         setWishlistGames(data.filter(d => d.status==="wishlist").map(d => ({
           id:d.game_id, title:d.game_title, cover:d.game_cover,
-          platform:d.game_platform, year:d.game_year, genre:"Jeu vidéo", rating:null, reviews:0, tags:[], summary:"",
+          platform:d.game_platform, year:d.game_year, genre:null, rating:null, reviews:0, tags:[], summary:"",
         })));
       }
     });
@@ -2310,7 +2679,7 @@ export default function JoystickLog() {
           .filter(g => g.count >= 1 && g.cover)
           .sort((a, b) => b.count - a.count)
           .slice(0, 15)
-          .map(g => ({ ...g, avgRating: Math.round(g.ratings.reduce((a,r)=>a+r,0)/g.ratings.length), platform:"Multi", year:"—", genre:"", tags:[], summary:"", videoId:null }));
+          .map(g => ({ ...g, avgRating: Math.round(g.ratings.reduce((a,r)=>a+r,0)/g.ratings.length), platform:null, year:"—", genre:null, tags:[], summary:"", videoId:null }));
         setPopularGames(popular);
       }).catch(() => {});
   }, []);
@@ -2363,8 +2732,9 @@ export default function JoystickLog() {
   useEffect(() => {
     if (searchQ.length < 2) { setSuggestions([]); setShowSuggestions(false); return; }
     setSuggLoading(true);
+    const ctrl = new AbortController();
     const timer = setTimeout(() => {
-      fetch(`/api/games?q=${encodeURIComponent(searchQ)}&offset=0`)
+      fetch(`/api/games?q=${encodeURIComponent(searchQ)}&offset=0`, { signal: ctrl.signal })
         .then(r => r.json())
         .then(data => {
           const items = (Array.isArray(data) ? data : [])
@@ -2374,9 +2744,9 @@ export default function JoystickLog() {
           setSuggestions(items);
           setShowSuggestions(items.length > 0);
           setSuggLoading(false);
-        }).catch(() => { setSuggLoading(false); });
+        }).catch(e => { if (e.name !== 'AbortError') setSuggLoading(false); });
     }, 220);
-    return () => clearTimeout(timer);
+    return () => { clearTimeout(timer); ctrl.abort(); };
   }, [searchQ]);
 
   /* Close suggestions on outside click */
@@ -2406,6 +2776,14 @@ export default function JoystickLog() {
     setLoadingMoreEx(false);
   }, []);
 
+  // Keep refs in sync with state so observers don't need them as deps
+  useEffect(() => { hasMoreExRef.current = hasMoreEx; }, [hasMoreEx]);
+  useEffect(() => { loadingExRef.current = loadingEx; }, [loadingEx]);
+  useEffect(() => { loadingMoreExRef.current = loadingMoreEx; }, [loadingMoreEx]);
+  useEffect(() => { exploreOffsetRef.current = exploreOffset; }, [exploreOffset]);
+  useEffect(() => { searchQRef.current = searchQ; }, [searchQ]);
+  useEffect(() => { platFilterRef.current = platFilter; }, [platFilter]);
+
   useEffect(() => {
     if (tab!=="explore") return;
     setExploreOffset(0);
@@ -2415,19 +2793,20 @@ export default function JoystickLog() {
 
   useEffect(() => { if (tab==="explore"&&exploreGames.length===0) fetchExplore("", platFilter, 0); }, [tab]);
 
-  /* Infinite scroll sentinel */
+  /* Infinite scroll sentinel — created once, reads current values via refs */
   useEffect(() => {
     if (!sentinelRef.current) return;
     const obs = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMoreEx && !loadingEx && !loadingMoreEx) {
-        const nextOffset = exploreOffset + 20;
+      if (entries[0].isIntersecting && hasMoreExRef.current && !loadingExRef.current && !loadingMoreExRef.current) {
+        const nextOffset = exploreOffsetRef.current + 20;
         setExploreOffset(nextOffset);
-        fetchExplore(searchQ, platFilter, nextOffset);
+        exploreOffsetRef.current = nextOffset;
+        fetchExplore(searchQRef.current, platFilterRef.current, nextOffset);
       }
     }, { threshold: 0.1 });
     obs.observe(sentinelRef.current);
     return () => obs.disconnect();
-  }, [hasMoreEx, loadingEx, loadingMoreEx, exploreOffset, searchQ, platFilter]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* Discover */
   const fetchDisco = useCallback(async (tags, offset = 0) => {
@@ -2444,20 +2823,29 @@ export default function JoystickLog() {
     setLoadingDisco(false); setLoadingMoreDisco(false);
   }, []);
 
+  // Keep discover refs in sync
+  useEffect(() => { hasMoreDiscoRef.current = hasMoreDisco; }, [hasMoreDisco]);
+  useEffect(() => { loadingDiscoRef.current = loadingDisco; }, [loadingDisco]);
+  useEffect(() => { loadingMoreDiscoRef.current = loadingMoreDisco; }, [loadingMoreDisco]);
+  useEffect(() => { discoOffsetRef.current = discoOffset; }, [discoOffset]);
+  useEffect(() => { activeTagsRef.current = activeTags; }, [activeTags]);
+
   useEffect(() => { setDiscoOffset(0); fetchDisco(activeTags, 0); }, [activeTags]);
 
+  /* Discover infinite scroll sentinel — created once */
   useEffect(() => {
     if (!discoSentinelRef.current) return;
     const obs = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMoreDisco && !loadingDisco && !loadingMoreDisco && activeTags.length > 0) {
-        const next = discoOffset + 20;
+      if (entries[0].isIntersecting && hasMoreDiscoRef.current && !loadingDiscoRef.current && !loadingMoreDiscoRef.current && activeTagsRef.current.length > 0) {
+        const next = discoOffsetRef.current + 20;
         setDiscoOffset(next);
-        fetchDisco(activeTags, next);
+        discoOffsetRef.current = next;
+        fetchDisco(activeTagsRef.current, next);
       }
     }, { threshold: 0.1 });
     obs.observe(discoSentinelRef.current);
     return () => obs.disconnect();
-  }, [hasMoreDisco, loadingDisco, loadingMoreDisco, activeTags, discoOffset, fetchDisco]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const logout = async () => { await supabase.auth.signOut(); setUser(null); setUserRatings({}); setUserStatus({}); setWishlistGames([]); };
 
@@ -2559,7 +2947,7 @@ export default function JoystickLog() {
                     ) : (
                       <div style={{ maxHeight:340, overflowY:"auto" }}>
                         {notifications.map(n => (
-                          <div key={n.id} onClick={()=>{ if(n.game_id) setSelected({ id:n.game_id, title:n.game_title||"", cover:n.game_cover||null, platform:"Multi", year:"—", genre:"", rating:null, reviews:0, tags:[], summary:"", allPlatforms:[], videoId:null }); setShowNotifs(false); }}
+                          <div key={n.id} onClick={()=>{ if(n.game_id) setSelected({ id:n.game_id, title:n.game_title||"", cover:n.game_cover||null, platform:null, year:"—", genre:null, rating:null, reviews:0, tags:[], summary:"", allPlatforms:[], videoId:null }); setShowNotifs(false); }}
                             style={{ display:"flex", gap:10, alignItems:"center", padding:"11px 16px", cursor:n.game_id?"pointer":"default", background:n.read?"transparent":"rgba(255,107,53,.04)", borderBottom:"1px solid rgba(255,255,255,.04)", transition:"background .15s" }}
                             onMouseEnter={e=>{if(n.game_id)e.currentTarget.style.background="rgba(255,107,53,.07)";}}
                             onMouseLeave={e=>{e.currentTarget.style.background=n.read?"transparent":"rgba(255,107,53,.04)";}}>
@@ -2587,10 +2975,11 @@ export default function JoystickLog() {
                 onMouseLeave={e=>e.currentTarget.style.boxShadow="0 0 18px rgba(255,107,53,.3)"}>
                 {user.email?.slice(0,2).toUpperCase()}
               </div>
-              <button onClick={logout} className="hide-m" style={{ background:"none", border:"1px solid rgba(255,255,255,.08)", borderRadius:9, color:"rgba(255,255,255,.3)", cursor:"pointer", fontSize:12, padding:"7px 13px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, transition:"all .15s", letterSpacing:.2 }}
-                onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(248,113,113,.35)";e.currentTarget.style.color="#f87171";}}
+              <button onClick={()=>setShowSettings(true)} className="hide-m" title={t("settings_title")}
+                style={{ background:"none", border:"1px solid rgba(255,255,255,.08)", borderRadius:9, color:"rgba(255,255,255,.3)", cursor:"pointer", fontSize:15, width:34, height:34, display:"flex", alignItems:"center", justifyContent:"center", transition:"all .15s" }}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(255,107,53,.35)";e.currentTarget.style.color="#ff6b35";}}
                 onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.08)";e.currentTarget.style.color="rgba(255,255,255,.3)";}}>
-                {t("logout")}
+                ⚙️
               </button>
             </>
           ) : (
@@ -3364,6 +3753,7 @@ export default function JoystickLog() {
       {showAuth && <AuthModal onClose={()=>setShowAuth(false)} onSuccess={u=>{ setUser(u); setShowAuth(false); }} t={t}/>}
       {showResetPw && <ResetPasswordModal onClose={()=>setShowResetPw(false)} t={t}/>}
       {legalModal && <LegalModal type={legalModal} onClose={()=>setLegalModal(null)}/>}
+      {showSettings && user && <SettingsModal user={user} profileUsername={profileUsername} setProfileUsername={setProfileUsername} onClose={()=>setShowSettings(false)} onDeleteAccount={()=>{ setUser(null); setUserRatings({}); setUserStatus({}); setWishlistGames([]); }} t={t}/>}
       {publicProfile && (
         <PublicProfile
           username={publicProfile}
