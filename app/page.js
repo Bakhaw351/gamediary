@@ -502,7 +502,7 @@ const CSS = `
   @keyframes shimmer  {from{background-position:-700px 0;}to{background-position:700px 0;}}
   @keyframes shine    {from{left:-80%;}to{left:130%;}}
   @keyframes float    {0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
-  @keyframes bgDrift  {0%{transform:translateY(0) scale(1);}33%{transform:translateY(-22px) scale(1.03);}66%{transform:translateY(12px) scale(.97);}100%{transform:translateY(0) scale(1);}}
+  @keyframes bgDrift  {0%{transform:translateY(0);}33%{transform:translateY(-18px);}66%{transform:translateY(10px);}100%{transform:translateY(0);}}
   @keyframes jacketDrift{0%{transform:translateY(0) rotate(var(--rot));}50%{transform:translateY(-14px) rotate(var(--rot));}100%{transform:translateY(0) rotate(var(--rot));}}
   @keyframes marquee  {from{transform:translateX(0);}to{transform:translateX(-50%);}}
   @keyframes marqueeR {from{transform:translateX(-50%);}to{transform:translateX(0);}}
@@ -513,6 +513,15 @@ const CSS = `
   .jacket-item,.cover-bg-item{will-change:transform;transform:translateZ(0);}
   @media (prefers-reduced-motion: reduce) {
     .jacket-item,.cover-bg-item,.hf1,.hf2,.hf3{animation:none!important;}
+  }
+  @media (max-width: 768px) {
+    .jacket-item{display:none!important;}
+    .cover-bg-item img{filter:none!important;}
+    .cover-bg-item{animation:none!important;}
+    .grad-text{animation:none!important;background-position:0% 50%;}
+    .marquee-track{animation-duration:120s!important;}
+    .marquee-track-r{animation-duration:140s!important;}
+    .btn::after{animation:none!important;}
   }
 
   .fu  {animation:fadeUp .65s cubic-bezier(.22,1,.36,1) both;}
@@ -742,7 +751,7 @@ const CoverBackground = ({ covers }) => {
         if (p.right)  s.right  = p.right;
         return (
           <div key={i} className="cover-bg-item" style={s}>
-            <img src={src} alt="" style={{ width:'100%', display:'block', borderRadius:24, transform:`rotate(${p.rot})`, filter:'blur(40px)' }} />
+            <img src={src} alt="" style={{ width:'100%', display:'block', borderRadius:24, transform:`rotate(${p.rot})`, filter:'blur(20px)' }} />
           </div>
         );
       })}
