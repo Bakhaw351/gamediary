@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(TOKEN=\"gq4i0zo2pfgtubkjp6gmic35d45ibq\")",
+      "Bash(curl -s -X POST \"https://api.igdb.com/v4/games\" -H \"Client-ID: ah2oe4757xks514c97kquwq0894p8b\" -H \"Authorization: Bearer $TOKEN\" -H \"Content-Type: text/plain\" -d \"fields name,category; where id = \\(1020,1942,72,472\\); limit 4;\")",
+      "Bash(git push:*)"
+    ]
+  }
+}

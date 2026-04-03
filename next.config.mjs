@@ -21,12 +21,12 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       // Fonts
       "font-src 'self' https://fonts.gstatic.com",
-      // Images: self + IGDB covers + DiceBear avatars + data URIs
-      `img-src 'self' data: https://images.igdb.com https://api.dicebear.com`,
+      // Images: self + IGDB covers + data URIs
+      `img-src 'self' data: https://images.igdb.com`,
       // API calls: Supabase + IGDB (server-side only, but listed for fetch() calls)
       `connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://api.igdb.com https://id.twitch.tv`,
-      // Frames: none
-      "frame-src 'none'",
+      // Frames: YouTube only (trailers)
+      "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
       // Objects: none
       "object-src 'none'",
       // Base URI: restrict to self

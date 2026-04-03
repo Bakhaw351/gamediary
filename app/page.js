@@ -1911,95 +1911,182 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
 
 /* ── AVATAR GALLERY ───────────────────────────────────────── */
 // lorelei-neutral = serious/neutral expression by default
-const DB = "https://api.dicebear.com/9.x/lorelei-neutral/svg?backgroundColor=1a1025&seed=";
+// ── CUSTOM SVG AVATARS ────────────────────────────────────────
+// Each avatar is a self-contained SVG string: bg gradient + face + unique hat
+const mkSvg = (bg1, bg2, face, hat) => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${bg1}"/><stop offset="100%" stop-color="${bg2}"/></linearGradient>
+  <clipPath id="c"><rect width="100" height="100" rx="18"/></clipPath>
+</defs>
+<rect width="100" height="100" rx="18" fill="url(#bg)"/>
+<!-- neck -->
+<rect x="41" y="68" width="18" height="14" rx="4" fill="#c8956b"/>
+<!-- shoulders -->
+<ellipse cx="50" cy="88" rx="28" ry="14" fill="#1a1a2e"/>
+<!-- head -->
+<ellipse cx="50" cy="54" rx="20" ry="22" fill="#c8956b"/>
+<!-- ears -->
+<ellipse cx="30" cy="55" rx="4" ry="5" fill="#c8956b"/>
+<ellipse cx="70" cy="55" rx="4" ry="5" fill="#c8956b"/>
+<!-- eyes -->
+${face}
+<!-- hat -->
+${hat}
+</svg>`)}`;
 
-// hat emoji per category — shown as overlay on avatar
-const CAT_HAT = {
-  combat:  "⚔️",
-  magic:   "🔮",
-  stealth: "🗡️",
-  ranged:  "🏹",
-  scifi:   "🤖",
-  dark:    "💀",
-  divine:  "✨",
-  sea:     "⚓",
-  // locked categories
-  rank:    "🏅",
-  writer:  "✍️",
-  passion: "❤️",
-  list:    "📋",
-  elite:   "👑",
+// face variants
+const FACE_STERN  = `<ellipse cx="43" cy="52" rx="3.5" ry="2.5" fill="#1a0a00"/><ellipse cx="57" cy="52" rx="3.5" ry="2.5" fill="#1a0a00"/><path d="M44 48 Q43 46 42 48" stroke="#6b4226" stroke-width="1.5" fill="none"/><path d="M56 48 Q57 46 58 48" stroke="#6b4226" stroke-width="1.5" fill="none"/><path d="M44 62 Q50 60 56 62" stroke="#6b4226" stroke-width="1.5" fill="none"/>`;
+const FACE_FIERCE = `<ellipse cx="43" cy="52" rx="3.5" ry="2" fill="#1a0a00"/><ellipse cx="57" cy="52" rx="3.5" ry="2" fill="#1a0a00"/><path d="M41 47 Q43 45 45 47" stroke="#5a3010" stroke-width="2" fill="none"/><path d="M55 47 Q57 45 59 47" stroke="#5a3010" stroke-width="2" fill="none"/><path d="M45 63 Q50 61 55 63" stroke="#6b4226" stroke-width="1.5" fill="none"/>`;
+const FACE_CALM   = `<ellipse cx="43" cy="53" rx="3" ry="3.5" fill="#1a0a00"/><ellipse cx="57" cy="53" rx="3" ry="3.5" fill="#1a0a00"/><circle cx="44" cy="52" r="1" fill="white" opacity=".6"/><circle cx="58" cy="52" r="1" fill="white" opacity=".6"/><path d="M45 63 Q50 65 55 63" stroke="#6b4226" stroke-width="1.5" fill="none"/>`;
+const FACE_DARK   = `<ellipse cx="43" cy="52" rx="3.5" ry="3" fill="#ff3030" opacity=".9"/><ellipse cx="57" cy="52" rx="3.5" ry="3" fill="#ff3030" opacity=".9"/><path d="M44 63 Q50 61 56 63" stroke="#8b0000" stroke-width="1.5" fill="none"/>`;
+const FACE_GLOWING= `<ellipse cx="43" cy="52" rx="3.5" ry="3" fill="#00cfff"/><ellipse cx="57" cy="52" rx="3.5" ry="3" fill="#00cfff"/><circle cx="43" cy="52" r="2" fill="white" opacity=".5"/><circle cx="57" cy="52" r="2" fill="white" opacity=".5"/><path d="M45 63 Q50 65 55 63" stroke="#00cfff" stroke-width="1.5" fill="none"/>`;
+const FACE_WISE   = `<ellipse cx="43" cy="53" rx="3" ry="3" fill="#2a1a00"/><ellipse cx="57" cy="53" rx="3" ry="3" fill="#2a1a00"/><path d="M40 47 Q43 45 46 47" stroke="#4a3010" stroke-width="1.8" fill="none"/><path d="M54 47 Q57 45 60 47" stroke="#4a3010" stroke-width="1.8" fill="none"/><path d="M42 38 Q43 36 45 38" stroke="#888" stroke-width="1.2" fill="none"/><path d="M55 38 Q57 36 59 38" stroke="#888" stroke-width="1.2" fill="none"/><path d="M45 63 Q50 65 55 63" stroke="#6b4226" stroke-width="1.5" fill="none"/>`;
+
+// hat definitions
+const HAT_KNIGHT    = `<path d="M30 44 Q30 25 50 23 Q70 25 70 44 Z" fill="#888"/><rect x="25" y="42" width="50" height="6" rx="2" fill="#666"/><rect x="32" y="30" width="36" height="20" rx="2" fill="#777"/><rect x="43" y="36" width="14" height="10" rx="1" fill="#1a1a2e"/>`;
+const HAT_VIKING    = `<path d="M28 46 Q30 25 50 22 Q70 25 72 46 Z" fill="#8B4513"/><rect x="24" y="44" width="52" height="7" rx="2" fill="#6B3410"/><ellipse cx="24" cy="46" rx="6" ry="4" fill="#e8d5a0"/><ellipse cx="76" cy="46" rx="6" ry="4" fill="#e8d5a0"/><path d="M38 22 Q35 14 32 10" stroke="#8B4513" stroke-width="3" fill="none"/><path d="M62 22 Q65 14 68 10" stroke="#8B4513" stroke-width="3" fill="none"/>`;
+const HAT_MAGE      = `<polygon points="50,5 30,45 70,45" fill="#4a0080"/><polygon points="50,5 30,45 70,45" fill="none" stroke="#9b30ff" stroke-width="1"/><rect x="24" y="43" width="52" height="7" rx="3" fill="#6a00b0"/><circle cx="50" cy="8" r="4" fill="#ffd700"/><path d="M42 20 L46 24 M54 18 L50 23" stroke="#ffd700" stroke-width="1" fill="none"/>`;
+const HAT_NINJA     = `<rect x="28" y="32" width="44" height="28" rx="4" fill="#1a1a1a"/><rect x="28" y="50" width="44" height="12" rx="4" fill="#111"/><rect x="28" y="46" width="44" height="8" fill="#222"/><rect x="25" y="52" width="10" height="4" rx="1" fill="#1a1a1a"/><rect x="65" y="52" width="10" height="4" rx="1" fill="#1a1a1a"/>`;
+const HAT_PIRATE    = `<path d="M22 46 Q25 28 50 24 Q75 28 78 46 Z" fill="#1a1a1a"/><rect x="18" y="44" width="64" height="8" rx="3" fill="#111"/><path d="M38 32 L50 26 L62 32" stroke="white" stroke-width="2" fill="none"/><circle cx="50" cy="26" r="3" fill="white"/><rect x="44" y="20" width="12" height="8" rx="1" fill="white"/><rect x="48" y="16" width="4" height="8" rx="1" fill="white"/>`;
+const HAT_SAMURAI   = `<path d="M25 44 Q28 30 50 26 Q72 30 75 44" fill="#8B0000" stroke="#600" stroke-width="1"/><path d="M20 44 Q22 36 50 32 Q78 36 80 44" fill="none" stroke="#8B0000" stroke-width="3"/><rect x="24" y="42" width="52" height="6" rx="1" fill="#600"/><path d="M42 26 Q50 20 58 26" fill="#ffd700" stroke="#cc9900" stroke-width="1"/>`;
+const HAT_WIZARD    = `<polygon points="50,3 28,46 72,46" fill="#1a3a6b"/><polygon points="50,3 28,46 72,46" fill="none" stroke="#4488ff" stroke-width="1.5"/><rect x="22" y="44" width="56" height="8" rx="4" fill="#2a4a8b"/><circle cx="42" cy="25" r="2" fill="#fff" opacity=".7"/><circle cx="58" cy="32" r="1.5" fill="#fff" opacity=".7"/><circle cx="50" cy="18" r="1.5" fill="#ffd700"/><circle cx="35" cy="38" r="1" fill="#fff" opacity=".5"/>`;
+const HAT_ARCHER    = `<path d="M30 42 Q32 28 50 25 Q68 28 70 42" fill="#2d5a1b" stroke="#1a3a0a" stroke-width="1"/><path d="M35 34 Q50 28 65 34" fill="none" stroke="#1a3a0a" stroke-width="1.5"/><rect x="28" y="40" width="44" height="7" rx="2" fill="#1a3a0a"/><rect x="47" y="18" width="6" height="10" rx="1" fill="#8B4513"/><path d="M44 18 L50 12 L56 18" fill="#8B4513"/>`;
+const HAT_PALADIN   = `<path d="M30 44 Q30 24 50 20 Q70 24 70 44 Z" fill="#c0a020"/><rect x="25" y="42" width="50" height="7" rx="2" fill="#a08010"/><path d="M42 34 L50 28 L58 34 L58 44 L42 44 Z" fill="#e0c040"/><path d="M50 28 L50 44 M42 36 L58 36" stroke="#c0a020" stroke-width="1.5"/>`;
+const HAT_BERSERKER = `<path d="M28 46 Q28 28 50 24 Q72 28 72 46 Z" fill="#5a2a00"/><rect x="24" y="44" width="52" height="7" rx="2" fill="#3a1a00"/><path d="M28 36 Q24 28 20 30" stroke="#5a2a00" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M72 36 Q76 28 80 30" stroke="#5a2a00" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M36 26 Q34 18 38 16" stroke="#8B0000" stroke-width="2.5" fill="none"/><path d="M64 26 Q66 18 62 16" stroke="#8B0000" stroke-width="2.5" fill="none"/>`;
+const HAT_DRUID     = `<path d="M30 45 Q32 32 50 28 Q68 32 70 45" fill="#2d5a1b"/><rect x="26" y="43" width="48" height="7" rx="3" fill="#1a3a0a"/><path d="M40 32 Q42 24 50 22 Q58 24 60 32" fill="#3a7a20"/><circle cx="50" cy="22" r="4" fill="#5aaa30"/><path d="M44 24 Q42 18 38 20 M56 24 Q58 18 62 20" stroke="#2d5a1b" stroke-width="1.5" fill="none"/>`;
+const HAT_SPY       = `<path d="M22 46 Q25 30 50 26 Q75 30 78 46 Z" fill="#1a1a1a"/><rect x="18" y="44" width="64" height="7" rx="2" fill="#111"/><rect x="30" y="50" width="40" height="4" fill="#111"/><ellipse cx="50" cy="26" rx="15" ry="4" fill="#222"/>`;
+const HAT_CYBORG    = `<path d="M28 46 Q28 26 50 22 Q72 26 72 46 Z" fill="#2a2a3a"/><rect x="24" y="44" width="52" height="7" rx="2" fill="#1a1a2a"/><rect x="38" y="26" width="24" height="16" rx="3" fill="#00cfff" opacity=".3"/><rect x="38" y="26" width="24" height="16" rx="3" fill="none" stroke="#00cfff" stroke-width="1.5"/><circle cx="44" cy="34" r="3" fill="#00cfff"/><circle cx="56" cy="34" r="3" fill="#ff3030"/><path d="M28 38 L34 38 M66 38 L72 38" stroke="#00cfff" stroke-width="2"/>`;
+const HAT_DEMON     = `<path d="M30 46 Q30 28 50 24 Q70 28 70 46 Z" fill="#4a0000"/><rect x="26" y="44" width="48" height="7" rx="2" fill="#300000"/><path d="M34 30 Q30 18 28 12" stroke="#8B0000" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M66 30 Q70 18 72 12" stroke="#8B0000" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M34 30 Q32 22 36 16" stroke="#ff3030" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M66 30 Q68 22 64 16" stroke="#ff3030" stroke-width="2" stroke-linecap="round" fill="none"/>`;
+const HAT_ANGEL     = `<ellipse cx="50" cy="22" rx="22" ry="5" fill="none" stroke="#ffd700" stroke-width="3"/><path d="M20 38 Q10 28 15 20 Q22 28 30 32" fill="#fff" opacity=".9"/><path d="M80 38 Q90 28 85 20 Q78 28 70 32" fill="#fff" opacity=".9"/>`;
+const HAT_GHOST     = `<path d="M28 56 Q28 28 50 24 Q72 28 72 56 L65 50 L58 56 L50 50 L42 56 L35 50 Z" fill="#ddeeff" opacity=".9"/><rect x="28" y="24" width="44" height="32" rx="22" fill="#ddeeff" opacity=".85"/>`;
+const HAT_ROBOT     = `<rect x="28" y="22" width="44" height="28" rx="6" fill="#3a3a4a"/><rect x="32" y="26" width="36" height="20" rx="4" fill="#2a2a3a"/><rect x="34" y="28" width="14" height="10" rx="2" fill="#00cfff" opacity=".8"/><rect x="52" y="28" width="14" height="10" rx="2" fill="#ff3030" opacity=".8"/><rect x="28" y="48" width="44" height="6" rx="2" fill="#3a3a4a"/><rect x="36" y="20" width="8" height="6" rx="2" fill="#555"/><rect x="56" y="20" width="8" height="6" rx="2" fill="#555"/>`;
+const HAT_GLADIATOR = `<path d="M28 44 Q30 26 50 22 Q70 26 72 44" fill="#8B6914"/><path d="M28 44 L22 52 L24 54 L30 46" fill="#7a5810"/><path d="M72 44 L78 52 L76 54 L70 46" fill="#7a5810"/><rect x="26" y="42" width="48" height="7" rx="2" fill="#6a4808"/><path d="M40 28 Q50 22 60 28" stroke="#ffd700" stroke-width="2" fill="none"/>`;
+const HAT_GUARD     = `<path d="M32 44 Q32 26 50 22 Q68 26 68 44 Z" fill="#556b2f"/><rect x="26" y="42" width="48" height="7" rx="2" fill="#3a4a1a"/><path d="M44 22 L50 16 L56 22" fill="#ffd700"/>`;
+const HAT_RANGER    = `<path d="M22 46 Q26 30 50 26 Q74 30 78 46 Z" fill="#5c4a1e"/><rect x="20" y="44" width="60" height="7" rx="3" fill="#3c2a0e"/><path d="M35 36 Q50 30 65 36" fill="#4a3a10" stroke="#3c2a0e" stroke-width="1"/><circle cx="50" cy="30" r="3" fill="#8B4513"/>`;
+const HAT_HUNTER    = `<path d="M26 46 Q28 30 50 26 Q72 30 74 46 Z" fill="#4a3010"/><rect x="22" y="44" width="56" height="7" rx="3" fill="#3a2008"/><path d="M35 32 L50 26 L65 32" fill="#2d1a00"/><path d="M44 18 Q50 14 56 18 Q50 22 44 18" fill="#8B4513"/>`;
+const HAT_SORCERER  = `<polygon points="50,4 26,46 74,46" fill="#2a0044"/><rect x="20" y="44" width="60" height="8" rx="4" fill="#3a0066"/><circle cx="50" cy="4" r="5" fill="#ff44ff"/><path d="M38 28 Q44 22 50 28 Q56 22 62 28" stroke="#ff44ff" stroke-width="1.5" fill="none" opacity=".7"/>`;
+const HAT_MONK      = `<path d="M32 46 Q32 30 50 26 Q68 30 68 46" fill="#cc6600"/><rect x="28" y="44" width="44" height="7" rx="2" fill="#aa4400"/><path d="M36 32 Q50 26 64 32" fill="none" stroke="#aa4400" stroke-width="2"/>`;
+const HAT_ROGUE     = `<path d="M24 46 Q26 30 50 26 Q74 30 76 46 Z" fill="#1a1a2e"/><rect x="20" y="44" width="60" height="7" rx="3" fill="#111"/><path d="M28 38 Q50 32 72 38" fill="#222" stroke="#111" stroke-width="1"/><path d="M42 24 Q50 18 58 24" fill="#1a1a2e"/>`;
+const HAT_THIEF     = `<path d="M30 46 Q32 34 50 30 Q68 34 70 46" fill="#2a1a00"/><rect x="26" y="44" width="48" height="7" rx="2" fill="#1a0e00"/><path d="M35 34 Q50 28 65 34 Q60 40 50 38 Q40 40 35 34" fill="#3a2a00"/>`;
+const HAT_BARD      = `<path d="M24 46 Q26 28 50 24 Q74 28 76 46 Z" fill="#8B008B"/><rect x="20" y="44" width="60" height="7" rx="3" fill="#6a006a"/><path d="M68 30 Q76 22 74 18" stroke="#ffd700" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="74" cy="16" r="4" fill="#ffd700"/>`;
+const HAT_ALIEN     = `<ellipse cx="50" cy="28" rx="26" ry="18" fill="#00440a" opacity=".9"/><ellipse cx="50" cy="28" rx="20" ry="14" fill="#006610" opacity=".9"/><ellipse cx="38" cy="18" rx="6" ry="9" fill="#00440a"/><ellipse cx="62" cy="18" rx="6" ry="9" fill="#00440a"/>`;
+const HAT_ZOMBIE    = `<path d="M30 46 Q28 28 50 24 Q72 28 70 46 Z" fill="#2d4a00"/><rect x="26" y="44" width="48" height="7" rx="2" fill="#1a3000"/><path d="M35 30 Q36 24 40 26 M60 28 Q64 22 65 26" stroke="#5a7a00" stroke-width="2" fill="none"/><path d="M42 36 L44 32 M55 36 L53 30" stroke="#1a3000" stroke-width="2"/>`;
+const HAT_DRAGON    = `<path d="M30 44 Q30 26 50 22 Q70 26 70 44" fill="#8B0000"/><path d="M30 34 Q20 22 22 14 Q28 22 34 28" fill="#8B0000"/><path d="M70 34 Q80 22 78 14 Q72 22 66 28" fill="#8B0000"/><rect x="26" y="42" width="48" height="7" rx="2" fill="#600000"/><path d="M40 24 Q50 18 60 24" stroke="#ffd700" stroke-width="2" fill="none"/>`;
+const HAT_PILOT     = `<path d="M28 46 Q28 28 50 24 Q72 28 72 46 Z" fill="#1a2a3a"/><rect x="24" y="44" width="52" height="7" rx="2" fill="#111"/><rect x="32" y="28" width="36" height="18" rx="8" fill="#2a3a4a"/><rect x="34" y="30" width="32" height="14" rx="6" fill="#00cfff" opacity=".3"/><path d="M24 38 L30 36 M70 38 L76 36" stroke="#555" stroke-width="2"/>`;
+const HAT_ENGINEER  = `<path d="M30 46 Q30 28 50 24 Q70 28 70 46 Z" fill="#3a3a00"/><rect x="26" y="44" width="48" height="7" rx="2" fill="#2a2a00"/><rect x="38" y="22" width="24" height="10" rx="2" fill="#5a5a00"/><rect x="44" y="16" width="4" height="8" fill="#888"/><rect x="52" y="16" width="4" height="8" fill="#888"/><circle cx="50" cy="26" r="3" fill="#ffd700"/>`;
+
+// locked hats
+const HAT_CROWN     = `<path d="M28 44 L34 26 L42 38 L50 20 L58 38 L66 26 L72 44 Z" fill="#ffd700" stroke="#cc9900" stroke-width="1"/><rect x="26" y="42" width="48" height="8" rx="3" fill="#cc9900"/><circle cx="50" cy="20" r="3" fill="#ff4444"/><circle cx="34" cy="26" r="2" fill="#4444ff"/><circle cx="66" cy="26" r="2" fill="#44ff44"/>`;
+const HAT_MEDAL     = `<path d="M32 44 Q32 28 50 24 Q68 28 68 44" fill="#888"/><rect x="28" y="42" width="44" height="7" rx="2" fill="#666"/><circle cx="50" cy="30" r="10" fill="#ffd700" stroke="#cc9900" stroke-width="1.5"/><text x="50" y="34" text-anchor="middle" font-size="10" fill="#8B6914" font-weight="bold">1</text>`;
+const HAT_QUILL     = `<path d="M26 46 Q28 30 50 26 Q72 30 74 46 Z" fill="#2a1a3a"/><rect x="22" y="44" width="56" height="7" rx="3" fill="#1a0a2a"/><path d="M60 22 Q72 10 76 6 Q74 16 66 26 Q64 28 60 26 Z" fill="#ddeeff"/><path d="M62 24 Q70 14 72 10" stroke="#aabbcc" stroke-width="1" fill="none"/>`;
+const HAT_HEART     = `<path d="M30 46 Q30 28 50 24 Q70 28 70 46 Z" fill="#4a0020"/><rect x="26" y="44" width="48" height="7" rx="2" fill="#300010"/><path d="M50 36 Q44 28 38 30 Q34 32 36 38 Q38 44 50 50 Q62 44 64 38 Q66 32 62 30 Q56 28 50 36 Z" fill="#ff1a4a" transform="scale(0.45) translate(61, 12)"/>`;
+const HAT_BOOK      = `<path d="M30 46 Q30 28 50 24 Q70 28 70 46 Z" fill="#1a3a5a"/><rect x="26" y="44" width="48" height="7" rx="2" fill="#0a2a4a"/><rect x="36" y="26" width="28" height="20" rx="2" fill="#c8a060"/><rect x="49" y="26" width="2" height="20" fill="#8B6914"/><path d="M38 30 L48 30 M38 34 L48 34 M38 38 L48 38" stroke="#8B6914" stroke-width="1"/>`;
+const HAT_FIRE      = `<path d="M30 46 Q30 28 50 24 Q70 28 70 46 Z" fill="#3a1400"/><rect x="26" y="44" width="48" height="7" rx="2" fill="#2a0a00"/><path d="M50 24 Q44 16 46 10 Q50 16 54 10 Q56 16 58 12 Q56 20 60 18 Q56 26 50 24 Z" fill="#ff6600"/><path d="M50 24 Q46 18 48 14 Q50 18 52 14 Q52 20 54 18 Q52 24 50 24 Z" fill="#ffcc00"/>`;
+const HAT_SKULL     = `<path d="M30 46 Q30 28 50 24 Q70 28 70 46 Z" fill="#1a1a1a"/><rect x="26" y="44" width="48" height="7" rx="2" fill="#111"/><ellipse cx="50" cy="30" rx="10" ry="10" fill="#ddd"/><ellipse cx="45" cy="28" rx="3" ry="4" fill="#1a1a1a"/><ellipse cx="55" cy="28" rx="3" ry="4" fill="#1a1a1a"/><path d="M44 37 L46 35 L48 37 L50 35 L52 37 L54 35 L56 37" stroke="#1a1a1a" stroke-width="1.5" fill="none"/>`;
+
+// Build avatar SVG from components
+const AVATAR_SVGS = {
+  warrior:      mkSvg("#1a0a00","#3a1a00", FACE_FIERCE,  HAT_BERSERKER),
+  knight:       mkSvg("#0a0a1a","#1a1a3a", FACE_STERN,   HAT_KNIGHT),
+  berserker:    mkSvg("#1a0000","#3a0000", FACE_FIERCE,  HAT_BERSERKER),
+  paladin:      mkSvg("#1a1400","#2a2400", FACE_CALM,    HAT_PALADIN),
+  gladiator:    mkSvg("#1a0a00","#2a1500", FACE_FIERCE,  HAT_GLADIATOR),
+  guard:        mkSvg("#0a1a00","#1a3000", FACE_STERN,   HAT_GUARD),
+  mage:         mkSvg("#1a0030","#2a0050", FACE_WISE,    HAT_MAGE),
+  wizard:       mkSvg("#0a0a2a","#0a1a4a", FACE_WISE,    HAT_WIZARD),
+  druid:        mkSvg("#0a1a00","#1a3000", FACE_CALM,    HAT_DRUID),
+  sorcerer:     mkSvg("#200030","#300050", FACE_FIERCE,  HAT_SORCERER),
+  bard:         mkSvg("#200020","#380038", FACE_CALM,    HAT_BARD),
+  monk:         mkSvg("#1a0a00","#2a1500", FACE_CALM,    HAT_MONK),
+  ninja:        mkSvg("#0a0a0a","#1a1a1a", FACE_STERN,   HAT_NINJA),
+  rogue:        mkSvg("#0a0a1a","#141428", FACE_STERN,   HAT_ROGUE),
+  thief:        mkSvg("#1a0a00","#241400", FACE_STERN,   HAT_THIEF),
+  spy:          mkSvg("#0a0a0a","#181818", FACE_CALM,    HAT_SPY),
+  samurai:      mkSvg("#1a0000","#2a0808", FACE_STERN,   HAT_SAMURAI),
+  archer:       mkSvg("#0a1400","#142000", FACE_CALM,    HAT_ARCHER),
+  ranger:       mkSvg("#0a1a00","#142800", FACE_STERN,   HAT_RANGER),
+  hunter:       mkSvg("#1a0a00","#281400", FACE_FIERCE,  HAT_HUNTER),
+  pilot:        mkSvg("#000a1a","#001430", FACE_CALM,    HAT_PILOT),
+  engineer:     mkSvg("#1a1400","#282000", FACE_CALM,    HAT_ENGINEER),
+  cyborg:       mkSvg("#000a1a","#001428", FACE_GLOWING, HAT_CYBORG),
+  robot:        mkSvg("#0a0a14","#141420", FACE_GLOWING, HAT_ROBOT),
+  alien:        mkSvg("#000a00","#001400", FACE_GLOWING, HAT_ALIEN),
+  zombie:       mkSvg("#0a1400","#101a00", FACE_DARK,    HAT_ZOMBIE),
+  demon:        mkSvg("#1a0000","#2a0000", FACE_DARK,    HAT_DEMON),
+  ghost:        mkSvg("#0a0a1a","#0a1428", FACE_CALM,    HAT_GHOST),
+  angel:        mkSvg("#1a1400","#2a2800", FACE_CALM,    HAT_ANGEL),
+  dragon:       mkSvg("#1a0000","#2a0808", FACE_FIERCE,  HAT_DRAGON),
+  pirate:       mkSvg("#0a0a00","#1a1400", FACE_FIERCE,  HAT_PIRATE),
+  viking:       mkSvg("#1a0a00","#2a1000", FACE_FIERCE,  HAT_VIKING),
+  // locked
+  rookie:       mkSvg("#001a10","#003020", FACE_CALM,    HAT_MEDAL),
+  scout:        mkSvg("#001a10","#003020", FACE_STERN,   HAT_MEDAL),
+  veteran:      mkSvg("#1a1000","#2a2000", FACE_STERN,   HAT_MEDAL),
+  legend:       mkSvg("#1a0a00","#2a1400", FACE_FIERCE,  HAT_CROWN),
+  immortal:     mkSvg("#1a0030","#2a0050", FACE_FIERCE,  HAT_CROWN),
+  godlike:      mkSvg("#1a1000","#ffd70022", FACE_GLOWING,HAT_CROWN),
+  critic:       mkSvg("#0a0a2a","#141440", FACE_WISE,    HAT_QUILL),
+  journalist:   mkSvg("#0a0a2a","#141440", FACE_WISE,    HAT_BOOK),
+  fanboy:       mkSvg("#1a0010","#2a0020", FACE_CALM,    HAT_HEART),
+  hater:        mkSvg("#1a0000","#2a0000", FACE_DARK,    HAT_SKULL),
+  completionist:mkSvg("#1a1000","#2a2000", FACE_STERN,   HAT_CROWN),
+  champion:     mkSvg("#1a0a00","#2a1400", FACE_FIERCE,  HAT_CROWN),
+  dreamer:      mkSvg("#0a0a2a","#101040", FACE_CALM,    HAT_HEART),
+  collector:    mkSvg("#001a10","#002a20", FACE_CALM,    HAT_BOOK),
+  curator:      mkSvg("#0a0a2a","#14143a", FACE_WISE,    HAT_BOOK),
+  speedrunner:  mkSvg("#1a0a00","#2a1000", FACE_FIERCE,  HAT_MEDAL),
+  dropout:      mkSvg("#0a0a0a","#141414", FACE_DARK,    HAT_SKULL),
+  devotee:      mkSvg("#1a0010","#2a0020", FACE_CALM,    HAT_HEART),
+  pessimist:    mkSvg("#0a0a00","#141400", FACE_DARK,    HAT_SKULL),
+  balanced:     mkSvg("#0a0a1a","#141428", FACE_CALM,    HAT_BOOK),
+  explorer2:    mkSvg("#001a10","#003020", FACE_STERN,   HAT_MEDAL),
+  wanderer:     mkSvg("#0a1400","#142000", FACE_CALM,    HAT_RANGER),
+  nomad:        mkSvg("#1a0a00","#281000", FACE_STERN,   HAT_RANGER),
+  hardcore:     mkSvg("#1a0000","#2a0000", FACE_FIERCE,  HAT_FIRE),
+  perfectionist:mkSvg("#1a1400","#2a2000", FACE_WISE,    HAT_CROWN),
+  retrogamer:   mkSvg("#0a0a1a","#101030", FACE_CALM,    HAT_MEDAL),
+  indie:        mkSvg("#0a1a10","#102820", FACE_CALM,    HAT_QUILL),
+  marathon:     mkSvg("#1a0a00","#2a1000", FACE_STERN,   HAT_FIRE),
+  archivist:    mkSvg("#0a0a2a","#10103a", FACE_WISE,    HAT_BOOK),
+  oracle:       mkSvg("#1a0030","#280050", FACE_GLOWING, HAT_CROWN),
+  overlord:     mkSvg("#1a0000","#300000", FACE_DARK,    HAT_CROWN),
+  phantom:      mkSvg("#0a0a1a","#0a1428", FACE_GLOWING, HAT_SKULL),
+  titan:        mkSvg("#0a0a0a","#181818", FACE_FIERCE,  HAT_CROWN),
 };
 
 const FREE_AVATARS = [
-  { id:"warrior",    seed:"Warrior",      label:"Warrior",    cat:"combat"  },
-  { id:"knight",     seed:"Knight",       label:"Knight",     cat:"combat"  },
-  { id:"berserker",  seed:"Berserker",    label:"Berserker",  cat:"combat"  },
-  { id:"paladin",    seed:"Paladin",      label:"Paladin",    cat:"combat"  },
-  { id:"gladiator",  seed:"Gladiator",    label:"Gladiator",  cat:"combat"  },
-  { id:"guard",      seed:"Guard",        label:"Guard",      cat:"combat"  },
-  { id:"mage",       seed:"Mage",         label:"Mage",       cat:"magic"   },
-  { id:"wizard",     seed:"Wizard",       label:"Wizard",     cat:"magic"   },
-  { id:"druid",      seed:"Druid",        label:"Druid",      cat:"magic"   },
-  { id:"sorcerer",   seed:"Sorcerer",     label:"Sorcerer",   cat:"magic"   },
-  { id:"bard",       seed:"Bard",         label:"Bard",       cat:"magic"   },
-  { id:"monk",       seed:"Monk",         label:"Monk",       cat:"magic"   },
-  { id:"ninja",      seed:"Ninja",        label:"Ninja",      cat:"stealth" },
-  { id:"rogue",      seed:"Rogue",        label:"Rogue",      cat:"stealth" },
-  { id:"thief",      seed:"Thief",        label:"Thief",      cat:"stealth" },
-  { id:"spy",        seed:"Spy",          label:"Spy",        cat:"stealth" },
-  { id:"samurai",    seed:"Samurai",      label:"Samurai",    cat:"stealth" },
-  { id:"archer",     seed:"Archer",       label:"Archer",     cat:"ranged"  },
-  { id:"ranger",     seed:"Ranger",       label:"Ranger",     cat:"ranged"  },
-  { id:"hunter",     seed:"Hunter",       label:"Hunter",     cat:"ranged"  },
-  { id:"pilot",      seed:"Pilot",        label:"Pilot",      cat:"scifi"   },
-  { id:"engineer",   seed:"Engineer",     label:"Engineer",   cat:"scifi"   },
-  { id:"cyborg",     seed:"Cyborg",       label:"Cyborg",     cat:"scifi"   },
-  { id:"robot",      seed:"Robot",        label:"Robot",      cat:"scifi"   },
-  { id:"alien",      seed:"Alien",        label:"Alien",      cat:"scifi"   },
-  { id:"zombie",     seed:"Zombie",       label:"Zombie",     cat:"dark"    },
-  { id:"demon",      seed:"Demon",        label:"Demon",      cat:"dark"    },
-  { id:"ghost",      seed:"Ghost",        label:"Ghost",      cat:"dark"    },
-  { id:"angel",      seed:"Angel",        label:"Angel",      cat:"divine"  },
-  { id:"dragon",     seed:"Dragon",       label:"Dragon",     cat:"divine"  },
-  { id:"pirate",     seed:"Pirate",       label:"Pirate",     cat:"sea"     },
-  { id:"viking",     seed:"Viking",       label:"Viking",     cat:"sea"     },
-];
-
-const LOCKED_AVATARS = [
-  { id:"rookie",       seed:"Rookie",        label:"Rookie",        cat:"rank",    cond:(r,s)=>Object.keys(r).length>=1,   hint:"Note ton 1er jeu" },
-  { id:"scout",        seed:"Scout",         label:"Scout",         cat:"rank",    cond:(r,s)=>Object.keys(r).length>=5,   hint:"Note 5 jeux" },
-  { id:"veteran",      seed:"Veteran",       label:"Veteran",       cat:"rank",    cond:(r,s)=>Object.keys(r).length>=10,  hint:"Note 10 jeux" },
-  { id:"legend",       seed:"Legend",        label:"Legend",        cat:"rank",    cond:(r,s)=>Object.keys(r).length>=25,  hint:"Note 25 jeux" },
-  { id:"immortal",     seed:"Immortal",      label:"Immortal",      cat:"elite",   cond:(r,s)=>Object.keys(r).length>=50,  hint:"Note 50 jeux" },
-  { id:"godlike",      seed:"Godlike",       label:"Godlike",       cat:"elite",   cond:(r,s)=>Object.keys(r).length>=100, hint:"Note 100 jeux" },
-  { id:"critic",       seed:"CriticPro",     label:"Critic",        cat:"writer",  cond:(r,s)=>Object.values(r).filter(x=>x.comment?.length>10).length>=1,  hint:"Écris ton 1er avis" },
-  { id:"journalist",   seed:"Journalist",    label:"Journalist",    cat:"writer",  cond:(r,s)=>Object.values(r).filter(x=>x.comment?.length>10).length>=5,  hint:"Écris 5 avis" },
-  { id:"fanboy",       seed:"Fanboy",        label:"Fanboy",        cat:"passion", cond:(r,s)=>Object.values(r).some(x=>x.rating===10),                     hint:"Donne un 10/10" },
-  { id:"hater",        seed:"Hater",         label:"Hater",         cat:"dark",    cond:(r,s)=>Object.values(r).some(x=>x.rating===1),                      hint:"Donne un 1/10" },
-  { id:"completionist",seed:"Completionist", label:"Completionist", cat:"elite",   cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=3,       hint:"Termine 3 jeux" },
-  { id:"champion",     seed:"Champion",      label:"Champion",      cat:"elite",   cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=10,      hint:"Termine 10 jeux" },
-  { id:"dreamer",      seed:"Dreamer",       label:"Dreamer",       cat:"list",    cond:(r,s)=>Object.values(s).filter(x=>x==="wishlist").length>=5,        hint:"Ajoute 5 jeux en wishlist" },
-  { id:"collector",    seed:"Collector",     label:"Collector",     cat:"list",    cond:(r,s)=>Object.keys(r).length>=10,  hint:"Note 10 jeux" },
-  { id:"curator",      seed:"Curator",       label:"Curator",       cat:"list",    cond:(r,s)=>Object.keys(r).length>=20,  hint:"Note 20 jeux" },
-  { id:"speedrunner",  seed:"Speedrunner",   label:"Speedrunner",   cat:"rank",    cond:(r,s)=>Object.values(s).filter(x=>x==="playing").length>=3,         hint:"Lance 3 jeux en même temps" },
-  { id:"dropout",      seed:"Dropout",       label:"Dropout",       cat:"dark",    cond:(r,s)=>Object.values(s).filter(x=>x==="dropped").length>=3,         hint:"Abandonne 3 jeux" },
-  { id:"devotee",      seed:"Devotee",       label:"Devotee",       cat:"passion", cond:(r,s)=>Object.values(r).filter(x=>x.rating>=9).length>=5,           hint:"Note 5 jeux 9 ou 10" },
-  { id:"pessimist",    seed:"Pessimist",     label:"Pessimist",     cat:"dark",    cond:(r,s)=>Object.values(r).filter(x=>x.rating<=3).length>=5,           hint:"Note 5 jeux 3 ou moins" },
-  { id:"balanced",     seed:"Balanced",      label:"Balanced",      cat:"writer",  cond:(r,s)=>Object.values(r).filter(x=>x.rating===5||x.rating===6).length>=10, hint:"Note 10 jeux entre 5 et 6" },
-  { id:"explorer2",    seed:"Explorer2",     label:"Explorer",      cat:"list",    cond:(r,s)=>Object.keys(s).length>=5,   hint:"Ajoute 5 jeux à ta liste" },
-  { id:"wanderer",     seed:"Wanderer",      label:"Wanderer",      cat:"list",    cond:(r,s)=>Object.keys(s).length>=15,  hint:"Ajoute 15 jeux à ta liste" },
-  { id:"nomad",        seed:"Nomad",         label:"Nomad",         cat:"list",    cond:(r,s)=>Object.keys(s).length>=30,  hint:"Ajoute 30 jeux à ta liste" },
-  { id:"hardcore",     seed:"Hardcore",      label:"Hardcore",      cat:"elite",   cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=5,       hint:"Termine 5 jeux" },
-  { id:"perfectionist",seed:"Perfectionist2",label:"Perfectionist", cat:"elite",   cond:(r,s)=>Object.values(r).filter(x=>x.rating===10).length>=3,         hint:"3 notes parfaites 10/10" },
-  { id:"retrogamer",   seed:"Retrogamer",    label:"Retrogamer",    cat:"passion", cond:(r,s)=>Object.keys(r).length>=15,  hint:"Note 15 jeux" },
-  { id:"indie",        seed:"IndieHero",     label:"Indie Hero",    cat:"passion", cond:(r,s)=>Object.values(r).filter(x=>x.comment?.length>10).length>=3,  hint:"Écris 3 avis" },
-  { id:"marathon",     seed:"Marathon",      label:"Marathon",      cat:"rank",    cond:(r,s)=>Object.values(s).filter(x=>x==="playing").length>=5,         hint:"5 jeux en cours en même temps" },
-  { id:"archivist",    seed:"Archivist",     label:"Archivist",     cat:"writer",  cond:(r,s)=>Object.keys(r).length>=30,  hint:"Note 30 jeux" },
-  { id:"oracle",       seed:"Oracle",        label:"Oracle",        cat:"elite",   cond:(r,s)=>Object.keys(r).length>=75,  hint:"Note 75 jeux" },
-  { id:"overlord",     seed:"Overlord",      label:"Overlord",      cat:"elite",   cond:(r,s)=>Object.keys(r).length>=200, hint:"Note 200 jeux" },
-  { id:"phantom",      seed:"Phantom",       label:"Phantom",       cat:"dark",    cond:(r,s)=>Object.values(r).filter(x=>x.rating>=8).length>=10,          hint:"Note 10 jeux 8 ou plus" },
-  { id:"titan",        seed:"Titan",         label:"Titan",         cat:"elite",   cond:(r,s)=>Object.values(s).filter(x=>x==="completed").length>=20,      hint:"Termine 20 jeux" },
+  { id:"warrior",    label:"Warrior"    },
+  { id:"knight",     label:"Knight"     },
+  { id:"berserker",  label:"Berserker"  },
+  { id:"paladin",    label:"Paladin"    },
+  { id:"gladiator",  label:"Gladiator"  },
+  { id:"guard",      label:"Guard"      },
+  { id:"mage",       label:"Mage"       },
+  { id:"wizard",     label:"Wizard"     },
+  { id:"druid",      label:"Druid"      },
+  { id:"sorcerer",   label:"Sorcerer"   },
+  { id:"bard",       label:"Bard"       },
+  { id:"monk",       label:"Monk"       },
+  { id:"ninja",      label:"Ninja"      },
+  { id:"rogue",      label:"Rogue"      },
+  { id:"thief",      label:"Thief"      },
+  { id:"spy",        label:"Spy"        },
+  { id:"samurai",    label:"Samurai"    },
+  { id:"archer",     label:"Archer"     },
+  { id:"ranger",     label:"Ranger"     },
+  { id:"hunter",     label:"Hunter"     },
+  { id:"pilot",      label:"Pilot"      },
+  { id:"engineer",   label:"Engineer"   },
+  { id:"cyborg",     label:"Cyborg"     },
+  { id:"robot",      label:"Robot"      },
+  { id:"alien",      label:"Alien"      },
+  { id:"zombie",     label:"Zombie"     },
+  { id:"demon",      label:"Demon"      },
+  { id:"ghost",      label:"Ghost"      },
+  { id:"angel",      label:"Angel"      },
+  { id:"dragon",     label:"Dragon"     },
+  { id:"pirate",     label:"Pirate"     },
+  { id:"viking",     label:"Viking"     },
 ];
 
 const AvatarGallery = ({ avatarUrl, setAvatarUrl, userRatings, userStatus }) => {
@@ -2035,22 +2122,15 @@ const AvatarGallery = ({ avatarUrl, setAvatarUrl, userRatings, userStatus }) => 
       {/* Grid */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:10, maxHeight:340, overflowY:"auto", paddingRight:4 }}>
         {list.map(av => {
-          const url = `${DB}${av.seed}`;
+          const url = AVATAR_SVGS[av.id];
           const unlocked = tab === "free" || av.cond(userRatings, userStatus);
           const selected = avatarUrl === url;
-          const hat = CAT_HAT[av.cat] || "🎮";
           return (
             <div key={av.id} title={unlocked ? av.label : `🔒 ${av.hint}`}
               onClick={() => unlocked && setAvatarUrl(url)}
               style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:4, cursor:unlocked?"pointer":"not-allowed" }}>
               <div style={{ position:"relative", borderRadius:12, overflow:"hidden", border:selected?"2px solid #ff6b35":"2px solid rgba(255,255,255,.08)", background:"#1a1025", width:"100%", aspectRatio:"1", transition:"border-color .15s, transform .15s, box-shadow .15s", transform:selected?"scale(1.06)":"scale(1)", boxShadow:selected?"0 0 16px rgba(255,107,53,.4)":"none" }}>
                 <img src={url} alt={av.label} style={{ width:"100%", height:"100%", display:"block", filter:unlocked?"none":"grayscale(1) brightness(.35)" }} loading="lazy" />
-                {/* Category hat badge */}
-                {unlocked && (
-                  <div style={{ position:"absolute", top:4, left:4, fontSize:13, lineHeight:1, background:"rgba(0,0,0,.55)", borderRadius:6, padding:"2px 4px", backdropFilter:"blur(4px)" }}>
-                    {hat}
-                  </div>
-                )}
                 {!unlocked && (
                   <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, background:"rgba(0,0,0,.3)" }}>🔒</div>
                 )}
