@@ -1182,6 +1182,109 @@ const ResetPasswordModal = ({ onClose, t }) => {
   );
 };
 
+/* ── REVIEW CARD (with collapsible replies) ───────────────── */
+const ReviewCard = ({ rv, col, initials, rxCounts, myRx, rvReplies, isReplying, replyText, liked, likeCount, onUserClick, onLike, onReact, onReplyToggle, onReplyChange, onReplySubmit, onReplyCancel, user, onAuthRequired, EMOJIS, t }) => {
+  const [showReplies, setShowReplies] = useState(false);
+  return (
+    <div style={{ background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.055)", borderRadius:16, padding:"16px 18px", transition:"border-color .2s" }}>
+      {/* Header */}
+      <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:rv.comment?12:10 }}>
+        <div onClick={()=>rv.user_display && onUserClick(rv.user_display)}
+          style={{ width:38, height:38, borderRadius:11, background:`linear-gradient(135deg,${col},${col}88)`, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:13, color:"#0a0600", flexShrink:0, cursor:rv.user_display?"pointer":"default", transition:"opacity .15s" }}
+          onMouseEnter={e=>{if(rv.user_display)e.currentTarget.style.opacity=".75";}}
+          onMouseLeave={e=>{e.currentTarget.style.opacity="1";}}>
+          {initials}
+        </div>
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
+            <span onClick={()=>rv.user_display && onUserClick(rv.user_display)} style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.72)", cursor:rv.user_display?"pointer":"default" }}
+              onMouseEnter={e=>{if(rv.user_display)e.currentTarget.style.color="#ff6b35";}}
+              onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,.72)";}}>
+              {rv.user_display || t("member")}
+            </span>
+            <span style={{ background:`${col}18`, border:`1px solid ${col}40`, borderRadius:6, padding:"1px 9px", fontSize:11, color:col, fontFamily:"'Syne',sans-serif", fontWeight:800 }}>{rv.rating}/10</span>
+            <span style={{ fontSize:11, color:"rgba(255,255,255,.18)", fontFamily:"'DM Sans',sans-serif" }}>{RATING_LABELS[rv.rating]}</span>
+          </div>
+        </div>
+      </div>
+      {/* Comment */}
+      {rv.comment && (
+        <p style={{ color:"rgba(255,255,255,.48)", fontSize:13, lineHeight:1.75, fontFamily:"'DM Sans',sans-serif", fontStyle:"italic", margin:"0 0 12px", paddingLeft:50 }}>"{rv.comment}"</p>
+      )}
+      {/* Actions bar */}
+      <div style={{ display:"flex", gap:6, flexWrap:"wrap", paddingLeft:50, alignItems:"center" }}>
+        <button onClick={() => onLike(rv.user_id)}
+          style={{ background: liked ? "rgba(239,68,68,.14)" : "rgba(255,255,255,.03)", border:`1px solid ${liked ? "rgba(239,68,68,.45)" : "rgba(255,255,255,.07)"}`, borderRadius:20, padding:"4px 12px", cursor:"pointer", fontSize:13, display:"flex", alignItems:"center", gap:5, transition:"all .18s", lineHeight:1, color: liked ? "#ef4444" : "rgba(255,255,255,.35)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>
+          <span style={{ fontSize:15 }}>{liked ? "❤️" : "🤍"}</span>
+          {likeCount > 0 && <span style={{ fontSize:12 }}>{likeCount}</span>}
+        </button>
+        <div style={{ width:1, height:18, background:"rgba(255,255,255,.07)", flexShrink:0 }} />
+        {EMOJIS.map(emoji => {
+          const count = rxCounts[emoji] || 0;
+          const active = myRx.includes(emoji);
+          return (
+            <button key={emoji} onClick={() => onReact(rv.user_id, emoji)}
+              style={{ background: active ? "rgba(255,107,53,.14)" : "rgba(255,255,255,.03)", border:`1px solid ${active ? "rgba(255,107,53,.35)" : "rgba(255,255,255,.07)"}`, borderRadius:20, padding:"4px 10px", cursor:"pointer", fontSize:14, display:"flex", alignItems:"center", gap:5, transition:"all .18s", lineHeight:1 }}>
+              {emoji}
+              {count > 0 && <span style={{ fontSize:11, fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, color: active ? "#ff6b35" : "rgba(255,255,255,.35)" }}>{count}</span>}
+            </button>
+          );
+        })}
+        <div style={{ width:1, height:18, background:"rgba(255,255,255,.07)", flexShrink:0 }} />
+        <button onClick={onReplyToggle}
+          style={{ background:"rgba(255,255,255,.03)", border:"1px solid rgba(255,255,255,.07)", borderRadius:20, padding:"4px 12px", cursor:"pointer", fontSize:12, color:"rgba(255,255,255,.4)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, transition:"all .18s" }}
+          onMouseEnter={e=>{e.currentTarget.style.color="#ff6b35";e.currentTarget.style.borderColor="rgba(255,107,53,.3)";}}
+          onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,.4)";e.currentTarget.style.borderColor="rgba(255,255,255,.07)";}}>
+          ↩ Répondre
+        </button>
+      </div>
+      {/* Reply input */}
+      {isReplying && (
+        <div style={{ marginTop:10, paddingLeft:50, display:"flex", gap:8 }}>
+          <input value={replyText} onChange={e=>onReplyChange(e.target.value)}
+            onKeyDown={e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); onReplySubmit(); } if(e.key==="Escape") onReplyCancel(); }}
+            placeholder="Votre réponse… (max 500 car.)" maxLength={500}
+            style={{ flex:1, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,107,53,.3)", borderRadius:10, color:"#fff", padding:"8px 12px", fontSize:13, fontFamily:"'Space Grotesk',sans-serif", outline:"none" }}
+            autoFocus />
+          <button onClick={onReplySubmit} style={{ background:"rgba(255,107,53,.15)", border:"1px solid rgba(255,107,53,.35)", borderRadius:10, color:"#ff6b35", cursor:"pointer", padding:"0 14px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13 }}>↵</button>
+          <button onClick={onReplyCancel} style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", borderRadius:10, color:"rgba(255,255,255,.35)", cursor:"pointer", padding:"0 12px", fontSize:13 }}>✕</button>
+        </div>
+      )}
+      {/* Collapsible replies */}
+      {rvReplies.length > 0 && (
+        <div style={{ paddingLeft:50, marginTop:10 }}>
+          <button onClick={()=>setShowReplies(v=>!v)}
+            style={{ background:"none", border:"none", color:"rgba(255,107,53,.7)", cursor:"pointer", fontSize:12, fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, padding:0, transition:"color .15s" }}
+            onMouseEnter={e=>e.currentTarget.style.color="#ff6b35"}
+            onMouseLeave={e=>e.currentTarget.style.color="rgba(255,107,53,.7)"}>
+            {showReplies ? "▲ Masquer" : `▼ Voir les réponses (${rvReplies.length})`}
+          </button>
+          {showReplies && (
+            <div style={{ display:"flex", flexDirection:"column", gap:8, marginTop:8, borderLeft:"2px solid rgba(255,107,53,.15)", paddingLeft:12 }}>
+              {rvReplies.map((rep,i) => (
+                <div key={i} style={{ display:"flex", gap:8, alignItems:"flex-start" }}>
+                  <div onClick={()=>rep.user_display && onUserClick(rep.user_display)}
+                    style={{ width:26, height:26, borderRadius:8, background:"rgba(255,107,53,.18)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontFamily:"'Syne',sans-serif", fontWeight:800, color:"#ff6b35", flexShrink:0, cursor:rep.user_display?"pointer":"default" }}>
+                    {rep.user_display?.slice(0,2).toUpperCase()||"?"}
+                  </div>
+                  <div>
+                    <span onClick={()=>rep.user_display && onUserClick(rep.user_display)} style={{ fontSize:12, fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, color:"rgba(255,255,255,.6)", cursor:rep.user_display?"pointer":"default", marginRight:8 }}
+                      onMouseEnter={e=>{if(rep.user_display)e.currentTarget.style.color="#ff6b35";}}
+                      onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,.6)";}}>
+                      {rep.user_display || t("member")}
+                    </span>
+                    <span style={{ fontSize:13, color:"rgba(255,255,255,.45)", fontFamily:"'DM Sans',sans-serif" }}>{rep.content}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 /* ── CINEMATIC GAME PAGE ──────────────────────────────────── */
 const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired, username, userLists, lang, onUserClick, t }) => {
   const [myR, setMyR] = useState(userRatings[game.id]?.rating || 0);
@@ -1200,6 +1303,9 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
   const [myReactions, setMyReactions] = useState({});
   const [likes, setLikes] = useState({});
   const [myLikes, setMyLikes] = useState(new Set());
+  const [replies, setReplies] = useState({});
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [replyText, setReplyText] = useState("");
   const [dlcs, setDlcs] = useState([]);
   const [series, setSeries] = useState([]);
   const [showListMenu, setShowListMenu] = useState(false);
@@ -1241,6 +1347,28 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
     return () => ctrl.abort();
   }, [game.id, lang]);
 
+  const BANNED_WORDS = ["connard","connasse","salope","pute","fdp","fils de pute","enculé","enculer","niquer","nique","tg","ta gueule","batard","bâtard","merde","putain de","espèce de","ordure","bitch","asshole","motherfucker","fucker","cunt","whore","nigger","faggot","retard","idiot","imbecile","moron","crétin","abruti","con ","conne ","gros con"];
+  const containsBanned = (text) => {
+    const low = text.toLowerCase();
+    return BANNED_WORDS.some(w => low.includes(w));
+  };
+
+  const submitReply = async (reviewerUserId) => {
+    if (!user) { onAuthRequired(); return; }
+    const clean = replyText.replace(/[<>]/g, "").trim().slice(0, 500);
+    if (!clean) return;
+    if (containsBanned(clean)) { setReplyText(""); return; }
+    const display = (username || user.user_metadata?.username || user.email?.split("@")[0] || "").replace(/[<>]/g,"").slice(0,50);
+    const { error } = await supabase.from("replies").insert({
+      game_id: game.id, reviewer_user_id: reviewerUserId,
+      user_id: user.id, user_display: display, content: clean,
+    });
+    if (!error) {
+      setReplies(p => ({ ...p, [reviewerUserId]: [...(p[reviewerUserId]||[]), { user_id: user.id, user_display: display, content: clean, created_at: new Date().toISOString() }] }));
+      setReplyingTo(null); setReplyText("");
+    }
+  };
+
   const EMOJIS = ["❤️","🔥","💯","😂","👏","😮"];
 
   const fetchCommunity = async () => {
@@ -1249,6 +1377,18 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
       .not("comment", "is", null).neq("comment", "")
       .order("created_at", { ascending: false });
     if (data) setCommunityReviews(data);
+
+    const { data: repData } = await supabase.from("replies")
+      .select("*").eq("game_id", game.id)
+      .order("created_at", { ascending: true });
+    if (repData) {
+      const r = {};
+      repData.forEach(rep => {
+        if (!r[rep.reviewer_user_id]) r[rep.reviewer_user_id] = [];
+        r[rep.reviewer_user_id].push(rep);
+      });
+      setReplies(r);
+    }
 
     const { data: rxData } = await supabase.from("reactions").select("*").eq("game_id", game.id);
     if (rxData) {
@@ -1383,6 +1523,8 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
       setUserRatings(p => ({...p, [game.id]:{rating:myR, comment:safeComment}}));
       setSaved(true);
       fetchCommunity();
+    } else if (res.status === 422) {
+      alert("Votre commentaire contient des mots inappropriés.");
     }
     setLoading(false);
   };
@@ -1901,56 +2043,19 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
                       const initials = rv.user_display ? rv.user_display.slice(0,2).toUpperCase() : "??";
                       const rxCounts = reactions[rv.user_id] || {};
                       const myRx = myReactions[rv.user_id] || [];
+                      const rvReplies = replies[rv.user_id] || [];
+                      const isReplying = replyingTo === rv.user_id;
                       return (
-                        <div key={rv.user_id} style={{ background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.055)", borderRadius:16, padding:"16px 18px", transition:"border-color .2s" }}>
-                          {/* Header */}
-                          <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:rv.comment?12:10 }}>
-                            <div style={{ width:38, height:38, borderRadius:11, background:`linear-gradient(135deg,${col},${col}88)`, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:13, color:"#0a0600", flexShrink:0 }}>{initials}</div>
-                            <div style={{ flex:1, minWidth:0 }}>
-                              <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
-                                <span onClick={()=>rv.user_display && onUserClick(rv.user_display)} style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.72)", cursor:rv.user_display?"pointer":"default" }}
-                                  onMouseEnter={e=>{if(rv.user_display)e.currentTarget.style.color="#ff6b35";}}
-                                  onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,.72)";}}>
-                                  {rv.user_display || t("member")}
-                                </span>
-                                <span style={{ background:`${col}18`, border:`1px solid ${col}40`, borderRadius:6, padding:"1px 9px", fontSize:11, color:col, fontFamily:"'Syne',sans-serif", fontWeight:800 }}>{rv.rating}/10</span>
-                                <span style={{ fontSize:11, color:"rgba(255,255,255,.18)", fontFamily:"'DM Sans',sans-serif" }}>{RATING_LABELS[rv.rating]}</span>
-                              </div>
-                            </div>
-                          </div>
-                          {/* Comment */}
-                          {rv.comment && (
-                            <p style={{ color:"rgba(255,255,255,.48)", fontSize:13, lineHeight:1.75, fontFamily:"'DM Sans',sans-serif", fontStyle:"italic", margin:"0 0 12px", paddingLeft:50 }}>"{rv.comment}"</p>
-                          )}
-                          {/* Like + Emoji reactions */}
-                          <div style={{ display:"flex", gap:6, flexWrap:"wrap", paddingLeft:50, alignItems:"center" }}>
-                            {/* ❤️ Like button */}
-                            {(() => {
-                              const liked = myLikes.has(rv.user_id);
-                              const count = likes[rv.user_id] || 0;
-                              return (
-                                <button onClick={() => toggleLike(rv.user_id)}
-                                  style={{ background: liked ? "rgba(239,68,68,.14)" : "rgba(255,255,255,.03)", border:`1px solid ${liked ? "rgba(239,68,68,.45)" : "rgba(255,255,255,.07)"}`, borderRadius:20, padding:"4px 12px", cursor:"pointer", fontSize:13, display:"flex", alignItems:"center", gap:5, transition:"all .18s", lineHeight:1, color: liked ? "#ef4444" : "rgba(255,255,255,.35)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>
-                                  <span style={{ fontSize:15 }}>{liked ? "❤️" : "🤍"}</span>
-                                  {count > 0 && <span style={{ fontSize:12 }}>{count}</span>}
-                                </button>
-                              );
-                            })()}
-                            {/* Separator */}
-                            <div style={{ width:1, height:18, background:"rgba(255,255,255,.07)", flexShrink:0 }} />
-                            {EMOJIS.map(emoji => {
-                              const count = rxCounts[emoji] || 0;
-                              const active = myRx.includes(emoji);
-                              return (
-                                <button key={emoji} onClick={() => toggleReaction(rv.user_id, emoji)}
-                                  style={{ background: active ? "rgba(255,107,53,.14)" : "rgba(255,255,255,.03)", border:`1px solid ${active ? "rgba(255,107,53,.35)" : "rgba(255,255,255,.07)"}`, borderRadius:20, padding:"4px 10px", cursor:"pointer", fontSize:14, display:"flex", alignItems:"center", gap:5, transition:"all .18s", lineHeight:1 }}>
-                                  {emoji}
-                                  {count > 0 && <span style={{ fontSize:11, fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, color: active ? "#ff6b35" : "rgba(255,255,255,.35)" }}>{count}</span>}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
+                        <ReviewCard key={rv.user_id}
+                          rv={rv} col={col} initials={initials} rxCounts={rxCounts} myRx={myRx}
+                          rvReplies={rvReplies} isReplying={isReplying} replyText={replyText}
+                          liked={myLikes.has(rv.user_id)} likeCount={likes[rv.user_id]||0}
+                          onUserClick={onUserClick} onLike={toggleLike} onReact={toggleReaction}
+                          onReplyToggle={()=>{ setReplyingTo(isReplying?null:rv.user_id); setReplyText(""); }}
+                          onReplyChange={setReplyText} onReplySubmit={()=>submitReply(rv.user_id)}
+                          onReplyCancel={()=>{ setReplyingTo(null); setReplyText(""); }}
+                          user={user} onAuthRequired={onAuthRequired}
+                          EMOJIS={EMOJIS} t={t} />
                       );
                     })}
                   </div>

@@ -2,12 +2,17 @@ import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "edge";
 
+const BANNED = ["connard","connasse","salope","pute","fdp","fils de pute","enculé","enculer","niquer","nique","ta gueule","batard","bâtard","ordure","bitch","asshole","motherfucker","fucker","cunt","whore","nigger","faggot"];
+
 function sanitize(str, maxLen) {
   if (!str) return "";
-  return String(str)
-    .replace(/[<>]/g, "")
-    .trim()
-    .slice(0, maxLen);
+  return String(str).replace(/[<>]/g, "").trim().slice(0, maxLen);
+}
+
+function containsBanned(text) {
+  if (!text) return false;
+  const low = text.toLowerCase();
+  return BANNED.some(w => low.includes(w));
 }
 
 export async function POST(request) {
@@ -37,6 +42,9 @@ export async function POST(request) {
 
   if (!gameId || typeof rating !== "number" || rating < 1 || rating > 10) {
     return Response.json({ error: "Invalid data" }, { status: 400 });
+  }
+  if (containsBanned(comment)) {
+    return Response.json({ error: "Inappropriate content" }, { status: 422 });
   }
 
   const { error } = await supabase.from("ratings").upsert({
