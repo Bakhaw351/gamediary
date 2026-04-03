@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -1291,7 +1291,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
     window.addEventListener("keydown", esc);
     document.body.style.overflow = "hidden";
     return () => { window.removeEventListener("keydown", esc); document.body.style.overflow = ""; };
-  }, []);
+  }, [onClose]);
 
   useEffect(() => {
     const timer = setTimeout(() => setBgLoaded(true), 100);
@@ -1303,18 +1303,25 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
   const setStatus = async (status) => {
     if (!user) { onAuthRequired(); return; }
     setStatusLoading(true);
+    const prevStatus = currentStatus;
     const newStatus = currentStatus === status ? null : status;
+    setCurrentStatus(newStatus);
+    setUserStatus(p => ({ ...p, [game.id]: newStatus }));
+    let err;
     if (newStatus) {
-      await supabase.from("game_status").upsert({
+      ({ error: err } = await supabase.from("game_status").upsert({
         user_id: user.id, game_id: game.id, status: newStatus,
         game_title: game.title, game_cover: game.cover,
         game_platform: game.platform, game_year: String(game.year),
-      }, { onConflict: "user_id,game_id" });
+      }, { onConflict: "user_id,game_id" }));
     } else {
-      await supabase.from("game_status").delete().eq("user_id", user.id).eq("game_id", game.id);
+      ({ error: err } = await supabase.from("game_status").delete().eq("user_id", user.id).eq("game_id", game.id));
     }
-    setCurrentStatus(newStatus);
-    setUserStatus(p => ({ ...p, [game.id]: newStatus }));
+    if (err) {
+      console.error('setStatus error:', err);
+      setCurrentStatus(prevStatus);
+      setUserStatus(p => ({ ...p, [game.id]: prevStatus }));
+    }
     setStatusLoading(false);
   };
 
@@ -2862,7 +2869,8 @@ export default function JoystickLog() {
         if (data?.username) setProfileUsername(data.username);
         else if (fromMeta) setProfileUsername(fromMeta);
         if (data?.avatar_url) setProfileAvatar(data.avatar_url);
-      });
+      })
+      .catch(e => console.error('loadProfile:', e));
   }, [user]);
 
   /* Load ratings & status */
@@ -2879,7 +2887,7 @@ export default function JoystickLog() {
         setUserRatings(r);
         if (games.length > 0) setRatedGamesList(games);
       }
-    });
+    }).catch(e => console.error('loadRatings:', e));
     supabase.from("game_status").select("*").eq("user_id", user.id).then(({ data }) => {
       if (data) {
         const s={};
@@ -2890,7 +2898,7 @@ export default function JoystickLog() {
           platform:d.game_platform, year:d.game_year, genre:null, rating:null, reviews:0, tags:[], summary:"",
         })));
       }
-    });
+    }).catch(e => console.error('loadStatus:', e));
   }, [user]);
 
   /* Home extra sections: trending, upcoming, gems, top + community stats */
@@ -2947,7 +2955,8 @@ export default function JoystickLog() {
     if (!user) { setNotifications([]); return; }
     supabase.from('notifications').select('*').eq('user_id', user.id)
       .order('created_at', { ascending: false }).limit(20)
-      .then(({ data }) => { if (data) setNotifications(data); });
+      .then(({ data }) => { if (data) setNotifications(data); })
+      .catch(e => console.error('loadNotifications:', e));
     const channel = supabase.channel('notifs').on('postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
       payload => setNotifications(p => [payload.new, ...p])
@@ -3029,7 +3038,7 @@ export default function JoystickLog() {
       if (offset === 0) setExploreGames(games);
       else setExploreGames(prev => [...prev, ...games]);
       setHasMoreEx(games.length === 20);
-    } catch {}
+    } catch(e) { console.error('fetchExplore:', e); setHasMoreEx(false); }
     setLoadingEx(false);
     setLoadingMoreEx(false);
   }, []);
@@ -3077,7 +3086,7 @@ export default function JoystickLog() {
       if (offset === 0) setDiscoGames(games);
       else setDiscoGames(prev => { const ids = new Set(prev.map(g=>g.id)); return [...prev, ...games.filter(g=>!ids.has(g.id))]; });
       setHasMoreDisco(games.length >= 20);
-    } catch {}
+    } catch(e) { console.error('fetchDisco:', e); setHasMoreDisco(false); }
     setLoadingDisco(false); setLoadingMoreDisco(false);
   }, []);
 
@@ -3107,18 +3116,31 @@ export default function JoystickLog() {
 
   const logout = async () => { await supabase.auth.signOut(); setUser(null); setUserRatings({}); setUserStatus({}); setWishlistGames([]); };
 
-  const allRatedGames = ratedGamesList.length > 0
-    ? ratedGamesList
-    : [...topGames, ...exploreGames].filter((g,i,arr) => userRatings[g.id] && arr.findIndex(x=>x.id===g.id)===i);
+  const allRatedGames = useMemo(() => {
+    if (ratedGamesList.length > 0) return ratedGamesList;
+    const seen = new Set();
+    return [...topGames, ...exploreGames].filter(g => {
+      if (!userRatings[g.id] || seen.has(g.id)) return false;
+      seen.add(g.id); return true;
+    });
+  }, [ratedGamesList, topGames, exploreGames, userRatings]);
+
+  const bgCovers = useMemo(() =>
+    [...topGames, ...trendingGames, ...gemGames].filter(g=>g.cover).map(g=>g.cover).slice(0,10),
+    [topGames, trendingGames, gemGames]);
+
+  const jacketCovers = useMemo(() =>
+    [...topGames, ...trendingGames, ...gemGames, ...exploreGames].filter(g=>g.cover).map(g=>g.cover).slice(0,12),
+    [topGames, trendingGames, gemGames, exploreGames]);
 
   return (
     <div data-theme={theme} suppressHydrationWarning style={{ minHeight:"100vh", background:th.bg, color:th.text, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>
       <style>{CSS}</style>
 
       {/* Game cover ambient background (color blobs) */}
-      <CoverBackground covers={[...topGames, ...trendingGames, ...gemGames].filter(g=>g.cover).map(g=>g.cover).slice(0,10)} />
+      <CoverBackground covers={bgCovers} />
       {/* Jacket wall — visible covers floating in background */}
-      <JacketWall covers={[...topGames, ...trendingGames, ...gemGames, ...exploreGames].filter(g=>g.cover).map(g=>g.cover).slice(0,12)} />
+      <JacketWall covers={jacketCovers} />
 
       {/* Ambient gradient mesh */}
       <div style={{ position:"fixed", inset:0, background:"radial-gradient(ellipse 90% 55% at 50% 0%,rgba(255,107,53,.26) 0%,transparent 65%)", pointerEvents:"none" }} />
