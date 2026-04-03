@@ -16,7 +16,7 @@ const securityHeaders = [
     value: [
       "default-src 'self'",
       // Scripts: self + Next.js inline scripts (nonce not available in static export, use strict-dynamic would be ideal but needs nonce)
-      "script-src 'self' 'unsafe-inline'",
+      "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
       // Styles: self + Google Fonts + inline styles used by React
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       // Fonts
@@ -24,9 +24,9 @@ const securityHeaders = [
       // Images: self + IGDB covers + data URIs
       `img-src 'self' data: https://images.igdb.com`,
       // API calls: Supabase + IGDB (server-side only, but listed for fetch() calls)
-      `connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://api.igdb.com https://id.twitch.tv`,
+      `connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://api.igdb.com https://id.twitch.tv https://challenges.cloudflare.com`,
       // Frames: YouTube only (trailers)
-      "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
+      "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://challenges.cloudflare.com",
       // Objects: none
       "object-src 'none'",
       // Base URI: restrict to self

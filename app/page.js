@@ -947,6 +947,36 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
   const [err, setErr]           = useState("");
   const [ok, setOk]             = useState("");
   const [forgotMode, setForgotMode] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const turnstileRef = useRef(null);
+  const turnstileIdRef = useRef(null);
+
+  useEffect(() => {
+    if (mode !== "signup" || forgotMode || typeof window === "undefined") return;
+    const render = () => {
+      if (!window.turnstile || !turnstileRef.current) return;
+      if (turnstileIdRef.current) window.turnstile.remove(turnstileIdRef.current);
+      turnstileIdRef.current = window.turnstile.render(turnstileRef.current, {
+        sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+        theme: "dark",
+        callback: token => setCaptchaToken(token),
+        "expired-callback": () => setCaptchaToken(""),
+        "error-callback": () => setCaptchaToken(""),
+      });
+    };
+    if (!window.turnstile) {
+      if (!document.querySelector('script[src*="turnstile"]')) {
+        const s = document.createElement("script");
+        s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+        s.async = true; s.defer = true;
+        s.onload = render;
+        document.head.appendChild(s);
+      } else {
+        const t = setInterval(() => { if (window.turnstile) { clearInterval(t); render(); } }, 100);
+      }
+    } else { render(); }
+    return () => { if (turnstileIdRef.current && window.turnstile) { window.turnstile.remove(turnstileIdRef.current); turnstileIdRef.current = null; } };
+  }, [mode, forgotMode]);
 
   const submit = async () => {
     if (!email || !pw) { setErr(t("fillFields")); return; }
@@ -959,6 +989,13 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
         if (error) throw error;
         onSuccess(data.user); onClose();
       } else {
+        if (!captchaToken) { setErr("Veuillez compléter le CAPTCHA"); setLoading(false); return; }
+        const verifyRes = await fetch("/api/verify-captcha", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: captchaToken }),
+        });
+        const { success: captchaOk } = await verifyRes.json();
+        if (!captchaOk) { setErr("CAPTCHA invalide, réessayez"); if (turnstileIdRef.current && window.turnstile) window.turnstile.reset(turnstileIdRef.current); setCaptchaToken(""); setLoading(false); return; }
         const uname = username.trim() || email.split("@")[0];
         const { data, error } = await supabase.auth.signUp({
           email, password: pw,
@@ -1036,6 +1073,10 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
               </>
             )}
           </div>
+
+          {!forgotMode && mode === "signup" && (
+            <div ref={turnstileRef} style={{ marginTop:10 }} />
+          )}
 
           {err && <div style={{ color:"#ff6b6b", fontSize:13, marginTop:10, padding:"9px 12px", background:"rgba(255,77,77,.07)", borderRadius:8, border:"1px solid rgba(255,77,77,.14)" }}>{err}</div>}
           {ok  && <div style={{ color:"#4ade80", fontSize:13, marginTop:10, padding:"9px 12px", background:"rgba(74,222,128,.07)", borderRadius:8, border:"1px solid rgba(74,222,128,.18)" }}>{ok}</div>}
@@ -1327,18 +1368,18 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
 
   const publish = async () => {
     if (!user) { onAuthRequired(); return; }
-    if (!myR) return;
-    // Validate rating range
-    if (myR < 1 || myR > 10) return;
-    // Sanitize comment: strip HTML tags, limit length
-    const safeComment = txt.replace(/<[^>]*>/g, '').trim().slice(0, 2000);
-    const safeDisplay = (username || user.user_metadata?.username || user.email?.split("@")[0] || '').replace(/<[^>]*>/g, '').trim().slice(0, 50);
+    if (!myR || myR < 1 || myR > 10) return;
     setLoading(true);
-    const { error } = await supabase.from("ratings").upsert(
-      { user_id:user.id, game_id:game.id, rating:myR, comment:safeComment, user_display: safeDisplay, game_title: game.title?.slice(0,200), game_cover: game.cover },
-      { onConflict:"user_id,game_id" }
-    );
-    if (!error) {
+    const { data: { session } } = await supabase.auth.getSession();
+    const userDisplay = username || user.user_metadata?.username || user.email?.split("@")[0] || "";
+    const res = await fetch("/api/ratings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
+      body: JSON.stringify({ gameId: game.id, rating: myR, comment: txt, gameTitle: game.title, gameCover: game.cover, userDisplay }),
+    });
+    const result = await res.json();
+    if (res.ok && result.ok) {
+      const safeComment = txt.replace(/[<>]/g, "").trim().slice(0, 2000);
       setUserRatings(p => ({...p, [game.id]:{rating:myR, comment:safeComment}}));
       setSaved(true);
       fetchCommunity();
