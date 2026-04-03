@@ -1183,8 +1183,22 @@ const ResetPasswordModal = ({ onClose, t }) => {
 };
 
 /* ── REVIEW CARD (with collapsible replies) ───────────────── */
-const ReviewCard = ({ rv, col, initials, rxCounts, myRx, rvReplies, isReplying, replyText, liked, likeCount, onUserClick, onLike, onReact, onReplyToggle, onReplyChange, onReplySubmit, onReplyCancel, user, onAuthRequired, EMOJIS, t }) => {
+const ReviewCard = ({ rv, col, initials, rxCounts, myRx, rvReplies, isReplying, replyText, liked, likeCount, onUserClick, onLike, onReact, onReplyToggle, onReplyChange, onReplySubmit, onReplyCancel, onEditSave, user, onAuthRequired, EMOJIS, t }) => {
   const [showReplies, setShowReplies] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editText, setEditText] = useState(rv.comment || "");
+  const [editSaving, setEditSaving] = useState(false);
+  const isOwn = user?.id === rv.user_id;
+
+  const saveEdit = async () => {
+    const clean = editText.replace(/[<>]/g, "").trim().slice(0, 2000);
+    if (clean === rv.comment) { setEditing(false); return; }
+    setEditSaving(true);
+    await onEditSave(rv.user_id, clean);
+    setEditSaving(false);
+    setEditing(false);
+  };
+
   return (
     <div style={{ background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.055)", borderRadius:16, padding:"16px 18px", transition:"border-color .2s" }}>
       {/* Header */}
@@ -1206,11 +1220,35 @@ const ReviewCard = ({ rv, col, initials, rxCounts, myRx, rvReplies, isReplying, 
             <span style={{ fontSize:11, color:"rgba(255,255,255,.18)", fontFamily:"'DM Sans',sans-serif" }}>{RATING_LABELS[rv.rating]}</span>
           </div>
         </div>
+        {isOwn && !editing && (
+          <button onClick={()=>{ setEditText(rv.comment||""); setEditing(true); }}
+            style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.07)", borderRadius:8, padding:"4px 10px", cursor:"pointer", fontSize:11, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, flexShrink:0, transition:"all .15s" }}
+            onMouseEnter={e=>{e.currentTarget.style.color="#ff6b35";e.currentTarget.style.borderColor="rgba(255,107,53,.3)";}}
+            onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,.3)";e.currentTarget.style.borderColor="rgba(255,255,255,.07)";}}>
+            ✏️ Modifier
+          </button>
+        )}
       </div>
-      {/* Comment */}
-      {rv.comment && (
+      {/* Comment / Edit mode */}
+      {editing ? (
+        <div style={{ paddingLeft:50, marginBottom:12 }}>
+          <textarea value={editText} onChange={e=>setEditText(e.target.value)} maxLength={2000} rows={3}
+            style={{ width:"100%", background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,107,53,.35)", borderRadius:10, color:"#fff", padding:"10px 12px", fontSize:13, fontFamily:"'DM Sans',sans-serif", outline:"none", resize:"vertical", boxSizing:"border-box" }}
+            autoFocus />
+          <div style={{ display:"flex", gap:8, marginTop:6 }}>
+            <button onClick={saveEdit} disabled={editSaving}
+              style={{ background:"rgba(255,107,53,.15)", border:"1px solid rgba(255,107,53,.35)", borderRadius:8, color:"#ff6b35", cursor:"pointer", padding:"6px 16px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:12 }}>
+              {editSaving ? "…" : "Sauvegarder"}
+            </button>
+            <button onClick={()=>setEditing(false)}
+              style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", borderRadius:8, color:"rgba(255,255,255,.35)", cursor:"pointer", padding:"6px 14px", fontSize:12 }}>
+              Annuler
+            </button>
+          </div>
+        </div>
+      ) : rv.comment ? (
         <p style={{ color:"rgba(255,255,255,.48)", fontSize:13, lineHeight:1.75, fontFamily:"'DM Sans',sans-serif", fontStyle:"italic", margin:"0 0 12px", paddingLeft:50 }}>"{rv.comment}"</p>
-      )}
+      ) : null}
       {/* Actions bar */}
       <div style={{ display:"flex", gap:6, flexWrap:"wrap", paddingLeft:50, alignItems:"center" }}>
         <button onClick={() => onLike(rv.user_id)}
@@ -1231,12 +1269,14 @@ const ReviewCard = ({ rv, col, initials, rxCounts, myRx, rvReplies, isReplying, 
           );
         })}
         <div style={{ width:1, height:18, background:"rgba(255,255,255,.07)", flexShrink:0 }} />
-        <button onClick={onReplyToggle}
-          style={{ background:"rgba(255,255,255,.03)", border:"1px solid rgba(255,255,255,.07)", borderRadius:20, padding:"4px 12px", cursor:"pointer", fontSize:12, color:"rgba(255,255,255,.4)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, transition:"all .18s" }}
-          onMouseEnter={e=>{e.currentTarget.style.color="#ff6b35";e.currentTarget.style.borderColor="rgba(255,107,53,.3)";}}
-          onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,.4)";e.currentTarget.style.borderColor="rgba(255,255,255,.07)";}}>
-          ↩ Répondre
-        </button>
+        {!isOwn && (
+          <button onClick={onReplyToggle}
+            style={{ background:"rgba(255,255,255,.03)", border:"1px solid rgba(255,255,255,.07)", borderRadius:20, padding:"4px 12px", cursor:"pointer", fontSize:12, color:"rgba(255,255,255,.4)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, transition:"all .18s" }}
+            onMouseEnter={e=>{e.currentTarget.style.color="#ff6b35";e.currentTarget.style.borderColor="rgba(255,107,53,.3)";}}
+            onMouseLeave={e=>{e.currentTarget.style.color="rgba(255,255,255,.4)";e.currentTarget.style.borderColor="rgba(255,255,255,.07)";}}>
+            ↩ Répondre
+          </button>
+        )}
       </div>
       {/* Reply input */}
       {isReplying && (
@@ -1367,6 +1407,17 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
       setReplies(p => ({ ...p, [reviewerUserId]: [...(p[reviewerUserId]||[]), { user_id: user.id, user_display: display, content: clean, created_at: new Date().toISOString() }] }));
       setReplyingTo(null); setReplyText("");
     }
+  };
+
+  const editComment = async (reviewerUserId, newComment) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const userDisplay = username || user.user_metadata?.username || user.email?.split("@")[0] || "";
+    await fetch("/api/ratings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
+      body: JSON.stringify({ gameId: game.id, rating: userRatings[game.id]?.rating || myR, comment: newComment, gameTitle: game.title, gameCover: game.cover, userDisplay }),
+    });
+    setCommunityReviews(p => p.map(r => r.user_id === reviewerUserId ? { ...r, comment: newComment } : r));
   };
 
   const EMOJIS = ["❤️","🔥","💯","😂","👏","😮"];
@@ -2054,6 +2105,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
                           onReplyToggle={()=>{ setReplyingTo(isReplying?null:rv.user_id); setReplyText(""); }}
                           onReplyChange={setReplyText} onReplySubmit={()=>submitReply(rv.user_id)}
                           onReplyCancel={()=>{ setReplyingTo(null); setReplyText(""); }}
+                          onEditSave={editComment}
                           user={user} onAuthRequired={onAuthRequired}
                           EMOJIS={EMOJIS} t={t} />
                       );
