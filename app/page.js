@@ -953,16 +953,20 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
 
   useEffect(() => {
     if (mode !== "signup" || forgotMode || typeof window === "undefined") return;
+    const sitekey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+    if (!sitekey) return;
     const render = () => {
       if (!window.turnstile || !turnstileRef.current) return;
-      if (turnstileIdRef.current) window.turnstile.remove(turnstileIdRef.current);
-      turnstileIdRef.current = window.turnstile.render(turnstileRef.current, {
-        sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
-        theme: "dark",
-        callback: token => setCaptchaToken(token),
-        "expired-callback": () => setCaptchaToken(""),
-        "error-callback": () => setCaptchaToken(""),
-      });
+      try {
+        if (turnstileIdRef.current) window.turnstile.remove(turnstileIdRef.current);
+        turnstileIdRef.current = window.turnstile.render(turnstileRef.current, {
+          sitekey,
+          theme: "dark",
+          callback: token => setCaptchaToken(token),
+          "expired-callback": () => setCaptchaToken(""),
+          "error-callback": () => setCaptchaToken(""),
+        });
+      } catch(e) { console.error("Turnstile render error:", e); }
     };
     if (!window.turnstile) {
       if (!document.querySelector('script[src*="turnstile"]')) {
@@ -1191,10 +1195,10 @@ const ReviewCard = ({ rv, col, initials, rxCounts, myRx, rvReplies, isReplying, 
   const isOwn = user?.id === rv.user_id;
 
   const saveEdit = async () => {
-    const clean = editText.replace(/[<>]/g, "").trim().slice(0, 2000);
-    if (clean === rv.comment) { setEditing(false); return; }
+    const clean = (editText || "").replace(/[<>]/g, "").trim().slice(0, 2000);
+    if (clean === (rv.comment || "")) { setEditing(false); return; }
     setEditSaving(true);
-    await onEditSave(rv.user_id, clean);
+    try { await onEditSave(rv.user_id, clean); } catch(e) { console.error("saveEdit:", e); }
     setEditSaving(false);
     setEditing(false);
   };
@@ -1410,14 +1414,22 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
   };
 
   const editComment = async (reviewerUserId, newComment) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const userDisplay = username || user.user_metadata?.username || user.email?.split("@")[0] || "";
-    await fetch("/api/ratings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
-      body: JSON.stringify({ gameId: game.id, rating: userRatings[game.id]?.rating || myR, comment: newComment, gameTitle: game.title, gameCover: game.cover, userDisplay }),
-    });
-    setCommunityReviews(p => p.map(r => r.user_id === reviewerUserId ? { ...r, comment: newComment } : r));
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData?.session;
+      if (!session) return;
+      const userDisplay = username || user?.user_metadata?.username || user?.email?.split("@")[0] || "";
+      const rating = userRatings[game.id]?.rating || myR;
+      if (!rating || rating < 1 || rating > 10) return;
+      const res = await fetch("/api/ratings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ gameId: game.id, rating, comment: newComment, gameTitle: game.title, gameCover: game.cover, userDisplay }),
+      });
+      if (res.ok) {
+        setCommunityReviews(p => p.map(r => r.user_id === reviewerUserId ? { ...r, comment: newComment } : r));
+      }
+    } catch(e) { console.error("editComment:", e); }
   };
 
   const EMOJIS = ["❤️","🔥","💯","😂","👏","😮"];
