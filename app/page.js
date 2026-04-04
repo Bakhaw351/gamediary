@@ -814,7 +814,7 @@ const HScrollSection = ({ games, onClick, accent = "#ff6b35", showDate = false }
       <div ref={scrollRef} style={{ display:"flex", gap:14, overflowX:"auto", paddingBottom:12, scrollbarWidth:"none", msOverflowStyle:"none" }}>
         {games.map(g => (
           <div key={g.id} className="hcard" onClick={()=>onClick(g)}
-            onAuxClick={ev=>{ if(ev.button===1){ ev.preventDefault(); window.open(`${window.location.origin}?game=${g.id}`,'_blank'); } }}>
+            onMouseDown={ev=>{ if(ev.button===1){ ev.preventDefault(); window.open(`${window.location.origin}?game=${g.id}`,'_blank'); } }}>
             <div className="hcard-img">
               {g.cover
                 ? <img src={g.cover} alt={g.title} style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} />
@@ -855,7 +855,7 @@ const GameCard = ({ game, onClick, rank, userRating }) => {
   const [e, setE] = useState(false);
   return (
     <div className="card" onClick={() => onClick(game)}
-      onAuxClick={ev => { if (ev.button === 1) { ev.preventDefault(); window.open(`${window.location.origin}?game=${game.id}`, '_blank'); } }}>
+      onMouseDown={ev => { if (ev.button === 1) { ev.preventDefault(); window.open(`${window.location.origin}?game=${game.id}`, '_blank'); } }}>
       <div style={{ position:"relative", paddingBottom:"148%", background:"#09090d" }}>
         {game.cover && !e
           ? <img src={game.cover} onError={() => setE(true)} alt={game.title} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }} />
@@ -902,7 +902,7 @@ const FeaturedCard = ({ game, onClick }) => {
   const [e, setE] = useState(false);
   return (
     <div className="card" onClick={() => onClick(game)} style={{ borderRadius:20 }}
-      onAuxClick={ev => { if (ev.button === 1) { ev.preventDefault(); window.open(`${window.location.origin}?game=${game.id}`, '_blank'); } }}>
+      onMouseDown={ev => { if (ev.button === 1) { ev.preventDefault(); window.open(`${window.location.origin}?game=${game.id}`, '_blank'); } }}>
       <div style={{ position:"relative", height:400 }}>
         {game.cover && !e
           ? <img src={game.cover} onError={() => setE(true)} alt={game.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
@@ -1211,7 +1211,7 @@ const ReviewCard = ({ rv, col, initials, rxCounts, myRx, rvReplies, isReplying, 
       {/* Header */}
       <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:rv.comment?12:10 }}>
         <div onClick={()=>rv.user_display && onUserClick(rv.user_display)}
-          onAuxClick={ev=>{ if(ev.button===1&&rv.user_display){ ev.preventDefault(); window.open(`${window.location.origin}?user=${encodeURIComponent(rv.user_display)}`,'_blank'); } }}
+          onMouseDown={ev=>{ if(ev.button===1&&rv.user_display){ ev.preventDefault(); window.open(`${window.location.origin}?user=${encodeURIComponent(rv.user_display)}`,'_blank'); } }}
           style={{ width:38, height:38, borderRadius:11, background:`linear-gradient(135deg,${col},${col}88)`, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:13, color:"#0a0600", flexShrink:0, cursor:rv.user_display?"pointer":"default", transition:"opacity .15s" }}
           onMouseEnter={e=>{if(rv.user_display)e.currentTarget.style.opacity=".75";}}
           onMouseLeave={e=>{e.currentTarget.style.opacity="1";}}>
@@ -2898,7 +2898,7 @@ const ActivityItem = ({ item, onClick, onUserClick }) => {
   const game = { id: item.game_id, title: item.game_title, cover: item.game_cover, platform:null, year:"—", genre:null, rating:null, reviews:0, tags:[], summary:"", videoId:null };
   return (
     <div onClick={()=>onClick(game)}
-      onAuxClick={ev=>{ if(ev.button===1){ ev.preventDefault(); window.open(`${window.location.origin}?game=${item.game_id}`,'_blank'); } }}
+      onMouseDown={ev=>{ if(ev.button===1){ ev.preventDefault(); window.open(`${window.location.origin}?game=${item.game_id}`,'_blank'); } }}
       style={{ display:"flex", gap:12, alignItems:"center", padding:"12px 14px", borderRadius:12, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.04)", cursor:"pointer", transition:"all .18s" }}
       onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,107,53,.04)";e.currentTarget.style.borderColor="rgba(255,107,53,.12)";}}
       onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,255,255,.02)";e.currentTarget.style.borderColor="rgba(255,255,255,.04)";}}>
