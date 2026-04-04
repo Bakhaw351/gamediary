@@ -884,12 +884,12 @@ const GameCard = ({ game, onClick, rank, userRating }) => {
         <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"0 11px 13px" }}>
           <div style={{ display:"flex", alignItems:"center", gap:5, marginBottom:5 }}>
             <span style={{ background:"rgba(255,255,255,.09)", borderRadius:5, padding:"1px 7px", fontSize:9, fontWeight:700, color:"rgba(255,255,255,.38)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:.3 }}>
-              {game.platform.length > 11 ? game.platform.slice(0,11)+"…" : game.platform}
+              {game.platform ? (game.platform.length > 11 ? game.platform.slice(0,11)+"…" : game.platform) : "—"}
             </span>
             <span style={{ fontSize:9, color:"rgba(255,255,255,.25)", fontFamily:"'DM Sans',sans-serif" }}>{game.year}</span>
           </div>
           <div style={{ fontSize:12, fontWeight:700, color:"rgba(255,255,255,.92)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.28, letterSpacing:"-.1px" }}>
-            {game.title.length > 24 ? game.title.slice(0,24)+"…" : game.title}
+            {(game.title||"").length > 24 ? (game.title||"").slice(0,24)+"…" : (game.title||"")}
           </div>
         </div>
       </div>
@@ -923,7 +923,7 @@ const FeaturedCard = ({ game, onClick }) => {
 
         {/* Content overlay */}
         <div style={{ position:"absolute", bottom:0, left:0, right:0, padding:"0 20px 24px" }}>
-          {game.tags.length > 0 && (
+          {game.tags?.length > 0 && (
             <div style={{ display:"flex", gap:6, marginBottom:10, flexWrap:"wrap" }}>
               {game.tags.slice(0,2).map(t => (
                 <span key={t} style={{ background:"rgba(255,255,255,.07)", border:"1px solid rgba(255,255,255,.09)", color:"rgba(255,255,255,.45)", borderRadius:6, padding:"2px 9px", fontSize:10, fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, letterSpacing:.2 }}>{t}</span>
@@ -3288,9 +3288,9 @@ export default function JoystickLog() {
 
   useEffect(() => { if (tab==="explore"&&exploreGames.length===0) fetchExplore("", platFilter, 0); }, [tab]);
 
-  /* Infinite scroll sentinel — created once, reads current values via refs */
+  /* Infinite scroll sentinel — attaches when explore tab is active */
   useEffect(() => {
-    if (!sentinelRef.current) return;
+    if (tab !== "explore" || !sentinelRef.current) return;
     const obs = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMoreExRef.current && !loadingExRef.current && !loadingMoreExRef.current) {
         const nextOffset = exploreOffsetRef.current + 20;
@@ -3301,7 +3301,7 @@ export default function JoystickLog() {
     }, { threshold: 0.1 });
     obs.observe(sentinelRef.current);
     return () => obs.disconnect();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* Discover */
   const fetchDisco = useCallback(async (tags, offset = 0) => {
@@ -3327,9 +3327,9 @@ export default function JoystickLog() {
 
   useEffect(() => { setDiscoOffset(0); fetchDisco(activeTags, 0); }, [activeTags]);
 
-  /* Discover infinite scroll sentinel — created once */
+  /* Discover infinite scroll sentinel — attaches when discover tab is active */
   useEffect(() => {
-    if (!discoSentinelRef.current) return;
+    if (tab !== "discover" || !discoSentinelRef.current) return;
     const obs = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMoreDiscoRef.current && !loadingDiscoRef.current && !loadingMoreDiscoRef.current && activeTagsRef.current.length > 0) {
         const next = discoOffsetRef.current + 20;
@@ -3340,7 +3340,7 @@ export default function JoystickLog() {
     }, { threshold: 0.1 });
     obs.observe(discoSentinelRef.current);
     return () => obs.disconnect();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const logout = async () => { await supabase.auth.signOut(); setUser(null); setUserRatings({}); setUserStatus({}); setWishlistGames([]); };
 
