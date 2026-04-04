@@ -1359,6 +1359,17 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
   const [translatedSummary, setTranslatedSummary] = useState(null);
   const [translating, setTranslating] = useState(false);
 
+  const [fullGame, setFullGame] = useState(game);
+  const g = fullGame;
+
+  useEffect(() => {
+    if (game.summary || game.videoId || (game.allPlatforms?.length > 0)) { setFullGame(game); return; }
+    fetch(`/api/games?id=${game.id}`)
+      .then(r => r.json())
+      .then(data => { if (data?.id) setFullGame(fg => ({ ...fg, ...formatGame(data) })); })
+      .catch(() => {});
+  }, [game.id]);
+
   const DLC_LABELS = { 1:t("dlcDLC"), 2:t("dlcExpansion"), 4:t("dlcStandalone") };
 
   useEffect(() => {
@@ -1376,11 +1387,11 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
   }, [game.id]);
 
   useEffect(() => {
-    if (!game.summary || lang === "en") { setTranslatedSummary(null); return; }
+    if (!fullGame.summary || lang === "en") { setTranslatedSummary(null); return; }
     const ctrl = new AbortController();
     setTranslating(true);
     setTranslatedSummary(null);
-    fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${lang}&dt=t&q=${encodeURIComponent(game.summary)}`, { signal: ctrl.signal })
+    fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${lang}&dt=t&q=${encodeURIComponent(fullGame.summary)}`, { signal: ctrl.signal })
       .then(r => r.json())
       .then(data => {
         const translated = data?.[0]?.map(s => s?.[0]).filter(Boolean).join("") || null;
@@ -1614,7 +1625,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
 
       {/* Cinematic Hero */}
       <div className="cinematic-hero">
-        {game.videoId ? (
+        {fullGame.videoId ? (
           <>
             {game.cover && (
               <div className="cinematic-bg" style={{ backgroundImage:`url(${game.cover})`, transform:"scale(1)", filter:"brightness(.15) saturate(1.2)" }} />
@@ -1622,7 +1633,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
             <div className="yt-bg-wrap">
               <iframe
                 key={muted}
-                src={`https://www.youtube.com/embed/${game.videoId}?autoplay=1&mute=${muted?1:0}&controls=0&loop=1&playlist=${game.videoId}&playsinline=1&disablekb=1&modestbranding=1&rel=0`}
+                src={`https://www.youtube.com/embed/${fullGame.videoId}?autoplay=1&mute=${muted?1:0}&controls=0&loop=1&playlist=${fullGame.videoId}&playsinline=1&disablekb=1&modestbranding=1&rel=0`}
                 allow="autoplay; encrypted-media"
               />
             </div>
@@ -1649,8 +1660,8 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
               {game.platform ? game.platform.split("(")[0].trim() : t("multi")}
             </span>
             <span style={{ color:"rgba(255,255,255,.4)", fontSize:13, fontFamily:"'DM Sans',sans-serif" }}>{game.year}</span>
-            {game.genre && <span style={{ color:"rgba(255,255,255,.4)", fontSize:13 }}>· {game.genre}</span>}
-            {game.tags.slice(0,3).map(t => (
+            {fullGame.genre && <span style={{ color:"rgba(255,255,255,.4)", fontSize:13 }}>· {fullGame.genre}</span>}
+            {fullGame.tags.slice(0,3).map(t => (
               <span key={t} style={{ background:"rgba(255,255,255,.06)", border:"1px solid rgba(255,255,255,.1)", color:"rgba(255,255,255,.45)", borderRadius:6, padding:"3px 10px", fontSize:11 }}>#{t}</span>
             ))}
           </div>
@@ -1661,9 +1672,9 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
           </h1>
 
           {/* Summary */}
-          {game.summary && (
+          {fullGame.summary && (
             <p style={{ fontSize:15, color:"rgba(255,255,255,.5)", maxWidth:560, lineHeight:1.75, fontFamily:"'DM Sans',sans-serif", marginBottom:28 }}>
-              {(() => { const s = translatedSummary || game.summary; return s.length > 240 ? s.slice(0,240)+"…" : s; })()}
+              {(() => { const s = translatedSummary || fullGame.summary; return s.length > 240 ? s.slice(0,240)+"…" : s; })()}
             </p>
           )}
 
@@ -1963,16 +1974,16 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
             </div>
 
             {/* ── SYNOPSIS ── */}
-            {game.summary && (
+            {fullGame.summary && (
               <div style={{ background:"rgba(255,255,255,.022)", border:"1px solid rgba(255,255,255,.07)", borderRadius:20, padding:"22px 26px" }}>
                 <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}>
                   <div style={{ fontSize:10, color:"rgba(255,107,53,.65)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:3, textTransform:"uppercase" }}>{t("synopsis")}</div>
                   {translating && <div className="spin" style={{ width:12, height:12, borderWidth:1.5 }} />}
                 </div>
                 <p style={{ color:"rgba(255,255,255,.52)", fontSize:14, lineHeight:1.85, fontFamily:"'DM Sans',sans-serif", margin:0 }}>
-                  {(() => { const s = translatedSummary || game.summary; return expanded || s.length <= 300 ? s : s.slice(0,300)+"…"; })()}
+                  {(() => { const s = translatedSummary || fullGame.summary; return expanded || s.length <= 300 ? s : s.slice(0,300)+"…"; })()}
                 </p>
-                {(translatedSummary || game.summary).length > 300 && (
+                {(translatedSummary || fullGame.summary).length > 300 && (
                   <button onClick={() => setExpanded(!expanded)} style={{ background:"none", border:"none", color:"rgba(255,107,53,.7)", cursor:"pointer", fontSize:13, padding:"10px 0 0", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600 }}>
                     {expanded ? t("readLess") : t("readMore")}
                   </button>
@@ -1983,9 +1994,9 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
             {/* ── INFO GRID ── */}
             <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:10 }}>
               {[
-                { icon:"🖥", label:t("platform"), value: (() => { const p = (game.allPlatforms?.length > 0 ? game.allPlatforms : [game.platform]).filter(Boolean); const shown = p.slice(0,5).map(x=>x.split("(")[0].trim()).join(", "); return p.length > 5 ? shown + ` +${p.length-5}` : shown; })() },
-                { icon:"📅", label:t("releaseYear"), value:game.year },
-                { icon:"🎭", label:t("mainGenre"), value:game.genre },
+                { icon:"🖥", label:t("platform"), value: (() => { const p = (fullGame.allPlatforms?.length > 0 ? fullGame.allPlatforms : [fullGame.platform]).filter(Boolean); const shown = p.slice(0,5).map(x=>x.split("(")[0].trim()).join(", "); return p.length > 5 ? shown + ` +${p.length-5}` : shown; })() },
+                { icon:"📅", label:t("releaseYear"), value:fullGame.year },
+                { icon:"🎭", label:t("mainGenre"), value:fullGame.genre },
                 { icon:"💬", label:t("communityCount"), value:communityReviews.length > 0 ? `${communityReviews.length} ${t("avisCount")}` : t("beFirst") },
               ].map(({ icon, label, value }) => (
                 <div key={label} className="stat-card" style={{ display:"flex", alignItems:"center", gap:14 }}>
@@ -1999,9 +2010,9 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
             </div>
 
             {/* Tags */}
-            {game.tags.length > 0 && (
+            {fullGame.tags.length > 0 && (
               <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-                {game.tags.map(t => (
+                {fullGame.tags.map(t => (
                   <span key={t} style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", color:"rgba(255,255,255,.38)", borderRadius:8, padding:"6px 14px", fontSize:12, fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, letterSpacing:.3 }}>#{t}</span>
                 ))}
               </div>
