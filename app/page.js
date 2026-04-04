@@ -1432,7 +1432,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
     } catch(e) { console.error("editComment:", e); }
   };
 
-  const EMOJIS = ["❤️","🔥","💯","😂","👏","😮"];
+  const EMOJIS = ["🔥","💯","😂","👏","😮","🎮"];
 
   const fetchCommunity = async () => {
     const { data } = await supabase.from("ratings")
