@@ -4228,7 +4228,7 @@ export default function JoystickLog() {
               <button className="site-footer" onClick={()=>setLegalModal("tos")}>Terms of Service</button>
               <button className="site-footer" onClick={()=>setLegalModal("privacy")}>Privacy Policy</button>
               <button className="site-footer" onClick={()=>setLegalModal("legal")}>Legal Notices</button>
-              <a className="site-footer" href="mailto:contact@joystick-log.com">Contact</a>
+              <a className="site-footer" href="mailto:contact@joystick-log.com">contact@joystick-log.com</a>
             </div>
           </div>
         </footer>
