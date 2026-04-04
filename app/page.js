@@ -3288,7 +3288,8 @@ export default function JoystickLog() {
 
   useEffect(() => { if (tab==="explore"&&exploreGames.length===0) fetchExplore("", platFilter, 0); }, [tab]);
 
-  /* Infinite scroll sentinel — attaches when explore tab is active */
+  /* Infinite scroll sentinel — re-attaches when tab or initial load changes so
+     IntersectionObserver fires again if sentinel was already in view after load */
   useEffect(() => {
     if (tab !== "explore" || !sentinelRef.current) return;
     const obs = new IntersectionObserver(entries => {
@@ -3301,7 +3302,7 @@ export default function JoystickLog() {
     }, { threshold: 0.1 });
     obs.observe(sentinelRef.current);
     return () => obs.disconnect();
-  }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [tab, loadingEx]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* Discover */
   const fetchDisco = useCallback(async (tags, offset = 0) => {
@@ -3327,7 +3328,7 @@ export default function JoystickLog() {
 
   useEffect(() => { setDiscoOffset(0); fetchDisco(activeTags, 0); }, [activeTags]);
 
-  /* Discover infinite scroll sentinel — attaches when discover tab is active */
+  /* Discover infinite scroll sentinel — re-attaches when tab or initial load changes */
   useEffect(() => {
     if (tab !== "discover" || !discoSentinelRef.current) return;
     const obs = new IntersectionObserver(entries => {
@@ -3340,7 +3341,7 @@ export default function JoystickLog() {
     }, { threshold: 0.1 });
     obs.observe(discoSentinelRef.current);
     return () => obs.disconnect();
-  }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [tab, loadingDisco]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const logout = async () => { await supabase.auth.signOut(); setUser(null); setUserRatings({}); setUserStatus({}); setWishlistGames([]); };
 
