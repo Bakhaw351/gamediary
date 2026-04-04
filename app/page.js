@@ -436,7 +436,7 @@ const formatGame   = g   => ({
   pressRating: g.aggregated_rating ? Math.round(g.aggregated_rating) : null,
   pressCount:  g.aggregated_rating_count || 0,
   reviews:     g.total_rating_count || 0,
-  tags:        g.genres?.map(x => x.name).slice(0,4) || [],
+  tags:        g.genres?.map(x => x.name)?.slice(0,4) || [],
   summary:     g.summary || "",
   videoId:     g.videos?.[0]?.video_id || null,
 });
@@ -3585,7 +3585,7 @@ export default function JoystickLog() {
                               </div>
                             )}
                             <div style={{ position:"absolute", bottom:9, left:9, right:9 }}>
-                              <div style={{ fontSize: isHero ? 13 : 10, color:"#fff", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2, textShadow:"0 1px 8px rgba(0,0,0,.9)" }}>{game.title.length>16?game.title.slice(0,16)+"…":game.title}</div>
+                              <div style={{ fontSize: isHero ? 13 : 10, color:"#fff", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2, textShadow:"0 1px 8px rgba(0,0,0,.9)" }}>{(game.title||"").length>16?(game.title||"").slice(0,16)+"…":(game.title||"")}</div>
                               {isHero && <div style={{ fontSize:9, color:"rgba(255,255,255,.35)", fontFamily:"'DM Sans',sans-serif", marginTop:2 }}>{game.year} · {game.genre}</div>}
                             </div>
                           </div>
