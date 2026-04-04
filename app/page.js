@@ -3057,7 +3057,9 @@ export default function JoystickLog() {
     return () => window.removeEventListener('popstate', onPop);
   }, []);
 
+  const tabMounted = useRef(false);
   useEffect(() => {
+    if (!tabMounted.current) { tabMounted.current = true; return; }
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     params.set('tab', tab);
