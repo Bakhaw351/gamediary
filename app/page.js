@@ -3233,8 +3233,7 @@ export default function JoystickLog() {
         .then(r => r.json())
         .then(data => {
           const items = (Array.isArray(data) ? data : [])
-            .filter(g => g.cover?.url)
-            .slice(0, 6)
+            .slice(0, 8)
             .map(g => ({ id: g.id, title: g.name, cover: formatCover(g.cover?.url), year: formatYear(g.first_release_date), genre: g.genres?.[0]?.name || "" }));
           setSuggestions(items);
           setShowSuggestions(items.length > 0);
