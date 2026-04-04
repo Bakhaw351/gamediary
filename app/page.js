@@ -3390,8 +3390,23 @@ export default function JoystickLog() {
         <div style={{ position:"absolute", bottom:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent 0%,rgba(255,107,53,.22) 30%,rgba(255,209,102,.3) 50%,rgba(255,107,53,.22) 70%,transparent 100%)", pointerEvents:"none" }} />
 
         {/* Logo */}
-        <div onClick={()=>setTab("home")} style={{ cursor:"pointer", flexShrink:0 }}>
-          <img src="/logo.png" alt="JoystickLog" style={{ height:42, width:"auto", display:"block", objectFit:"contain" }} />
+        <div onClick={()=>setTab("home")} style={{ display:"flex", alignItems:"center", gap:11, cursor:"pointer" }}>
+          <div style={{ width:38, height:38, borderRadius:11, background:"linear-gradient(135deg,#ff6b35 0%,#b83a00 100%)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 0 28px rgba(255,107,53,.5), 0 0 0 1px rgba(255,255,255,.15) inset", flexShrink:0 }}>
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+              <ellipse cx="16" cy="24.5" rx="8.5" ry="3" fill="rgba(255,255,255,.88)"/>
+              <rect x="14.2" y="12" width="3.6" height="12.5" rx="1.8" fill="white"/>
+              <circle cx="16" cy="10" r="4.8" fill="white"/>
+              <circle cx="14.2" cy="8.4" r="1.4" fill="rgba(255,255,255,.45)"/>
+              <circle cx="9.5" cy="24.8" r="1.6" fill="#b83a00"/>
+              <circle cx="22.5" cy="24.8" r="1.6" fill="#b83a00"/>
+            </svg>
+          </div>
+          <div style={{ display:"flex", flexDirection:"column", gap:0, lineHeight:1 }}>
+            <span style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:15, letterSpacing:2, color:"rgba(255,255,255,.92)", textTransform:"uppercase" }}>
+              joystick<span style={{ background:"linear-gradient(90deg,#ff6b35,#ffd166)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>log</span>
+            </span>
+            <span style={{ fontSize:9, color:"rgba(255,255,255,.22)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, letterSpacing:1.8, textTransform:"uppercase" }}>game journal</span>
+          </div>
         </div>
 
         {/* Center nav */}
