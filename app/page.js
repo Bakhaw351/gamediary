@@ -928,7 +928,7 @@ const FeaturedCard = ({ game, onClick }) => {
             </div>
           )}
           <div style={{ fontSize:11, color:"rgba(255,255,255,.32)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:500, marginBottom:7, letterSpacing:.2 }}>
-            {game.platform.split("(")[0].trim()} · {game.year}
+            {game.platform?.split("(")[0].trim()} · {game.year}
           </div>
           <div style={{ fontSize:22, fontWeight:700, color:"#fff", fontFamily:"'Syne',sans-serif", lineHeight:1.1, letterSpacing:"-.4px" }}>{game.title}</div>
         </div>
@@ -1983,7 +1983,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
             {/* ── INFO GRID ── */}
             <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:10 }}>
               {[
-                { icon:"🖥", label:t("platform"), value: (() => { const p = game.allPlatforms?.length > 0 ? game.allPlatforms : [game.platform]; const shown = p.slice(0,5).map(x=>x.split("(")[0].trim()).join(", "); return p.length > 5 ? shown + ` +${p.length-5}` : shown; })() },
+                { icon:"🖥", label:t("platform"), value: (() => { const p = (game.allPlatforms?.length > 0 ? game.allPlatforms : [game.platform]).filter(Boolean); const shown = p.slice(0,5).map(x=>x.split("(")[0].trim()).join(", "); return p.length > 5 ? shown + ` +${p.length-5}` : shown; })() },
                 { icon:"📅", label:t("releaseYear"), value:game.year },
                 { icon:"🎭", label:t("mainGenre"), value:game.genre },
                 { icon:"💬", label:t("communityCount"), value:communityReviews.length > 0 ? `${communityReviews.length} ${t("avisCount")}` : t("beFirst") },
