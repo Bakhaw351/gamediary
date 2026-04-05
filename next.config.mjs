@@ -22,7 +22,7 @@ const securityHeaders = [
       // Fonts
       "font-src 'self' https://fonts.gstatic.com",
       // Images: self + IGDB covers + data URIs
-      `img-src 'self' data: https://images.igdb.com`,
+      `img-src 'self' data: https://images.igdb.com https://media.rawg.io`,
       // API calls: Supabase + IGDB (server-side only, but listed for fetch() calls)
       `connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://api.igdb.com https://id.twitch.tv https://challenges.cloudflare.com`,
       // Frames: YouTube only (trailers)
