@@ -2417,7 +2417,7 @@ const SettingsModal = ({ user, profileUsername, setProfileUsername, profileAvata
   useEffect(() => {
     setUsername(profileUsername);
     // Load extra profile data
-    supabase.from("profiles").select("bio,avatar_url,is_public,phone").eq("id", user.id).single()
+    supabase.from("profiles").select("bio,avatar_url,is_public,phone").eq("id", user.id).maybeSingle()
       .then(({ data }) => {
         if (data) {
           setBio(data.bio || "");
@@ -3100,7 +3100,7 @@ export default function JoystickLog() {
   useEffect(() => {
     if (!user) { setProfileUsername(""); setProfileAvatar(""); return; }
     const fromMeta = user.user_metadata?.username;
-    supabase.from("profiles").select("username,avatar_url").eq("id", user.id).single()
+    supabase.from("profiles").select("username,avatar_url").eq("id", user.id).maybeSingle()
       .then(({ data }) => {
         if (data?.username) setProfileUsername(data.username);
         else if (fromMeta) setProfileUsername(fromMeta);
