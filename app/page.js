@@ -422,7 +422,11 @@ const detectLang = () => {
 };
 
 const formatRating = r => r ? Math.min(10, Math.round(r / 10)) : null;
-const formatCover  = url => url ? `https:${url.replace("t_thumb","t_cover_big_2x")}` : null;
+const formatCover  = url => {
+  if (!url) return null;
+  if (url.startsWith('http')) return url; // RAWG full URL
+  return `https:${url.replace("t_thumb","t_cover_big_2x")}`; // IGDB relative URL
+};
 const formatYear   = ts  => ts  ? new Date(ts * 1000).getFullYear() : "—";
 const formatGame   = g   => ({
   id:          g.id,
@@ -1368,7 +1372,11 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
 
   useEffect(() => {
     if (game.summary || game.videoId || (game.allPlatforms?.length > 0)) { setFullGame(game); return; }
-    fetch(`/api/games?id=${game.id}`)
+    const isRawg = String(game.id).startsWith("rawg_");
+    const url = isRawg
+      ? `/api/games?rawgId=${String(game.id).replace("rawg_", "")}`
+      : `/api/games?id=${game.id}`;
+    fetch(url)
       .then(r => r.json())
       .then(data => { if (data?.id) setFullGame(fg => ({ ...fg, ...formatGame(data) })); })
       .catch(() => {});
