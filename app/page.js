@@ -3494,13 +3494,16 @@ export default function JoystickLog() {
                 )}
               </div>
 
-              <div onClick={()=>setTab("profile")} style={{ width:36, height:36, borderRadius:10, background:"linear-gradient(135deg,#ff6b35,#ffd166)", display:"flex", alignItems:"center", justifyContent:"center", color:"#140800", fontWeight:800, fontSize:13, fontFamily:"'Syne',sans-serif", cursor:"pointer", boxShadow:"0 0 18px rgba(255,107,53,.3)", letterSpacing:.5, transition:"box-shadow .2s", overflow:"hidden", position:"relative" }}
-                onMouseEnter={e=>e.currentTarget.style.boxShadow="0 0 28px rgba(255,107,53,.55)"}
-                onMouseLeave={e=>e.currentTarget.style.boxShadow="0 0 18px rgba(255,107,53,.3)"}>
-                {profileAvatar
-                  ? <img src={profileAvatar} alt="avatar" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
-                  : (profileUsername || user.email || "??").slice(0,2).toUpperCase()
-                }
+              <div onClick={()=>setTab("profile")} style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:3, cursor:"pointer" }}
+                onMouseEnter={e=>e.currentTarget.querySelector('.nav-av').style.boxShadow="0 0 28px rgba(255,107,53,.55)"}
+                onMouseLeave={e=>e.currentTarget.querySelector('.nav-av').style.boxShadow="0 0 18px rgba(255,107,53,.3)"}>
+                <div className="nav-av" style={{ width:36, height:36, borderRadius:10, background:"linear-gradient(135deg,#ff6b35,#ffd166)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 0 18px rgba(255,107,53,.3)", transition:"box-shadow .2s", overflow:"hidden" }}>
+                  {profileAvatar
+                    ? <img src={profileAvatar} alt="avatar" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+                    : <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#140800" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><line x1="8" y1="9" x2="8" y2="15"/><line x1="5" y1="12" x2="11" y2="12"/><circle cx="16" cy="10" r="1" fill="#140800" stroke="none"/><circle cx="19" cy="12" r="1" fill="#140800" stroke="none"/><circle cx="16" cy="14" r="1" fill="#140800" stroke="none"/><circle cx="13" cy="12" r="1" fill="#140800" stroke="none"/></svg>
+                  }
+                </div>
+                <span style={{ fontSize:9, fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, color:"rgba(255,107,53,.8)", letterSpacing:.5, textTransform:"uppercase" }}>Profil</span>
               </div>
               <button onClick={()=>setShowSettings(true)} className="hide-m" title={t("settings_title")}
                 style={{ background:"none", border:"1px solid rgba(255,255,255,.08)", borderRadius:9, color:"rgba(255,255,255,.3)", cursor:"pointer", fontSize:15, width:34, height:34, display:"flex", alignItems:"center", justifyContent:"center", transition:"all .15s" }}
@@ -4020,10 +4023,10 @@ export default function JoystickLog() {
                   <div style={{ position:"absolute", top:0, right:0, width:320, height:320, background:"radial-gradient(circle,rgba(255,107,53,.06) 0%,transparent 70%)", pointerEvents:"none" }} />
                   <div style={{ display:"flex", gap:22, alignItems:"center", flexWrap:"wrap", position:"relative", zIndex:1 }}>
                     {/* Avatar */}
-                    <div onClick={()=>setShowSettings(true)} title="Changer l'avatar" style={{ width:72, height:72, borderRadius:18, background:"linear-gradient(135deg,#ff6b35,#ffd166)", display:"flex", alignItems:"center", justifyContent:"center", color:"#140800", fontWeight:800, fontSize:26, fontFamily:"'Syne',sans-serif", flexShrink:0, boxShadow:"0 0 28px rgba(255,107,53,.35)", cursor:"pointer", overflow:"hidden", position:"relative" }}>
+                    <div onClick={()=>setShowSettings(true)} title="Changer l'avatar" style={{ width:72, height:72, borderRadius:18, background:"linear-gradient(135deg,#ff6b35,#ffd166)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, boxShadow:"0 0 28px rgba(255,107,53,.35)", cursor:"pointer", overflow:"hidden", position:"relative" }}>
                       {profileAvatar
                         ? <img src={profileAvatar} alt="avatar" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
-                        : (profileUsername || user.email || "??").slice(0,2).toUpperCase()
+                        : <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="#140800" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><line x1="8" y1="9" x2="8" y2="15"/><line x1="5" y1="12" x2="11" y2="12"/><circle cx="16" cy="10" r="1.2" fill="#140800" stroke="none"/><circle cx="19" cy="12" r="1.2" fill="#140800" stroke="none"/><circle cx="16" cy="14" r="1.2" fill="#140800" stroke="none"/><circle cx="13" cy="12" r="1.2" fill="#140800" stroke="none"/></svg>
                       }
                     </div>
                     <div style={{ flex:1 }}>
