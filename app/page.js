@@ -2349,44 +2349,53 @@ const FREE_AVATARS = [
   { id:"viking",     label:"Viking"     },
 ];
 
+// rarity: "silver" | "gold" | "diamond" | "legendary"
 const LOCKED_AVATARS = [
-  { id:"rookie",       label:"Rookie",       cond:(r,_) => Object.keys(r).length >= 1 },
-  { id:"scout",        label:"Scout",        cond:(r,_) => Object.keys(r).length >= 5 },
-  { id:"speedrunner",  label:"Speedrunner",  cond:(r,_) => Object.keys(r).length >= 10 },
-  { id:"collector",    label:"Collector",    cond:(r,_) => Object.keys(r).length >= 15 },
-  { id:"veteran",      label:"Veteran",      cond:(r,_) => Object.keys(r).length >= 25 },
-  { id:"explorer2",    label:"Explorer",     cond:(_,s) => Object.keys(s).length >= 5 },
-  { id:"critic",       label:"Critic",       cond:(r,_) => Object.values(r).filter(x=>x.comment?.length>10).length >= 3 },
-  { id:"journalist",   label:"Journalist",   cond:(r,_) => Object.values(r).filter(x=>x.comment?.length>10).length >= 10 },
-  { id:"completionist",label:"Completionist",cond:(_,s) => Object.values(s).filter(x=>x==="completed").length >= 5 },
-  { id:"champion",     label:"Champion",     cond:(r,_) => Object.values(r).some(x=>x.rating===10) },
-  { id:"fanboy",       label:"Fanboy",       cond:(r,_) => Object.values(r).filter(x=>x.rating>=9).length >= 5 },
-  { id:"dreamer",      label:"Dreamer",      cond:(_,s) => Object.values(s).filter(x=>x==="wishlist").length >= 5 },
-  { id:"curator",      label:"Curator",      cond:(r,_) => Object.values(r).filter(x=>x.comment?.length>0).length >= 15 },
-  { id:"balanced",     label:"Balanced",     cond:(r,_) => Object.keys(r).length >= 20 },
-  { id:"archivist",    label:"Archivist",    cond:(r,_) => Object.keys(r).length >= 30 },
-  { id:"hardcore",     label:"Hardcore",     cond:(_,s) => Object.values(s).filter(x=>x==="dropped").length >= 3 },
-  { id:"dropout",      label:"Dropout",      cond:(_,s) => Object.values(s).filter(x=>x==="dropped").length >= 7 },
-  { id:"hater",        label:"Hater",        cond:(r,_) => Object.values(r).filter(x=>x.rating<=3).length >= 5 },
-  { id:"pessimist",    label:"Pessimist",    cond:(r,_) => Object.values(r).filter(x=>x.rating<=2).length >= 3 },
-  { id:"devotee",      label:"Devotee",      cond:(r,_) => Object.values(r).filter(x=>x.rating===10).length >= 3 },
-  { id:"perfectionist",label:"Perfectionist",cond:(r,_) => Object.values(r).filter(x=>x.rating>=9).length >= 10 },
-  { id:"marathon",     label:"Marathon",     cond:(r,_) => Object.keys(r).length >= 40 },
-  { id:"wanderer",     label:"Wanderer",     cond:(_,s) => Object.keys(s).length >= 10 },
-  { id:"nomad",        label:"Nomad",        cond:(_,s) => Object.keys(s).length >= 20 },
-  { id:"retrogamer",   label:"Retrogamer",   cond:(r,_) => Object.keys(r).length >= 50 },
-  { id:"indie",        label:"Indie",        cond:(r,_) => Object.keys(r).length >= 35 },
-  { id:"phantom",      label:"Phantom",      cond:(r,_) => Object.keys(r).length >= 60 },
-  { id:"oracle",       label:"Oracle",       cond:(r,_) => Object.values(r).filter(x=>x.comment?.length>50).length >= 10 },
-  { id:"overlord",     label:"Overlord",     cond:(r,_) => Object.keys(r).length >= 75 },
-  { id:"titan",        label:"Titan",        cond:(r,_) => Object.keys(r).length >= 100 },
-  { id:"legend",       label:"Legend",       cond:(r,_) => Object.keys(r).length >= 150 },
-  { id:"immortal",     label:"Immortal",     cond:(r,_) => Object.keys(r).length >= 200 },
-  { id:"godlike",      label:"Godlike",      cond:(r,_) => Object.keys(r).length >= 300 },
+  { id:"rookie",       label:"Rookie",        rarity:"silver",    hint:"Note ton 1er jeu",                          cond:(r,_) => Object.keys(r).length >= 1 },
+  { id:"scout",        label:"Scout",         rarity:"silver",    hint:"Note 5 jeux",                               cond:(r,_) => Object.keys(r).length >= 5 },
+  { id:"speedrunner",  label:"Speedrunner",   rarity:"silver",    hint:"Note 10 jeux",                              cond:(r,_) => Object.keys(r).length >= 10 },
+  { id:"explorer2",    label:"Explorer",      rarity:"silver",    hint:"Ajoute 5 jeux à ta liste",                  cond:(_,s) => Object.keys(s).length >= 5 },
+  { id:"dreamer",      label:"Dreamer",       rarity:"silver",    hint:"5 jeux en Envie de jouer",                  cond:(_,s) => Object.values(s).filter(x=>x==="wishlist").length >= 5 },
+  { id:"hardcore",     label:"Hardcore",      rarity:"silver",    hint:"Abandonne 3 jeux",                          cond:(_,s) => Object.values(s).filter(x=>x==="dropped").length >= 3 },
+  { id:"critic",       label:"Critic",        rarity:"silver",    hint:"Écris 3 critiques",                         cond:(r,_) => Object.values(r).filter(x=>x.comment?.length>10).length >= 3 },
+  { id:"collector",    label:"Collector",     rarity:"silver",    hint:"Note 15 jeux",                              cond:(r,_) => Object.keys(r).length >= 15 },
+  { id:"champion",     label:"Champion",      rarity:"gold",      hint:"Donne un 10/10 à un jeu",                   cond:(r,_) => Object.values(r).some(x=>x.rating===10) },
+  { id:"completionist",label:"Completionist", rarity:"gold",      hint:"Termine 5 jeux",                            cond:(_,s) => Object.values(s).filter(x=>x==="completed").length >= 5 },
+  { id:"veteran",      label:"Veteran",       rarity:"gold",      hint:"Note 25 jeux",                              cond:(r,_) => Object.keys(r).length >= 25 },
+  { id:"fanboy",       label:"Fanboy",        rarity:"gold",      hint:"5 jeux notés 9 ou 10",                      cond:(r,_) => Object.values(r).filter(x=>x.rating>=9).length >= 5 },
+  { id:"journalist",   label:"Journalist",    rarity:"gold",      hint:"Écris 10 critiques",                        cond:(r,_) => Object.values(r).filter(x=>x.comment?.length>10).length >= 10 },
+  { id:"curator",      label:"Curator",       rarity:"gold",      hint:"15 jeux avec une critique",                 cond:(r,_) => Object.values(r).filter(x=>x.comment?.length>0).length >= 15 },
+  { id:"balanced",     label:"Balanced",      rarity:"gold",      hint:"Note 20 jeux",                              cond:(r,_) => Object.keys(r).length >= 20 },
+  { id:"pessimist",    label:"Pessimist",      rarity:"gold",     hint:"3 jeux notés 1 ou 2",                       cond:(r,_) => Object.values(r).filter(x=>x.rating<=2).length >= 3 },
+  { id:"devotee",      label:"Devotee",       rarity:"gold",      hint:"3 jeux notés 10/10",                        cond:(r,_) => Object.values(r).filter(x=>x.rating===10).length >= 3 },
+  { id:"archivist",    label:"Archivist",     rarity:"gold",      hint:"Note 30 jeux",                              cond:(r,_) => Object.keys(r).length >= 30 },
+  { id:"wanderer",     label:"Wanderer",      rarity:"gold",      hint:"10 jeux dans ta liste",                     cond:(_,s) => Object.keys(s).length >= 10 },
+  { id:"indie",        label:"Indie",         rarity:"diamond",   hint:"Note 35 jeux",                              cond:(r,_) => Object.keys(r).length >= 35 },
+  { id:"marathon",     label:"Marathon",      rarity:"diamond",   hint:"Note 40 jeux",                              cond:(r,_) => Object.keys(r).length >= 40 },
+  { id:"hater",        label:"Hater",         rarity:"diamond",   hint:"5 jeux notés 3 ou moins",                   cond:(r,_) => Object.values(r).filter(x=>x.rating<=3).length >= 5 },
+  { id:"dropout",      label:"Dropout",       rarity:"diamond",   hint:"Abandonne 7 jeux",                          cond:(_,s) => Object.values(s).filter(x=>x==="dropped").length >= 7 },
+  { id:"perfectionist",label:"Perfectionist", rarity:"diamond",   hint:"10 jeux notés 9 ou 10",                     cond:(r,_) => Object.values(r).filter(x=>x.rating>=9).length >= 10 },
+  { id:"retrogamer",   label:"Retrogamer",    rarity:"diamond",   hint:"Note 50 jeux",                              cond:(r,_) => Object.keys(r).length >= 50 },
+  { id:"nomad",        label:"Nomad",         rarity:"diamond",   hint:"20 jeux dans ta liste",                     cond:(_,s) => Object.keys(s).length >= 20 },
+  { id:"phantom",      label:"Phantom",       rarity:"diamond",   hint:"Note 60 jeux",                              cond:(r,_) => Object.keys(r).length >= 60 },
+  { id:"oracle",       label:"Oracle",        rarity:"legendary", hint:"10 critiques de plus de 50 caractères",     cond:(r,_) => Object.values(r).filter(x=>x.comment?.length>50).length >= 10 },
+  { id:"overlord",     label:"Overlord",      rarity:"legendary", hint:"Note 75 jeux",                              cond:(r,_) => Object.keys(r).length >= 75 },
+  { id:"titan",        label:"Titan",         rarity:"legendary", hint:"Note 100 jeux",                             cond:(r,_) => Object.keys(r).length >= 100 },
+  { id:"legend",       label:"Legend",        rarity:"legendary", hint:"Note 150 jeux",                             cond:(r,_) => Object.keys(r).length >= 150 },
+  { id:"immortal",     label:"Immortal",      rarity:"legendary", hint:"Note 200 jeux",                             cond:(r,_) => Object.keys(r).length >= 200 },
+  { id:"godlike",      label:"Godlike",       rarity:"legendary", hint:"Note 300 jeux",                             cond:(r,_) => Object.keys(r).length >= 300 },
 ];
+
+const RARITY = {
+  silver:    { border:"#94a3b8", glow:"rgba(148,163,184,.5)", label:"Argent",   badge:"⚪" },
+  gold:      { border:"#fbbf24", glow:"rgba(251,191,36,.5)",  label:"Or",       badge:"🟡" },
+  diamond:   { border:"#67e8f9", glow:"rgba(103,232,249,.5)", label:"Diamant",  badge:"💎" },
+  legendary: { border:"#ff6b35", glow:"rgba(255,107,53,.6)",  label:"Légendaire",badge:"🔥" },
+};
 
 const AvatarGallery = ({ avatarUrl, setAvatarUrl, userRatings, userStatus }) => {
   const [tab, setTab] = useState("free");
+  const [hovered, setHovered] = useState(null);
   const list = tab === "free" ? FREE_AVATARS : LOCKED_AVATARS;
 
   return (
@@ -2407,7 +2416,7 @@ const AvatarGallery = ({ avatarUrl, setAvatarUrl, userRatings, userStatus }) => 
 
       {/* Tabs */}
       <div style={{ display:"flex", gap:4, marginBottom:12, background:"rgba(255,255,255,.04)", borderRadius:10, padding:4 }}>
-        {[["free","🎮 Gratuits (32)"],["locked","🔒 Débloquables (32)"]].map(([id,label])=>(
+        {[["free","🎮 Gratuits (32)"],["locked","🏆 Débloquables (33)"]].map(([id,label])=>(
           <button key={id} onClick={()=>setTab(id)}
             style={{ flex:1, padding:"7px 8px", borderRadius:8, border:tab===id?"1px solid rgba(255,107,53,.3)":"1px solid transparent", background:tab===id?"rgba(255,107,53,.1)":"transparent", color:tab===id?"#ffd166":"var(--c-text-3)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:12, cursor:"pointer", transition:"all .15s" }}>
             {label}
@@ -2415,26 +2424,80 @@ const AvatarGallery = ({ avatarUrl, setAvatarUrl, userRatings, userStatus }) => 
         ))}
       </div>
 
+      {/* Rarity legend (locked tab only) */}
+      {tab === "locked" && (
+        <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:12 }}>
+          {Object.entries(RARITY).map(([key, r]) => (
+            <div key={key} style={{ display:"flex", alignItems:"center", gap:4, padding:"3px 9px", borderRadius:99, border:`1px solid ${r.border}22`, background:`${r.border}11` }}>
+              <span style={{ fontSize:10 }}>{r.badge}</span>
+              <span style={{ fontSize:10, fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, color:r.border }}>{r.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Grid */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:10, maxHeight:340, overflowY:"auto", paddingRight:4 }}>
         {list.map(av => {
           const url = AVATAR_SVGS[av.id];
           const unlocked = tab === "free" || av.cond(userRatings, userStatus);
           const selected = avatarUrl === url;
+          const r = av.rarity ? RARITY[av.rarity] : null;
+          const isHov = hovered === av.id;
+          const borderColor = selected ? "#ff6b35" : (r && unlocked) ? r.border : "rgba(255,255,255,.08)";
+          const glowShadow = selected ? "0 0 18px rgba(255,107,53,.5)" : (r && unlocked && isHov) ? `0 0 18px ${r.glow}` : "none";
+
           return (
-            <div key={av.id} title={unlocked ? av.label : `🔒 ${av.hint}`}
+            <div key={av.id} style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:4, cursor:unlocked?"pointer":"default", position:"relative" }}
               onClick={() => unlocked && setAvatarUrl(url)}
-              style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:4, cursor:unlocked?"pointer":"not-allowed" }}>
-              <div style={{ position:"relative", borderRadius:12, overflow:"hidden", border:selected?"2px solid #ff6b35":"2px solid rgba(255,255,255,.08)", background:"#1a1025", width:"100%", aspectRatio:"1", transition:"border-color .15s, transform .15s, box-shadow .15s", transform:selected?"scale(1.06)":"scale(1)", boxShadow:selected?"0 0 16px rgba(255,107,53,.4)":"none" }}>
-                <img src={url} alt={av.label} style={{ width:"100%", height:"100%", display:"block", filter:unlocked?"none":"grayscale(1) brightness(.35)" }} loading="lazy" />
-                {!unlocked && (
-                  <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, background:"rgba(0,0,0,.3)" }}>🔒</div>
+              onMouseEnter={() => setHovered(av.id)}
+              onMouseLeave={() => setHovered(null)}>
+
+              {/* Tooltip */}
+              {isHov && (
+                <div style={{ position:"absolute", bottom:"calc(100% + 8px)", left:"50%", transform:"translateX(-50%)", zIndex:99, pointerEvents:"none", minWidth:140, maxWidth:180 }}>
+                  <div style={{ background:"#1a1025", border:`1px solid ${r ? r.border : "rgba(255,255,255,.15)"}`, borderRadius:10, padding:"9px 12px", boxShadow:`0 8px 32px rgba(0,0,0,.7), 0 0 16px ${r ? r.glow : "transparent"}` }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:5, marginBottom:5 }}>
+                      {r && <span style={{ fontSize:12 }}>{r.badge}</span>}
+                      <span style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:12, color:r ? r.border : "#fff" }}>{av.label}</span>
+                      {r && <span style={{ fontSize:9, fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, color:r.border, marginLeft:"auto", opacity:.8 }}>{r.label}</span>}
+                    </div>
+                    <div style={{ fontSize:11, fontFamily:"'DM Sans',sans-serif", color:"rgba(255,255,255,.55)", lineHeight:1.4 }}>
+                      {unlocked ? "✅ Débloqué !" : `🔒 ${av.hint}`}
+                    </div>
+                  </div>
+                  <div style={{ width:8, height:8, background:"#1a1025", border:`1px solid ${r ? r.border : "rgba(255,255,255,.15)"}`, borderTop:"none", borderLeft:"none", transform:"rotate(45deg)", margin:"-4px auto 0", position:"relative" }} />
+                </div>
+              )}
+
+              {/* Avatar card */}
+              <div style={{ position:"relative", borderRadius:12, overflow:"hidden",
+                border: r && !selected ? `2px solid ${unlocked ? r.border : "rgba(255,255,255,.08)"}` : `2px solid ${selected ? "#ff6b35" : "rgba(255,255,255,.08)"}`,
+                background: r ? `linear-gradient(135deg, #0d0a18, #1a1025)` : "#111",
+                width:"100%", aspectRatio:"1",
+                transition:"transform .15s, box-shadow .15s",
+                transform: isHov && unlocked ? "scale(1.08)" : selected ? "scale(1.06)" : "scale(1)",
+                boxShadow: glowShadow,
+              }}>
+                {/* Premium shimmer background for locked avatars */}
+                {r && unlocked && (
+                  <div style={{ position:"absolute", inset:0, background:`radial-gradient(circle at 30% 20%, ${r.border}18 0%, transparent 60%)`, pointerEvents:"none" }} />
                 )}
+                <img src={url} alt={av.label} style={{ width:"100%", height:"100%", display:"block", filter: !unlocked ? "grayscale(1) brightness(.25)" : "none", position:"relative", zIndex:1 }} loading="lazy" />
+                {/* Lock overlay */}
+                {!unlocked && (
+                  <div style={{ position:"absolute", inset:0, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:3, background:"rgba(0,0,0,.45)", zIndex:2 }}>
+                    <span style={{ fontSize:16 }}>🔒</span>
+                    {r && <span style={{ fontSize:8, fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, color:r.border, letterSpacing:.5 }}>{r.label.toUpperCase()}</span>}
+                  </div>
+                )}
+                {/* Selected dot */}
                 {selected && (
-                  <div style={{ position:"absolute", bottom:4, right:4, width:10, height:10, borderRadius:"50%", background:"#ff6b35", boxShadow:"0 0 8px #ff6b35" }} />
+                  <div style={{ position:"absolute", bottom:4, right:4, width:10, height:10, borderRadius:"50%", background:"#ff6b35", boxShadow:"0 0 8px #ff6b35", zIndex:3 }} />
                 )}
               </div>
-              <span style={{ fontSize:10, color:selected?"#ffd166":"rgba(255,255,255,.35)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, textAlign:"center", letterSpacing:.3, transition:"color .15s" }}>
+
+              <span style={{ fontSize:10, color: selected ? "#ffd166" : r && unlocked ? r.border : "rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, textAlign:"center", letterSpacing:.3, transition:"color .15s" }}>
                 {av.label}
               </span>
             </div>
