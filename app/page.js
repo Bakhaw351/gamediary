@@ -1063,14 +1063,14 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
 
           <div style={{ display:"flex", flexDirection:"column", gap:9 }}>
             {!forgotMode && mode === "signup" && (
-              <input className="inp" placeholder={t("usernamePlaceholder")} value={username} onChange={e => setUsername(e.target.value)} />
+              <input id="signup-username" name="username" autoComplete="username" className="inp" placeholder={t("usernamePlaceholder")} value={username} onChange={e => setUsername(e.target.value)} />
             )}
-            <input className="inp" type="email" placeholder="Email" value={email}
+            <input id="auth-email" name="email" autoComplete="email" className="inp" type="email" placeholder="Email" value={email}
               onChange={e => setEmail(e.target.value)}
               onKeyDown={e => e.key==="Enter" && (forgotMode ? sendResetLink() : submit())} />
             {!forgotMode && (
               <>
-                <input className="inp" type="password" placeholder={t("passwordPlaceholder")} value={pw}
+                <input id="auth-password" name="password" autoComplete={mode==="login"?"current-password":"new-password"} className="inp" type="password" placeholder={t("passwordPlaceholder")} value={pw}
                   onChange={e => setPw(e.target.value)}
                   onKeyDown={e => e.key==="Enter" && submit()} />
                 {mode === "login" && (
@@ -1372,14 +1372,16 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
 
   useEffect(() => {
     if (game.summary || game.videoId || (game.allPlatforms?.length > 0)) { setFullGame(game); return; }
+    const ctrl = new AbortController();
     const isRawg = String(game.id).startsWith("rawg_");
     const url = isRawg
       ? `/api/games?rawgId=${String(game.id).replace("rawg_", "")}`
       : `/api/games?id=${game.id}`;
-    fetch(url)
+    fetch(url, { signal: ctrl.signal })
       .then(r => r.json())
       .then(data => { if (data?.id) setFullGame(fg => ({ ...fg, ...formatGame(data) })); })
-      .catch(() => {});
+      .catch(e => { if (e.name !== 'AbortError') console.warn('fullGame fetch:', e); });
+    return () => ctrl.abort();
   }, [game.id]);
 
   const DLC_LABELS = { 1:t("dlcDLC"), 2:t("dlcExpansion"), 4:t("dlcStandalone") };
@@ -1406,7 +1408,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
     fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${lang}&dt=t&q=${encodeURIComponent(fullGame.summary)}`, { signal: ctrl.signal })
       .then(r => r.json())
       .then(data => {
-        const translated = data?.[0]?.map(s => s?.[0]).filter(Boolean).join("") || null;
+        const translated = (Array.isArray(data?.[0]) ? data[0] : []).map(s => s?.[0]).filter(Boolean).join("") || null;
         setTranslatedSummary(translated);
       })
       .catch(e => { if (e.name !== 'AbortError') console.warn('Translation error:', e); })
@@ -1596,21 +1598,30 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
     if (!user) { onAuthRequired(); return; }
     if (!myR || myR < 1 || myR > 10) return;
     setLoading(true);
-    const { data: { session } } = await supabase.auth.getSession();
-    const userDisplay = username || user.user_metadata?.username || user.email?.split("@")[0] || "";
-    const res = await fetch("/api/ratings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
-      body: JSON.stringify({ gameId: game.id, rating: myR, comment: txt, gameTitle: game.title, gameCover: game.cover, userDisplay }),
-    });
-    const result = await res.json();
-    if (res.ok && result.ok) {
-      const safeComment = txt.replace(/[<>]/g, "").trim().slice(0, 2000);
-      setUserRatings(p => ({...p, [game.id]:{rating:myR, comment:safeComment}}));
-      setSaved(true);
-      fetchCommunity();
-    } else if (res.status === 422) {
-      alert("Votre commentaire contient des mots inappropriés.");
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) { setLoading(false); return; }
+      const userDisplay = username || user.user_metadata?.username || user.email?.split("@")[0] || "";
+      const res = await fetch("/api/ratings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ gameId: String(game.id), rating: myR, comment: txt, gameTitle: game.title, gameCover: game.cover, userDisplay }),
+      });
+      let result = {};
+      try { result = await res.json(); } catch { /* non-JSON response */ }
+      if (res.ok && result.ok) {
+        const safeComment = txt.replace(/[<>]/g, "").trim().slice(0, 2000);
+        setUserRatings(p => ({...p, [game.id]:{rating:myR, comment:safeComment}}));
+        setSaved(true);
+        fetchCommunity();
+      } else if (res.status === 422) {
+        alert("Votre commentaire contient des mots inappropriés.");
+      } else {
+        alert("Erreur lors de la sauvegarde. Réessayez.");
+      }
+    } catch(e) {
+      console.error("publish error:", e);
+      alert("Erreur réseau. Vérifiez votre connexion.");
     }
     setLoading(false);
   };
@@ -1993,9 +2004,9 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
                   {translating && <div className="spin" style={{ width:12, height:12, borderWidth:1.5 }} />}
                 </div>
                 <p style={{ color:"rgba(255,255,255,.52)", fontSize:14, lineHeight:1.85, fontFamily:"'DM Sans',sans-serif", margin:0 }}>
-                  {(() => { const s = translatedSummary || fullGame.summary; return expanded || s.length <= 300 ? s : s.slice(0,300)+"…"; })()}
+                  {(() => { const s = translatedSummary || fullGame.summary || ""; return expanded || s.length <= 300 ? s : s.slice(0,300)+"…"; })()}
                 </p>
-                {(translatedSummary || fullGame.summary).length > 300 && (
+                {(translatedSummary || fullGame.summary || "").length > 300 && (
                   <button onClick={() => setExpanded(!expanded)} style={{ background:"none", border:"none", color:"rgba(255,107,53,.7)", cursor:"pointer", fontSize:13, padding:"10px 0 0", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600 }}>
                     {expanded ? t("readLess") : t("readMore")}
                   </button>
@@ -3088,7 +3099,7 @@ export default function JoystickLog() {
 
   /* Auth */
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => { if (data.session?.user) setUser(data.session.user); });
+    supabase.auth.getSession().then(({ data, error }) => { if (!error && data.session?.user) setUser(data.session.user); }).catch(() => {});
     const { data:{ subscription } } = supabase.auth.onAuthStateChange((event, s) => {
       setUser(s?.user || null);
       if (event === "PASSWORD_RECOVERY") setShowResetPw(true);
@@ -3271,7 +3282,7 @@ export default function JoystickLog() {
       const data = await fetch(url).then(r=>r.json());
       const games = (Array.isArray(data) ? data : []).map(formatGame).filter(g=>g.cover);
       if (offset === 0) setExploreGames(games);
-      else setExploreGames(prev => [...prev, ...games]);
+      else setExploreGames(prev => { const ids = new Set(prev.map(g=>String(g.id))); return [...prev, ...games.filter(g=>!ids.has(String(g.id)))]; });
       setHasMoreEx(games.length === 20);
     } catch(e) { console.error('fetchExplore:', e); setHasMoreEx(false); }
     setLoadingEx(false);
@@ -3301,9 +3312,10 @@ export default function JoystickLog() {
     if (tab !== "explore" || !sentinelRef.current) return;
     const obs = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMoreExRef.current && !loadingExRef.current && !loadingMoreExRef.current) {
+        loadingMoreExRef.current = true; // prevent double-fire before state update
         const nextOffset = exploreOffsetRef.current + 20;
-        setExploreOffset(nextOffset);
         exploreOffsetRef.current = nextOffset;
+        setExploreOffset(nextOffset);
         fetchExplore(searchQRef.current, platFilterRef.current, nextOffset);
       }
     }, { threshold: 0.1 });
@@ -3340,9 +3352,10 @@ export default function JoystickLog() {
     if (tab !== "discover" || !discoSentinelRef.current) return;
     const obs = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMoreDiscoRef.current && !loadingDiscoRef.current && !loadingMoreDiscoRef.current && activeTagsRef.current.length > 0) {
+        loadingMoreDiscoRef.current = true; // prevent double-fire before state update
         const next = discoOffsetRef.current + 20;
-        setDiscoOffset(next);
         discoOffsetRef.current = next;
+        setDiscoOffset(next);
         fetchDisco(activeTagsRef.current, next);
       }
     }, { threshold: 0.1 });

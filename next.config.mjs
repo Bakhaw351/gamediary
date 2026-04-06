@@ -24,7 +24,7 @@ const securityHeaders = [
       // Images: self + IGDB covers + data URIs
       `img-src 'self' data: https://images.igdb.com https://media.rawg.io`,
       // API calls: Supabase + IGDB (server-side only, but listed for fetch() calls)
-      `connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://api.igdb.com https://id.twitch.tv https://challenges.cloudflare.com`,
+      `connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://api.igdb.com https://id.twitch.tv https://challenges.cloudflare.com https://translate.googleapis.com https://api.rawg.io`,
       // Frames: YouTube only (trailers)
       "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://challenges.cloudflare.com",
       // Objects: none
