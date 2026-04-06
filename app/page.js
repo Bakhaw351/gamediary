@@ -2349,6 +2349,41 @@ const FREE_AVATARS = [
   { id:"viking",     label:"Viking"     },
 ];
 
+const LOCKED_AVATARS = [
+  { id:"legend",      label:"Legend",      cond:(r,_) => Object.keys(r).length >= 50 },
+  { id:"grandmaster", label:"Grandmaster", cond:(r,_) => Object.keys(r).length >= 100 },
+  { id:"champion",    label:"Champion",    cond:(r,_) => Object.values(r).some(x=>x.rating===10) },
+  { id:"critic",      label:"Critic",      cond:(r,_) => Object.values(r).filter(x=>x.comment?.length>10).length >= 5 },
+  { id:"completionist",label:"Completionist",cond:(_,s)=>Object.values(s).filter(x=>x==="completed").length>=10 },
+  { id:"collector2",  label:"Collector",   cond:(r,_) => Object.keys(r).length >= 25 },
+  { id:"explorer2",   label:"Explorer",    cond:(_,s) => Object.keys(s).length >= 10 },
+  { id:"hunter2",     label:"Hunter",      cond:(_,s) => Object.values(s).filter(x=>x==="wishlist").length>=10 },
+  { id:"speedrunner", label:"Speedrunner", cond:(r,_) => Object.keys(r).length >= 10 },
+  { id:"veteran",     label:"Veteran",     cond:(r,_) => Object.keys(r).length >= 30 },
+  { id:"elite",       label:"Elite",       cond:(r,_) => Object.keys(r).length >= 75 },
+  { id:"phantom",     label:"Phantom",     cond:(_,s) => Object.values(s).filter(x=>x==="dropped").length>=5 },
+  { id:"warlord",     label:"Warlord",     cond:(r,_) => Object.values(r).filter(x=>x.rating<=3).length>=5 },
+  { id:"overlord",    label:"Overlord",    cond:(r,_) => Object.keys(r).length >= 150 },
+  { id:"shadow",      label:"Shadow",      cond:(_,s) => Object.values(s).filter(x=>x==="playing").length>=3 },
+  { id:"titan",       label:"Titan",       cond:(r,_) => Object.keys(r).length >= 200 },
+  { id:"oracle",      label:"Oracle",      cond:(r,_) => Object.values(r).filter(x=>x.comment?.length>50).length>=10 },
+  { id:"prophet",     label:"Prophet",     cond:(r,_) => Object.values(r).filter(x=>x.rating>=9).length>=10 },
+  { id:"divine",      label:"Divine",      cond:(r,_) => Object.values(r).filter(x=>x.rating===10).length>=5 },
+  { id:"immortal",    label:"Immortal",    cond:(r,_) => Object.keys(r).length >= 300 },
+  { id:"dragon2",     label:"Dragon Lord", cond:(_,s) => Object.values(s).filter(x=>x==="completed").length>=25 },
+  { id:"specter",     label:"Specter",     cond:(r,_) => Object.keys(r).length >= 20 },
+  { id:"sovereign",   label:"Sovereign",   cond:(r,_) => Object.keys(r).length >= 500 },
+  { id:"architect",   label:"Architect",   cond:(r,_) => Object.values(r).filter(x=>x.comment?.length>0).length>=20 },
+  { id:"sentinel",    label:"Sentinel",    cond:(_,s) => Object.keys(s).length >= 20 },
+  { id:"wraith",      label:"Wraith",      cond:(r,_) => Object.values(r).filter(x=>x.rating<=2).length>=3 },
+  { id:"blademaster", label:"Blademaster", cond:(r,_) => Object.keys(r).length >= 40 },
+  { id:"phoenix",     label:"Phoenix",     cond:(_,s) => Object.values(s).filter(x=>x==="completed").length>=5 },
+  { id:"glacier",     label:"Glacier",     cond:(r,_) => Object.values(r).filter(x=>x.rating>=8).length>=20 },
+  { id:"nebula",      label:"Nebula",      cond:(r,_) => Object.keys(r).length >= 60 },
+  { id:"cosmos",      label:"Cosmos",      cond:(r,_) => Object.keys(r).length >= 80 },
+  { id:"eclipse",     label:"Eclipse",     cond:(r,_) => Object.keys(r).length >= 120 },
+];
+
 const AvatarGallery = ({ avatarUrl, setAvatarUrl, userRatings, userStatus }) => {
   const [tab, setTab] = useState("free");
   const list = tab === "free" ? FREE_AVATARS : LOCKED_AVATARS;
