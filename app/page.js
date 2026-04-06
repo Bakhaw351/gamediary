@@ -3494,10 +3494,13 @@ export default function JoystickLog() {
                 )}
               </div>
 
-              <div onClick={()=>setTab("profile")} style={{ width:36, height:36, borderRadius:10, background:"linear-gradient(135deg,#ff6b35,#ffd166)", display:"flex", alignItems:"center", justifyContent:"center", color:"#140800", fontWeight:800, fontSize:13, fontFamily:"'Syne',sans-serif", cursor:"pointer", boxShadow:"0 0 18px rgba(255,107,53,.3)", letterSpacing:.5, transition:"box-shadow .2s" }}
+              <div onClick={()=>setTab("profile")} style={{ width:36, height:36, borderRadius:10, background:"linear-gradient(135deg,#ff6b35,#ffd166)", display:"flex", alignItems:"center", justifyContent:"center", color:"#140800", fontWeight:800, fontSize:13, fontFamily:"'Syne',sans-serif", cursor:"pointer", boxShadow:"0 0 18px rgba(255,107,53,.3)", letterSpacing:.5, transition:"box-shadow .2s", overflow:"hidden", position:"relative" }}
                 onMouseEnter={e=>e.currentTarget.style.boxShadow="0 0 28px rgba(255,107,53,.55)"}
                 onMouseLeave={e=>e.currentTarget.style.boxShadow="0 0 18px rgba(255,107,53,.3)"}>
-                {user.email?.slice(0,2).toUpperCase()}
+                {profileAvatar
+                  ? <img src={profileAvatar} alt="avatar" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+                  : <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#140800" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><line x1="12" y1="12" x2="12" y2="12"/><line x1="8" y1="9" x2="8" y2="15"/><line x1="16" y1="12" x2="16" y2="12"/><circle cx="16" cy="12" r="1" fill="#140800"/><line x1="6" y1="12" x2="10" y2="12"/></svg>
+                }
               </div>
               <button onClick={()=>setShowSettings(true)} className="hide-m" title={t("settings_title")}
                 style={{ background:"none", border:"1px solid rgba(255,255,255,.08)", borderRadius:9, color:"rgba(255,255,255,.3)", cursor:"pointer", fontSize:15, width:34, height:34, display:"flex", alignItems:"center", justifyContent:"center", transition:"all .15s" }}
