@@ -1,46 +1,98 @@
+import { ImageResponse } from '@vercel/og';
+
 export const runtime = 'edge';
 
 export async function GET() {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#09080e"/>
-      <stop offset="100%" stop-color="#130a04"/>
-    </linearGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#ff6b35"/>
-      <stop offset="100%" stop-color="#ffd166"/>
-    </linearGradient>
-    <filter id="blur1"><feGaussianBlur stdDeviation="60"/></filter>
-  </defs>
-  <rect width="1200" height="630" fill="url(#bg)"/>
-  <circle cx="200" cy="200" r="280" fill="#ff6b35" opacity="0.06" filter="url(#blur1)"/>
-  <circle cx="1000" cy="450" r="220" fill="#ffd166" opacity="0.05" filter="url(#blur1)"/>
-  <rect x="0" y="0" width="1200" height="3" fill="url(#accent)"/>
-  <rect x="80" y="200" width="64" height="64" rx="16" fill="#ff6b35"/>
-  <ellipse cx="112" cy="249" rx="17" ry="6" fill="rgba(255,255,255,.88)"/>
-  <rect x="108.4" y="224" width="7.2" height="25" rx="3.6" fill="white"/>
-  <circle cx="112" cy="220" r="9.6" fill="white"/>
-  <text x="160" y="247" font-family="Arial Black,sans-serif" font-weight="900" font-size="42" fill="white" letter-spacing="-1">JoystickLog</text>
-  <rect x="160" y="258" width="130" height="22" rx="11" fill="rgba(255,107,53,.15)" stroke="rgba(255,107,53,.35)" stroke-width="1"/>
-  <text x="225" y="273" font-family="Arial,sans-serif" font-size="11" fill="#ff6b35" font-weight="700" letter-spacing="2" text-anchor="middle">GRATUIT</text>
-  <rect x="80" y="316" width="600" height="1" fill="rgba(255,255,255,.07)"/>
-  <text x="80" y="380" font-family="Arial Black,sans-serif" font-weight="900" font-size="62" fill="white" letter-spacing="-2">Note. Critique.</text>
-  <text x="80" y="452" font-family="Arial Black,sans-serif" font-weight="900" font-size="62" letter-spacing="-2"><tspan fill="#ff6b35">Partage</tspan><tspan fill="white"> tes jeux.</tspan></text>
-  <text x="80" y="510" font-family="Arial,sans-serif" font-size="22" fill="rgba(255,255,255,.4)">Des millions de jeux · De la Game Boy à la PS5</text>
-  <text x="80" y="580" font-family="Arial,sans-serif" font-size="18" fill="rgba(255,107,53,.6)" font-weight="700" letter-spacing="1">joystick-log.com</text>
-  <rect x="820" y="120" width="130" height="175" rx="14" fill="rgba(255,107,53,.06)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
-  <rect x="970" y="80" width="130" height="175" rx="14" fill="rgba(167,139,250,.06)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
-  <rect x="820" y="320" width="130" height="175" rx="14" fill="rgba(255,209,102,.05)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
-  <rect x="970" y="280" width="130" height="175" rx="14" fill="rgba(255,107,53,.05)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
-  <rect x="900" y="265" width="36" height="22" rx="7" fill="#ff6b35"/>
-  <text x="918" y="280" font-family="Arial Black,sans-serif" font-size="12" fill="white" font-weight="900" text-anchor="middle">9</text>
-</svg>`;
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: '1200px',
+          height: '630px',
+          display: 'flex',
+          flexDirection: 'column',
+          background: 'linear-gradient(135deg, #09080e 0%, #130a04 100%)',
+          position: 'relative',
+          overflow: 'hidden',
+          fontFamily: 'Arial Black, sans-serif',
+        }}
+      >
+        {/* Glow blobs */}
+        <div style={{ position:'absolute', top:-80, left:-80, width:400, height:400, borderRadius:'50%', background:'rgba(255,107,53,0.09)', filter:'blur(80px)', display:'flex' }} />
+        <div style={{ position:'absolute', bottom:-60, right:-60, width:340, height:340, borderRadius:'50%', background:'rgba(255,209,102,0.07)', filter:'blur(70px)', display:'flex' }} />
 
-  return new Response(svg, {
-    headers: {
-      'Content-Type': 'image/svg+xml',
-      'Cache-Control': 'public, max-age=86400',
-    },
-  });
+        {/* Top accent line */}
+        <div style={{ position:'absolute', top:0, left:0, right:0, height:4, background:'linear-gradient(90deg, #ff6b35, #ffd166)', display:'flex' }} />
+
+        {/* Logo row */}
+        <div style={{ display:'flex', alignItems:'center', gap:16, position:'absolute', top:52, left:80 }}>
+          {/* Icon */}
+          <div style={{ width:64, height:64, borderRadius:16, background:'#ff6b35', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="6" width="20" height="12" rx="4"/>
+              <line x1="8" y1="9" x2="8" y2="15"/>
+              <line x1="5" y1="12" x2="11" y2="12"/>
+              <circle cx="16" cy="10" r="1.2" fill="white" stroke="none"/>
+              <circle cx="19" cy="12" r="1.2" fill="white" stroke="none"/>
+              <circle cx="16" cy="14" r="1.2" fill="white" stroke="none"/>
+              <circle cx="13" cy="12" r="1.2" fill="white" stroke="none"/>
+            </svg>
+          </div>
+          {/* Name */}
+          <div style={{ display:'flex', flexDirection:'column', gap:2 }}>
+            <div style={{ fontSize:38, fontWeight:900, letterSpacing:-1, color:'white', display:'flex' }}>
+              Joystick<span style={{ background:'linear-gradient(90deg,#ff6b35,#ffd166)', WebkitBackgroundClip:'text', color:'transparent' }}>Log</span>
+            </div>
+            <div style={{ fontSize:12, color:'rgba(255,255,255,0.3)', letterSpacing:3, textTransform:'uppercase', fontFamily:'Arial, sans-serif', fontWeight:700, display:'flex' }}>
+              GAME JOURNAL
+            </div>
+          </div>
+          {/* Free badge */}
+          <div style={{ marginLeft:8, padding:'5px 14px', borderRadius:99, background:'rgba(255,107,53,0.15)', border:'1px solid rgba(255,107,53,0.35)', display:'flex' }}>
+            <span style={{ fontSize:11, fontWeight:700, color:'#ff6b35', letterSpacing:2, fontFamily:'Arial,sans-serif' }}>GRATUIT</span>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div style={{ position:'absolute', top:152, left:80, width:580, height:1, background:'rgba(255,255,255,0.07)', display:'flex' }} />
+
+        {/* Main headline */}
+        <div style={{ position:'absolute', top:178, left:80, display:'flex', flexDirection:'column', gap:0 }}>
+          <div style={{ fontSize:70, fontWeight:900, color:'white', letterSpacing:-2, lineHeight:1.05, display:'flex' }}>Note. Critique.</div>
+          <div style={{ fontSize:70, fontWeight:900, letterSpacing:-2, lineHeight:1.05, display:'flex' }}>
+            <span style={{ background:'linear-gradient(90deg,#ff6b35,#ffd166)', WebkitBackgroundClip:'text', color:'transparent' }}>Partage</span>
+            <span style={{ color:'white' }}>&nbsp;tes jeux.</span>
+          </div>
+        </div>
+
+        {/* Subtitle */}
+        <div style={{ position:'absolute', top:370, left:80, fontSize:22, color:'rgba(255,255,255,0.38)', fontFamily:'Arial, sans-serif', display:'flex' }}>
+          Des millions de jeux · De la Game Boy à la PS5
+        </div>
+
+        {/* URL */}
+        <div style={{ position:'absolute', bottom:52, left:80, fontSize:20, fontWeight:700, color:'rgba(255,107,53,0.7)', letterSpacing:1, fontFamily:'Arial, sans-serif', display:'flex' }}>
+          joystick-log.com
+        </div>
+
+        {/* Fake game cards right side */}
+        {[
+          { top:90,  left:820, color:'rgba(255,107,53,0.08)',   border:'rgba(255,107,53,0.15)',  score:'9' },
+          { top:90,  left:970, color:'rgba(167,139,250,0.08)',  border:'rgba(167,139,250,0.15)', score:'8' },
+          { top:295, left:820, color:'rgba(255,209,102,0.06)',  border:'rgba(255,209,102,0.12)', score:'7' },
+          { top:295, left:970, color:'rgba(255,107,53,0.07)',   border:'rgba(255,107,53,0.12)',  score:'10' },
+        ].map((c, i) => (
+          <div key={i} style={{ position:'absolute', top:c.top, left:c.left, width:130, height:180, borderRadius:14, background:c.color, border:`1px solid ${c.border}`, display:'flex', alignItems:'flex-end', justifyContent:'flex-end', padding:8 }}>
+            <div style={{ width:34, height:22, borderRadius:7, background:'#ff6b35', display:'flex', alignItems:'center', justifyContent:'center' }}>
+              <span style={{ fontSize:13, fontWeight:900, color:'white' }}>{c.score}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    ),
+    {
+      width: 1200,
+      height: 630,
+    }
+  );
 }
