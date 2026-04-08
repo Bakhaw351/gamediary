@@ -3344,10 +3344,9 @@ export default function JoystickLog() {
       }).catch(() => {});
   }, [user, topReviews.length]);
 
-  /* Profile recommendations — based on genres of top-rated games */
+  /* Profile recommendations — fetch genres from IGDB for top-rated games */
   useEffect(() => {
     if (ratedGamesList.length === 0) { setProfileRecs([]); return; }
-    // Map IGDB genre names → discover tag keys
     const GENRE_TO_TAG = {
       "role-playing":["RPG"], "rpg":["RPG"],
       "action":["Action"], "shooter":["FPS","Action"],
@@ -3357,21 +3356,30 @@ export default function JoystickLog() {
       "horror":["Horreur"], "indie":["Indie"],
       "open world":["Open World"], "strategy":["RPG"],
     };
-    // Collect genres from games rated >= 7
-    const tagCount = {};
-    ratedGamesList.forEach(g => {
-      if ((userRatings[g.id]?.rating || 0) < 7) return;
-      (g.tags || []).forEach(genre => {
-        const key = genre.toLowerCase();
-        const matched = Object.entries(GENRE_TO_TAG).find(([k]) => key.includes(k));
-        if (matched) matched[1].forEach(t => { tagCount[t] = (tagCount[t] || 0) + 1; });
-      });
-    });
-    const tags = Object.entries(tagCount).sort((a,b) => b[1]-a[1]).slice(0,4).map(([t]) => t);
-    if (tags.length === 0) { setProfileRecs([]); return; }
+    // Top 4 rated IGDB games (not RAWG) with rating >= 7
+    const topIds = ratedGamesList
+      .filter(g => (userRatings[g.id]?.rating || 0) >= 7 && !String(g.id).startsWith("rawg_"))
+      .sort((a,b) => (userRatings[b.id]?.rating||0) - (userRatings[a.id]?.rating||0))
+      .slice(0, 4)
+      .map(g => g.id);
+    if (topIds.length === 0) { setProfileRecs([]); return; }
     const ratedIds = new Set(ratedGamesList.map(g => String(g.id)));
-    fetch(`/api/games/discover?tags=${encodeURIComponent(tags.join(','))}`)
-      .then(r => r.json())
+    // Fetch genres for those games in parallel
+    Promise.all(topIds.map(id => fetch(`/api/games?id=${id}`).then(r => r.json()).catch(() => null)))
+      .then(results => {
+        const tagCount = {};
+        results.forEach(data => {
+          if (!data?.genres) return;
+          data.genres.forEach(genre => {
+            const key = (genre.name || "").toLowerCase();
+            const matched = Object.entries(GENRE_TO_TAG).find(([k]) => key.includes(k));
+            if (matched) matched[1].forEach(t => { tagCount[t] = (tagCount[t] || 0) + 1; });
+          });
+        });
+        const tags = Object.entries(tagCount).sort((a,b) => b[1]-a[1]).slice(0,4).map(([t]) => t);
+        if (tags.length === 0) return;
+        return fetch(`/api/games/discover?tags=${encodeURIComponent(tags.join(','))}`).then(r => r.json());
+      })
       .then(data => {
         if (!Array.isArray(data)) return;
         const recs = data
