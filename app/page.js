@@ -4170,8 +4170,7 @@ export default function JoystickLog() {
                     </div>
                     <div style={{ flex:1 }}>
                       <div style={{ fontSize:10, color:"rgba(255,107,53,.6)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:5 }}>{t("player")}</div>
-                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:20, color:"#fff", marginBottom:2, letterSpacing:-.2 }}>{profileUsername || user.email?.split("@")[0]}</h2>
-                      <div style={{ fontSize:12, color:"rgba(255,255,255,.25)", fontFamily:"'Space Grotesk',sans-serif", marginBottom:18 }}>{user.email}</div>
+                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:20, color:"#fff", marginBottom:2, letterSpacing:-.2 }}>{profileUsername || t("player")}</h2>
                       {/* Stat cards in row */}
                       <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
                         {[
