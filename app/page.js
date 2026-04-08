@@ -3126,6 +3126,7 @@ export default function JoystickLog() {
   const [notifications, setNotifications]   = useState([]);
   const [showNotifs, setShowNotifs]         = useState(false);
   const [topReviews, setTopReviews]         = useState([]);
+  const [topReviewMyLikes, setTopReviewMyLikes] = useState(new Set());
   const [theme, setTheme]                   = useState("dark");
   const notifRef = useRef(null);
 
@@ -3333,6 +3334,14 @@ export default function JoystickLog() {
   useEffect(() => {
     supabase.rpc('get_top_reviews').then(({ data }) => { if (data) setTopReviews(data); }).catch(() => {});
   }, []);
+  useEffect(() => {
+    if (!user || topReviews.length === 0) return;
+    const pairs = topReviews.map(rv => `${rv.reviewer_id}_${rv.game_id}`);
+    supabase.from("likes").select("reviewer_id,game_id").eq("user_id", user.id)
+      .then(({ data }) => {
+        if (data) setTopReviewMyLikes(new Set(data.map(l => `${l.reviewer_id}_${l.game_id}`)));
+      }).catch(() => {});
+  }, [user, topReviews.length]);
 
   /* User lists */
   useEffect(() => {
@@ -3899,7 +3908,31 @@ export default function JoystickLog() {
                   </div>
                 </div>
                 <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-                  {topReviews.map((rv, i) => (
+                  {topReviews.map((rv, i) => {
+                    const likeKey = `${rv.reviewer_id}_${rv.game_id}`;
+                    const liked = topReviewMyLikes.has(likeKey);
+                    const displayName = rv.user_display || rv.reviewer_username || "Joueur";
+                    const toggleLike = async () => {
+                      if (!user) { setShowAuth(true); return; }
+                      if (user.id === rv.reviewer_id) return;
+                      const nowLiked = !liked;
+                      setTopReviewMyLikes(prev => {
+                        const next = new Set(prev);
+                        nowLiked ? next.add(likeKey) : next.delete(likeKey);
+                        return next;
+                      });
+                      setTopReviews(prev => prev.map(r =>
+                        r.reviewer_id === rv.reviewer_id && r.game_id === rv.game_id
+                          ? { ...r, like_count: (r.like_count || 0) + (nowLiked ? 1 : -1) }
+                          : r
+                      ));
+                      if (nowLiked) {
+                        await supabase.from("likes").insert({ game_id: rv.game_id, user_id: user.id, reviewer_id: rv.reviewer_id }).catch(() => {});
+                      } else {
+                        await supabase.from("likes").delete().eq("game_id", rv.game_id).eq("user_id", user.id).eq("reviewer_id", rv.reviewer_id).catch(() => {});
+                      }
+                    };
+                    return (
                     <div key={rv.reviewer_id + rv.game_id} style={{ display:"flex", gap:16, padding:"18px 20px", borderRadius:18, border:"1px solid rgba(255,255,255,.048)", background:"rgba(255,255,255,.016)", transition:"all .22s", alignItems:"flex-start" }}>
                       {/* Rank */}
                       <div style={{ flexShrink:0, width:28, textAlign:"center", paddingTop:4 }}>
@@ -3915,8 +3948,8 @@ export default function JoystickLog() {
                       <div style={{ flex:1, minWidth:0 }}>
                         <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:6, flexWrap:"wrap" }}>
                           <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.75)", cursor:"pointer" }}
-                            onClick={() => openUserProfile(rv.reviewer_username)}>
-                            {rv.reviewer_username || "Joueur"}
+                            onClick={() => openUserProfile(displayName)}>
+                            {displayName}
                           </span>
                           <span style={{ color:"rgba(255,255,255,.18)", fontSize:11 }}>sur</span>
                           <span style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.55)" }}>
@@ -3932,13 +3965,14 @@ export default function JoystickLog() {
                           </p>
                         )}
                       </div>
-                      {/* Like count (read-only) */}
-                      <div style={{ flexShrink:0, background:"rgba(239,68,68,.08)", border:"1px solid rgba(239,68,68,.2)", borderRadius:20, padding:"5px 13px", fontSize:13, display:"flex", alignItems:"center", gap:5, color:"rgba(239,68,68,.7)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>
-                        <span style={{ fontSize:15 }}>❤️</span>
+                      {/* Like button — interactive */}
+                      <button onClick={toggleLike} style={{ flexShrink:0, background: liked ? "rgba(239,68,68,.18)" : "rgba(239,68,68,.06)", border: liked ? "1px solid rgba(239,68,68,.5)" : "1px solid rgba(239,68,68,.18)", borderRadius:20, padding:"5px 13px", fontSize:13, display:"flex", alignItems:"center", gap:5, color: liked ? "#ef4444" : "rgba(239,68,68,.6)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, cursor:"pointer", transition:"all .18s", outline:"none" }}>
+                        <span style={{ fontSize:15, transition:"transform .15s", transform: liked ? "scale(1.2)" : "scale(1)" }}>{liked ? "❤️" : "🤍"}</span>
                         <span>{rv.like_count || 0}</span>
-                      </div>
+                      </button>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
