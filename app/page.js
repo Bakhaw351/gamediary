@@ -3127,6 +3127,7 @@ export default function JoystickLog() {
   const [showNotifs, setShowNotifs]         = useState(false);
   const [topReviews, setTopReviews]         = useState([]);
   const [topReviewMyLikes, setTopReviewMyLikes] = useState(new Set());
+  const [profileRecs, setProfileRecs]       = useState([]);
   const [theme, setTheme]                   = useState("dark");
   const notifRef = useRef(null);
 
@@ -3342,6 +3343,44 @@ export default function JoystickLog() {
         if (data) setTopReviewMyLikes(new Set(data.map(l => `${l.reviewer_id}_${l.game_id}`)));
       }).catch(() => {});
   }, [user, topReviews.length]);
+
+  /* Profile recommendations — based on genres of top-rated games */
+  useEffect(() => {
+    if (ratedGamesList.length === 0) { setProfileRecs([]); return; }
+    // Map IGDB genre names → discover tag keys
+    const GENRE_TO_TAG = {
+      "role-playing":["RPG"], "rpg":["RPG"],
+      "action":["Action"], "shooter":["FPS","Action"],
+      "adventure":["Aventure"], "platform":["Platformer"],
+      "puzzle":["Puzzle"], "simulation":["Simulation"],
+      "sport":["Sport"], "sports":["Sport"],
+      "horror":["Horreur"], "indie":["Indie"],
+      "open world":["Open World"], "strategy":["RPG"],
+    };
+    // Collect genres from games rated >= 7
+    const tagCount = {};
+    ratedGamesList.forEach(g => {
+      if ((userRatings[g.id]?.rating || 0) < 7) return;
+      (g.tags || []).forEach(genre => {
+        const key = genre.toLowerCase();
+        const matched = Object.entries(GENRE_TO_TAG).find(([k]) => key.includes(k));
+        if (matched) matched[1].forEach(t => { tagCount[t] = (tagCount[t] || 0) + 1; });
+      });
+    });
+    const tags = Object.entries(tagCount).sort((a,b) => b[1]-a[1]).slice(0,4).map(([t]) => t);
+    if (tags.length === 0) { setProfileRecs([]); return; }
+    const ratedIds = new Set(ratedGamesList.map(g => String(g.id)));
+    fetch(`/api/games/discover?tags=${encodeURIComponent(tags.join(','))}`)
+      .then(r => r.json())
+      .then(data => {
+        if (!Array.isArray(data)) return;
+        const recs = data
+          .map(g => formatGame(g))
+          .filter(g => g.cover && !ratedIds.has(String(g.id)))
+          .slice(0, 10);
+        setProfileRecs(recs);
+      }).catch(() => {});
+  }, [ratedGamesList.length]);
 
   /* User lists */
   useEffect(() => {
@@ -4231,6 +4270,36 @@ export default function JoystickLog() {
                     </div>
                   );
                 })()}
+
+                {/* Recommandations */}
+                {profileRecs.length > 0 && (
+                  <div style={{ marginBottom:28 }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:14 }}>
+                      <span style={{ fontSize:18 }}>✨</span>
+                      <div style={{ fontSize:10, color:"rgba(167,139,250,.8)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", fontWeight:700 }}>Recommandations</div>
+                      <div style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>basées sur tes goûts</div>
+                    </div>
+                    <div style={{ display:"flex", gap:10, overflowX:"auto", paddingBottom:6 }}>
+                      {profileRecs.map(g => {
+                        const cover = g.cover ? (g.cover.startsWith("http") ? g.cover : `https:${g.cover.replace("t_thumb","t_cover_big")}`) : null;
+                        return (
+                          <div key={g.id} onClick={() => setSelectedGame(g)} style={{ flexShrink:0, width:100, cursor:"pointer" }}>
+                            <div style={{ width:100, height:134, borderRadius:12, overflow:"hidden", background:"rgba(255,255,255,.06)", border:"1px solid rgba(167,139,250,.15)", position:"relative" }}>
+                              {cover
+                                ? <img src={cover} alt={g.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+                                : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:28 }}>🎮</div>
+                              }
+                              {g.rating && (
+                                <div style={{ position:"absolute", bottom:6, right:6, background:"rgba(167,139,250,.9)", borderRadius:7, padding:"2px 8px", fontFamily:"'Syne',sans-serif", fontWeight:900, fontSize:11, color:"#fff", boxShadow:"0 2px 8px rgba(0,0,0,.5)" }}>{g.rating}</div>
+                              )}
+                            </div>
+                            <div style={{ marginTop:7, fontSize:11, fontWeight:700, color:"rgba(255,255,255,.6)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2, textAlign:"center", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{g.title}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
                 {/* Rating distribution */}
                 {Object.keys(userRatings).length > 0 && (
