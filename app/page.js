@@ -4195,6 +4195,43 @@ export default function JoystickLog() {
                 {/* Username edit */}
                 <UsernameEdit user={user} profileUsername={profileUsername} setProfileUsername={setProfileUsername} t={t} />
 
+                {/* Coups de cœur — jeux notés 8+ */}
+                {(() => {
+                  const favs = ratedGamesList
+                    .filter(g => (userRatings[g.id]?.rating || 0) >= 8)
+                    .sort((a,b) => (userRatings[b.id]?.rating||0) - (userRatings[a.id]?.rating||0));
+                  if (favs.length === 0) return null;
+                  return (
+                    <div style={{ marginBottom:28 }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:14 }}>
+                        <span style={{ fontSize:18 }}>❤️</span>
+                        <div style={{ fontSize:10, color:"rgba(239,68,68,.7)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", fontWeight:700 }}>Coups de cœur</div>
+                        <div style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>· {favs.length} jeu{favs.length>1?"x":""}</div>
+                      </div>
+                      <div style={{ display:"flex", gap:10, overflowX:"auto", paddingBottom:6 }}>
+                        {favs.map(g => {
+                          const r = userRatings[g.id]?.rating;
+                          const rCol = r >= 9 ? "#ffd166" : "#ff6b35";
+                          const cover = g.cover ? (g.cover.startsWith("http") ? g.cover : `https:${g.cover.replace("t_thumb","t_cover_big")}`) : null;
+                          return (
+                            <div key={g.id} onClick={() => setSelectedGame(g)} style={{ flexShrink:0, width:100, cursor:"pointer", position:"relative" }}>
+                              <div style={{ width:100, height:134, borderRadius:12, overflow:"hidden", background:"rgba(255,255,255,.06)", border:"1px solid rgba(255,255,255,.08)", position:"relative" }}>
+                                {cover
+                                  ? <img src={cover} alt={g.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+                                  : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:28 }}>🎮</div>
+                                }
+                                {/* Score badge */}
+                                <div style={{ position:"absolute", bottom:6, right:6, background:rCol, borderRadius:7, padding:"2px 8px", fontFamily:"'Syne',sans-serif", fontWeight:900, fontSize:12, color: r >= 9 ? "#0d0e14" : "#fff", boxShadow:"0 2px 8px rgba(0,0,0,.5)" }}>{r}/10</div>
+                              </div>
+                              <div style={{ marginTop:7, fontSize:11, fontWeight:700, color:"rgba(255,255,255,.7)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2, textAlign:"center", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{g.title}</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 {/* Rating distribution */}
                 {Object.keys(userRatings).length > 0 && (
                   <div style={{ marginBottom:28, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.06)", borderRadius:14, padding:"18px 20px" }}>
