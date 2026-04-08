@@ -935,7 +935,7 @@ const FeaturedCard = ({ game, onClick }) => {
             </div>
           )}
           <div style={{ fontSize:11, color:"rgba(255,255,255,.32)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:500, marginBottom:7, letterSpacing:.2 }}>
-            {game.platform?.split("(")[0].trim()} · {game.year}
+            {game.platform?.split("(")[0]?.trim()} · {game.year}
           </div>
           <div style={{ fontSize:22, fontWeight:700, color:"#fff", fontFamily:"'Syne',sans-serif", lineHeight:1.1, letterSpacing:"-.4px" }}>{game.title}</div>
         </div>
@@ -1339,13 +1339,13 @@ const ReviewCard = ({ rv, col, initials, rxCounts, myRx, rvReplies, isReplying, 
 
 /* ── CINEMATIC GAME PAGE ──────────────────────────────────── */
 const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired, username, userLists, lang, onUserClick, t }) => {
-  const [myR, setMyR] = useState(userRatings[game.id]?.rating || 0);
+  const [myR, setMyR] = useState(userRatings?.[game.id]?.rating || 0);
   const [hovR, setHovR] = useState(0);
-  const [txt, setTxt] = useState(userRatings[game.id]?.comment || "");
-  const [saved, setSaved] = useState(!!userRatings[game.id]);
+  const [txt, setTxt] = useState(userRatings?.[game.id]?.comment || "");
+  const [saved, setSaved] = useState(!!(userRatings?.[game.id]));
   const [loading, setLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState(userStatus[game.id] || null);
+  const [currentStatus, setCurrentStatus] = useState(userStatus?.[game.id] || null);
   const [bgLoaded, setBgLoaded] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -1444,7 +1444,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
       const session = sessionData?.session;
       if (!session) return;
       const userDisplay = username || user?.user_metadata?.username || user?.email?.split("@")[0] || "";
-      const rating = userRatings[game.id]?.rating || myR;
+      const rating = userRatings?.[game.id]?.rating || myR;
       if (!rating || rating < 1 || rating > 10) return;
       const res = await fetch("/api/ratings", {
         method: "POST",
@@ -1680,11 +1680,11 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
           {/* Badges */}
           <div style={{ display:"flex", gap:10, marginBottom:18, flexWrap:"wrap", alignItems:"center" }}>
             <span style={{ background:"rgba(255,107,53,.15)", color:"#ffd166", border:"1px solid rgba(255,107,53,.3)", borderRadius:99, padding:"4px 14px", fontSize:12, fontFamily:"'Syne',sans-serif", fontWeight:700 }}>
-              {game.platform ? game.platform.split("(")[0].trim() : t("multi")}
+              {game.platform ? game.platform.split("(")[0]?.trim() : t("multi")}
             </span>
             <span style={{ color:"rgba(255,255,255,.4)", fontSize:13, fontFamily:"'DM Sans',sans-serif" }}>{game.year}</span>
             {fullGame.genre && <span style={{ color:"rgba(255,255,255,.4)", fontSize:13 }}>· {fullGame.genre}</span>}
-            {fullGame.tags.slice(0,3).map(t => (
+            {(fullGame.tags||[]).slice(0,3).map(t => (
               <span key={t} style={{ background:"rgba(255,255,255,.06)", border:"1px solid rgba(255,255,255,.1)", color:"rgba(255,255,255,.45)", borderRadius:6, padding:"3px 10px", fontSize:11 }}>#{t}</span>
             ))}
           </div>
@@ -1703,9 +1703,9 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
 
           {/* Stats row */}
           <div style={{ display:"flex", gap:28, marginBottom:32, flexWrap:"wrap", alignItems:"center" }}>
-            {userRatings[game.id] && (
+            {userRatings?.[game.id] && (
               <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                <Ring value={userRatings[game.id].rating} size={52} />
+                <Ring value={userRatings[game.id]?.rating} size={52} />
                 <div>
                   <div style={{ fontSize:12, color:"rgba(255,255,255,.3)", fontFamily:"'DM Sans',sans-serif" }}>{t("myRating")}</div>
                   <div style={{ fontSize:13, color:"rgba(255,255,255,.55)", fontFamily:"'DM Sans',sans-serif" }}>{t("savedLabel")}</div>
@@ -2017,7 +2017,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
             {/* ── INFO GRID ── */}
             <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:10 }}>
               {[
-                { icon:"🖥", label:t("platform"), value: (() => { const p = (fullGame.allPlatforms?.length > 0 ? fullGame.allPlatforms : [fullGame.platform]).filter(Boolean); const shown = p.slice(0,5).map(x=>x.split("(")[0].trim()).join(", "); return p.length > 5 ? shown + ` +${p.length-5}` : shown; })() },
+                { icon:"🖥", label:t("platform"), value: (() => { const p = (fullGame.allPlatforms?.length > 0 ? fullGame.allPlatforms : [fullGame.platform]).filter(Boolean); const shown = p.slice(0,5).map(x=>x?.split("(")[0]?.trim()).filter(Boolean).join(", "); return p.length > 5 ? shown + ` +${p.length-5}` : shown; })() },
                 { icon:"📅", label:t("releaseYear"), value:fullGame.year },
                 { icon:"🎭", label:t("mainGenre"), value:fullGame.genre },
                 { icon:"💬", label:t("communityCount"), value:communityReviews.length > 0 ? `${communityReviews.length} ${t("avisCount")}` : t("beFirst") },
@@ -2033,9 +2033,9 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
             </div>
 
             {/* Tags */}
-            {fullGame.tags.length > 0 && (
+            {(fullGame.tags?.length > 0) && (
               <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-                {fullGame.tags.map(t => (
+                {(fullGame.tags||[]).map(t => (
                   <span key={t} style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", color:"rgba(255,255,255,.38)", borderRadius:8, padding:"6px 14px", fontSize:12, fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, letterSpacing:.3 }}>#{t}</span>
                 ))}
               </div>
@@ -2582,14 +2582,20 @@ const SettingsModal = ({ user, profileUsername, setProfileUsername, profileAvata
 
   const deleteAccount = async () => {
     if (deleteConfirm !== "SUPPRIMER") { flash("err", t("settings_err_delete_confirm")); return; }
+    if (!user?.id) return;
     setSaving(true);
-    // Delete user data then call onDeleteAccount
-    await supabase.from("game_ratings").delete().eq("user_id", user.id);
-    await supabase.from("game_status").delete().eq("user_id", user.id);
-    await supabase.from("profiles").delete().eq("id", user.id);
-    await supabase.auth.signOut();
-    onDeleteAccount();
-    onClose();
+    try {
+      await supabase.from("game_ratings").delete().eq("user_id", user.id);
+      await supabase.from("game_status").delete().eq("user_id", user.id);
+      await supabase.from("profiles").delete().eq("id", user.id);
+      await supabase.auth.signOut();
+      onDeleteAccount();
+      onClose();
+    } catch(e) {
+      console.error("deleteAccount:", e);
+      flash("err", "Erreur lors de la suppression.");
+      setSaving(false);
+    }
   };
 
   const SECTIONS = [
