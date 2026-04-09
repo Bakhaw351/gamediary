@@ -2064,7 +2064,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
                           onMouseLeave={e=>e.currentTarget.style.transform="translateY(0)"}>
                           <div style={{ borderRadius:10, overflow:"hidden", border:"1px solid rgba(255,255,255,.08)", marginBottom:6, paddingBottom:"140%", position:"relative", background:"#0d0b09" }}>
                             {cover
-                              ? <img src={cover} alt={g.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }} />
+                              ? <img src={cover} alt={g.name} loading="lazy" style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }} />
                               : <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}>🎮</div>
                             }
                           </div>
@@ -3062,7 +3062,7 @@ const ActivityItem = ({ item, onClick, onUserClick }) => {
       onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,107,53,.04)";e.currentTarget.style.borderColor="rgba(255,107,53,.12)";}}
       onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,255,255,.02)";e.currentTarget.style.borderColor="rgba(255,255,255,.04)";}}>
       <div style={{ width:36, height:48, borderRadius:7, overflow:"hidden", flexShrink:0, background:"rgba(255,255,255,.06)" }}>
-        {item.game_cover && <img src={item.game_cover} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} />}
+        {item.game_cover && <img src={item.game_cover} alt="" loading="lazy" style={{ width:"100%", height:"100%", objectFit:"cover" }} />}
       </div>
       <div style={{ flex:1, minWidth:0 }}>
         <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:3 }}>
@@ -3096,7 +3096,7 @@ export default function JoystickLog() {
       navigator.serviceWorker.register("/sw.js").catch(() => {});
     }
   }, []);
-  const t = key => (TRANSLATIONS[lang]?.[key] ?? TRANSLATIONS.fr[key] ?? key);
+  const t = useCallback(key => (TRANSLATIONS[lang]?.[key] ?? TRANSLATIONS.fr[key] ?? key), [lang]);
 
   const [tab, setTab]           = useState("home");
   const [selected, setSelected] = useState(null);
@@ -3404,7 +3404,7 @@ export default function JoystickLog() {
       .then(results => {
         const tagCount = {};
         results.forEach(data => {
-          if (!data?.genres) return;
+          if (!Array.isArray(data?.genres)) return;
           data.genres.forEach(genre => {
             const key = (genre.name || "").toLowerCase();
             const matched = Object.entries(GENRE_TO_TAG).find(([k]) => key.includes(k));
@@ -3496,8 +3496,9 @@ export default function JoystickLog() {
   useEffect(() => {
     if (tab!=="explore") return;
     setExploreOffset(0);
-    const t = setTimeout(()=>fetchExplore(searchQ, platFilter, 0), searchQ.length>=2?500:0);
-    return ()=>clearTimeout(t);
+    exploreOffsetRef.current = 0; // reset immediately so IntersectionObserver sees it
+    const timer = setTimeout(()=>fetchExplore(searchQ, platFilter, 0), searchQ.length>=2?500:0);
+    return ()=>clearTimeout(timer);
   }, [searchQ, platFilter, tab]);
 
   useEffect(() => { if (tab==="explore"&&exploreGames.length===0) fetchExplore("", platFilter, 0); }, [tab]);
@@ -3577,6 +3578,19 @@ export default function JoystickLog() {
   const jacketCovers = useMemo(() =>
     [...topGames, ...trendingGames, ...gemGames, ...exploreGames].filter(g=>g.cover).map(g=>g.cover).slice(0,12),
     [topGames, trendingGames, gemGames, exploreGames]);
+
+  const profileStats = useMemo(() => {
+    const ratingVals = Object.values(userRatings);
+    const avg = ratingVals.length > 0
+      ? (ratingVals.reduce((a, b) => a + b.rating, 0) / ratingVals.length).toFixed(1)
+      : "—";
+    return [
+      { key:"rated", v: Object.keys(userRatings).length, l: t("gamesRated"), icon:"⭐" },
+      { key:"list",  v: Object.keys(userStatus).length,  l: t("inMyList"),   icon:"📋" },
+      { key:"wish",  v: wishlistGames.length,            l: t("wantToPlay"), icon:"🔖" },
+      { key:"avg",   v: avg,                             l: t("avgRating"),  icon:"📊" },
+    ];
+  }, [userRatings, userStatus, wishlistGames.length, t]);
 
   const profileFavs = useMemo(() =>
     ratedGamesList
@@ -3984,8 +3998,8 @@ export default function JoystickLog() {
                   </div>
                 </div>
                 <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-                  {activityFeed.slice(0, 10).map((item, i) => (
-                    <ActivityItem key={`${item.user_id}-${item.game_id}-${i}`} item={item} onClick={g=>setSelected(g)} onUserClick={openUserProfile} />
+                  {activityFeed.slice(0, 10).map((item) => (
+                    <ActivityItem key={`${item.user_id}-${item.game_id}-${item.updated_at}`} item={item} onClick={g=>setSelected(g)} onUserClick={openUserProfile} />
                   ))}
                 </div>
               </div>
@@ -4038,7 +4052,7 @@ export default function JoystickLog() {
                       </div>
                       {/* Cover */}
                       <div style={{ flexShrink:0, width:44, height:58, borderRadius:8, overflow:"hidden", background:"rgba(255,255,255,.06)" }}>
-                        {rv.game_cover && <img src={rv.game_cover.replace("t_thumb","t_cover_small")} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} />}
+                        {rv.game_cover && <img src={rv.game_cover.replace("t_thumb","t_cover_small")} alt="" loading="lazy" style={{ width:"100%", height:"100%", objectFit:"cover" }} />}
                       </div>
                       {/* Content */}
                       <div style={{ flex:1, minWidth:0 }}>
@@ -4269,13 +4283,8 @@ export default function JoystickLog() {
                       <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:20, color:"#fff", marginBottom:2, letterSpacing:-.2 }}>{profileUsername || t("player")}</h2>
                       {/* Stat cards in row */}
                       <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
-                        {[
-                          { v:Object.keys(userRatings).length, l:t("gamesRated"), icon:"⭐" },
-                          { v:Object.keys(userStatus).length, l:t("inMyList"), icon:"📋" },
-                          { v:wishlistGames.length, l:t("wantToPlay"), icon:"🔖" },
-                          { v:Object.keys(userRatings).length>0?(Object.values(userRatings).reduce((a,b)=>a+b.rating,0)/Object.keys(userRatings).length).toFixed(1):"—", l:t("avgRating"), icon:"📊" },
-                        ].map(s=>(
-                          <div key={s.l} style={{ background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", borderRadius:12, padding:"10px 16px", display:"flex", alignItems:"center", gap:10 }}>
+                        {profileStats.map(s=>(
+                          <div key={s.key} style={{ background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", borderRadius:12, padding:"10px 16px", display:"flex", alignItems:"center", gap:10 }}>
                             <span style={{ fontSize:16 }}>{s.icon}</span>
                             <div>
                               <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:20, color:"#ff6b35", lineHeight:1 }}>{s.v}</div>

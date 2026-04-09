@@ -47,6 +47,16 @@ export async function POST(request) {
     return Response.json({ error: "Inappropriate content" }, { status: 422 });
   }
 
+  // Only allow covers from known trusted domains to prevent tracking pixels / open storage
+  const ALLOWED_COVER_HOSTS = ['images.igdb.com', 'media.rawg.io'];
+  let safeGameCover = null;
+  if (gameCover && typeof gameCover === 'string') {
+    try {
+      const coverUrl = new URL(gameCover.startsWith('//') ? `https:${gameCover}` : gameCover);
+      if (ALLOWED_COVER_HOSTS.includes(coverUrl.hostname)) safeGameCover = gameCover;
+    } catch { /* invalid URL — ignore */ }
+  }
+
   const { error } = await supabase.from("ratings").upsert({
     user_id: user.id,
     game_id: gameId,
@@ -54,7 +64,7 @@ export async function POST(request) {
     comment: sanitize(comment, 2000),
     user_display: sanitize(userDisplay, 50),
     game_title: sanitize(gameTitle, 200),
-    game_cover: gameCover || null,
+    game_cover: safeGameCover,
   }, { onConflict: "user_id,game_id" });
 
   if (error) {
