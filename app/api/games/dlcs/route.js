@@ -8,7 +8,7 @@ function sanitizeId(id) {
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const gameId = sanitizeId(searchParams.get('id'));
-  if (!gameId) return Response.json({ dlcs: [], series: [] });
+  if (!gameId) return Response.json({ dlcs: [], series: [], editions: [] });
 
   const access_token = await getIgdbToken();
   const headers = {
@@ -19,7 +19,7 @@ export async function GET(request) {
 
   const gameRes = await fetch('https://api.igdb.com/v4/games', {
     method: 'POST', headers,
-    body: `fields dlcs,expansions,collection,game_versions; where id = ${gameId};`,
+    body: `fields dlcs,expansions,collection; where id = ${gameId};`,
   }).catch(e => { console.error('IGDB dlcs game fetch:', e); return null; });
 
   if (!gameRes) return Response.json({ dlcs: [], series: [], editions: [] });
@@ -29,9 +29,6 @@ export async function GET(request) {
     ...(gameData?.dlcs || []),
     ...(gameData?.expansions || []),
   ].filter(id => Number.isFinite(id) && id > 0).slice(0, 30);
-
-  const editionIds = (gameData?.game_versions || [])
-    .filter(id => Number.isFinite(id) && id > 0).slice(0, 15);
 
   const collectionId = Number.isFinite(gameData?.collection) ? gameData.collection : null;
 
@@ -53,15 +50,10 @@ export async function GET(request) {
         }).then(r => r.json()).catch(() => [])
       : Promise.resolve([]),
 
-    editionIds.length > 0
-      ? fetch('https://api.igdb.com/v4/games', {
-          method: 'POST', headers,
-          body: `fields name,cover.url,first_release_date; where id = (${editionIds.join(',')}); sort first_release_date asc; limit 15;`,
-        }).then(r => r.json()).catch(() => [])
-      : fetch('https://api.igdb.com/v4/games', {
-          method: 'POST', headers,
-          body: `fields name,cover.url,first_release_date; where version_parent = ${gameId}; sort first_release_date asc; limit 15;`,
-        }).then(r => r.json()).catch(() => []),
+    fetch('https://api.igdb.com/v4/games', {
+      method: 'POST', headers,
+      body: `fields name,cover.url,first_release_date; where version_parent = ${gameId}; sort first_release_date asc; limit 15;`,
+    }).then(r => r.json()).catch(() => []),
   ]);
 
   return Response.json({

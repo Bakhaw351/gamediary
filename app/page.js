@@ -2089,26 +2089,24 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
                     </div>
                     <span style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>{dlcs.length} {dlcs.length>1?t("contents"):t("content")}</span>
                   </div>
-                  <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                  <div style={{ display:"flex", gap:10, overflowX:"auto", paddingBottom:6 }}>
                     {dlcs.map(dlc => {
                       const cover = dlc.cover?.url ? `https:${dlc.cover.url.replace("t_thumb","t_cover_big")}` : null;
                       const year = dlc.first_release_date ? new Date(dlc.first_release_date*1000).getFullYear() : null;
                       const typeLabel = DLC_LABELS[dlc.category] || t("dlcDLC");
                       return (
-                        <div key={dlc.id} style={{ display:"flex", alignItems:"center", gap:14, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.05)", borderRadius:14, padding:"12px 14px", transition:"all .2s", cursor:"default" }}
-                          onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(167,139,250,.22)"; e.currentTarget.style.background="rgba(167,139,250,.04)"; }}
-                          onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(255,255,255,.05)"; e.currentTarget.style.background="rgba(255,255,255,.02)"; }}>
-                          {cover
-                            ? <img src={cover} alt={dlc.name} style={{ width:42, height:56, borderRadius:8, objectFit:"cover", flexShrink:0, border:"1px solid rgba(255,255,255,.08)" }} />
-                            : <div style={{ width:42, height:56, borderRadius:8, background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>🎮</div>
-                          }
-                          <div style={{ flex:1, minWidth:0 }}>
-                            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.82)", marginBottom:4, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{dlc.name}</div>
-                            <div style={{ display:"flex", gap:7, alignItems:"center", flexWrap:"wrap" }}>
-                              <span style={{ background:"rgba(167,139,250,.12)", border:"1px solid rgba(167,139,250,.25)", borderRadius:5, padding:"1px 8px", fontSize:10, color:"rgba(167,139,250,.85)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>{typeLabel}</span>
-                              {year && <span style={{ fontSize:11, color:"rgba(255,255,255,.22)", fontFamily:"'DM Sans',sans-serif" }}>{year}</span>}
+                        <div key={dlc.id} style={{ flexShrink:0, width:100 }}>
+                          <div style={{ width:100, height:134, borderRadius:12, overflow:"hidden", background:"rgba(255,255,255,.06)", border:"1px solid rgba(167,139,250,.15)", position:"relative" }}>
+                            {cover
+                              ? <img src={cover} alt={dlc.name} loading="lazy" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+                              : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:28 }}>🎮</div>
+                            }
+                            <div style={{ position:"absolute", bottom:5, left:5, right:5 }}>
+                              <span style={{ background:"rgba(167,139,250,.88)", borderRadius:5, padding:"1px 6px", fontSize:9, color:"#fff", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>{typeLabel}</span>
                             </div>
                           </div>
+                          <div style={{ marginTop:7, fontSize:11, fontWeight:700, color:"rgba(255,255,255,.7)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2, textAlign:"center", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{dlc.name}</div>
+                          {year && <div style={{ fontSize:10, color:"rgba(255,255,255,.25)", fontFamily:"'DM Sans',sans-serif", textAlign:"center" }}>{year}</div>}
                         </div>
                       );
                     })}
