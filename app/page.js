@@ -1360,6 +1360,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
   const [replyText, setReplyText] = useState("");
   const [dlcs, setDlcs] = useState([]);
   const [series, setSeries] = useState([]);
+  const [editions, setEditions] = useState([]);
   const [showListMenu, setShowListMenu] = useState(false);
   const [addedToList, setAddedToList] = useState(null);
   const [showShareMenu, setShowShareMenu] = useState(false);
@@ -1394,6 +1395,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
         if (data && !Array.isArray(data)) {
           setDlcs(data.dlcs || []);
           setSeries(data.series || []);
+          setEditions(data.editions || []);
         }
       })
       .catch(e => { if (e.name !== 'AbortError') console.warn('DLC fetch error:', e); });
@@ -2106,6 +2108,41 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
                               <span style={{ background:"rgba(167,139,250,.12)", border:"1px solid rgba(167,139,250,.25)", borderRadius:5, padding:"1px 8px", fontSize:10, color:"rgba(167,139,250,.85)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>{typeLabel}</span>
                               {year && <span style={{ fontSize:11, color:"rgba(255,255,255,.22)", fontFamily:"'DM Sans',sans-serif" }}>{year}</span>}
                             </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── ÉDITIONS ── */}
+            {editions.length > 0 && (
+              <div style={{ background:"rgba(255,255,255,.022)", border:"1px solid rgba(255,255,255,.07)", borderRadius:20, overflow:"hidden" }}>
+                <div style={{ height:2, background:"linear-gradient(90deg,#ffd166,#a78bfa 55%,transparent)" }} />
+                <div style={{ padding:"22px 26px 26px" }}>
+                  <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:18 }}>
+                    <div className="sect-h">
+                      <span style={{ fontSize:10, color:"rgba(255,209,102,.8)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:3, textTransform:"uppercase" }}>Éditions</span>
+                    </div>
+                    <span style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>{editions.length} édition{editions.length>1?"s":""}</span>
+                  </div>
+                  <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                    {editions.map(ed => {
+                      const cover = ed.cover?.url ? `https:${ed.cover.url.replace("t_thumb","t_cover_big")}` : null;
+                      const year = ed.first_release_date ? new Date(ed.first_release_date*1000).getFullYear() : null;
+                      return (
+                        <div key={ed.id} style={{ display:"flex", alignItems:"center", gap:14, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.05)", borderRadius:14, padding:"12px 14px", transition:"all .2s", cursor:"default" }}
+                          onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(255,209,102,.22)"; e.currentTarget.style.background="rgba(255,209,102,.04)"; }}
+                          onMouseLeave={e=>{ e.currentTarget.style.borderColor="rgba(255,255,255,.05)"; e.currentTarget.style.background="rgba(255,255,255,.02)"; }}>
+                          {cover
+                            ? <img src={cover} alt={ed.name} loading="lazy" style={{ width:42, height:56, borderRadius:8, objectFit:"cover", flexShrink:0, border:"1px solid rgba(255,255,255,.08)" }} />
+                            : <div style={{ width:42, height:56, borderRadius:8, background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>🎮</div>
+                          }
+                          <div style={{ flex:1, minWidth:0 }}>
+                            <div style={{ fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.82)", marginBottom:4, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{ed.name}</div>
+                            {year && <span style={{ fontSize:11, color:"rgba(255,255,255,.22)", fontFamily:"'DM Sans',sans-serif" }}>{year}</span>}
                           </div>
                         </div>
                       );

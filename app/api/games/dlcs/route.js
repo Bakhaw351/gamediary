@@ -19,10 +19,10 @@ export async function GET(request) {
 
   const gameRes = await fetch('https://api.igdb.com/v4/games', {
     method: 'POST', headers,
-    body: `fields dlcs,expansions,collection; where id = ${gameId};`,
+    body: `fields dlcs,expansions,collection,game_versions; where id = ${gameId};`,
   }).catch(e => { console.error('IGDB dlcs game fetch:', e); return null; });
 
-  if (!gameRes) return Response.json({ dlcs: [], series: [] });
+  if (!gameRes) return Response.json({ dlcs: [], series: [], editions: [] });
   const [gameData] = await gameRes.json().catch(() => [{}]);
 
   const dlcIds = [
@@ -30,9 +30,12 @@ export async function GET(request) {
     ...(gameData?.expansions || []),
   ].filter(id => Number.isFinite(id) && id > 0).slice(0, 30);
 
+  const editionIds = (gameData?.game_versions || [])
+    .filter(id => Number.isFinite(id) && id > 0).slice(0, 15);
+
   const collectionId = Number.isFinite(gameData?.collection) ? gameData.collection : null;
 
-  const [dlcData, seriesData] = await Promise.all([
+  const [dlcData, seriesData, editionData] = await Promise.all([
     dlcIds.length > 0
       ? fetch('https://api.igdb.com/v4/games', {
           method: 'POST', headers,
@@ -49,10 +52,21 @@ export async function GET(request) {
           body: `fields name,cover.url,first_release_date,rating; where collection = ${collectionId} & id != ${gameId} & category = 0 & cover != null; sort first_release_date asc; limit 12;`,
         }).then(r => r.json()).catch(() => [])
       : Promise.resolve([]),
+
+    editionIds.length > 0
+      ? fetch('https://api.igdb.com/v4/games', {
+          method: 'POST', headers,
+          body: `fields name,cover.url,first_release_date; where id = (${editionIds.join(',')}); sort first_release_date asc; limit 15;`,
+        }).then(r => r.json()).catch(() => [])
+      : fetch('https://api.igdb.com/v4/games', {
+          method: 'POST', headers,
+          body: `fields name,cover.url,first_release_date; where version_parent = ${gameId}; sort first_release_date asc; limit 15;`,
+        }).then(r => r.json()).catch(() => []),
   ]);
 
   return Response.json({
-    dlcs:   Array.isArray(dlcData)    ? dlcData    : [],
-    series: Array.isArray(seriesData) ? seriesData : [],
+    dlcs:     Array.isArray(dlcData)     ? dlcData     : [],
+    series:   Array.isArray(seriesData)  ? seriesData  : [],
+    editions: Array.isArray(editionData) ? editionData : [],
   });
 }

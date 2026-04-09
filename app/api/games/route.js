@@ -120,10 +120,10 @@ export async function GET(request) {
   const platClause = platId ? ` & platforms = (${platId})` : '';
 
   if (query.length >= 2) {
-    // Query both APIs in parallel
+    // Query both APIs in parallel — exclude DLCs (parent_game) and editions/versions (version_parent)
     const [igdbData, rawgData] = await Promise.all([
       fetchIgdb(
-        `search "${query}"; ${IGDB_FIELDS} where parent_game = null${platClause}; limit 20; offset ${offset};`,
+        `search "${query}"; ${IGDB_FIELDS} where parent_game = null & version_parent = null${platClause}; limit 20; offset ${offset};`,
         headers
       ),
       fetchRawg(query, offset),
@@ -132,7 +132,7 @@ export async function GET(request) {
   } else {
     // Default listing — IGDB only (RAWG has no good "top games" sort)
     const data = await fetchIgdb(
-      `${IGDB_FIELDS} where rating > 0 & cover != null & total_rating_count > 5 & parent_game = null${platClause}; sort total_rating_count desc; limit 20; offset ${offset};`,
+      `${IGDB_FIELDS} where rating > 0 & cover != null & total_rating_count > 5 & parent_game = null & version_parent = null${platClause}; sort total_rating_count desc; limit 20; offset ${offset};`,
       headers
     );
     return Response.json(data);
