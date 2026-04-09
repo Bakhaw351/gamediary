@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo, memo } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -855,14 +855,14 @@ const HScrollSection = ({ games, onClick, accent = "#ff6b35", showDate = false }
 };
 
 /* ── GAME CARD ────────────────────────────────────────────── */
-const GameCard = ({ game, onClick, rank, userRating }) => {
+const GameCard = memo(({ game, onClick, rank, userRating }) => {
   const [e, setE] = useState(false);
   return (
     <div className="card" onClick={() => onClick(game)}
       onMouseDown={ev => { if (ev.button === 1) { ev.preventDefault(); window.open(`${window.location.origin}?game=${game.id}`, '_blank'); } }}>
       <div style={{ position:"relative", paddingBottom:"148%", background:"#09090d" }}>
         {game.cover && !e
-          ? <img src={game.cover} onError={() => setE(true)} alt={game.title} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }} />
+          ? <img src={game.cover} onError={() => setE(true)} alt={game.title} loading="lazy" style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }} />
           : <div style={{ position:"absolute", inset:0, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:8, background:"linear-gradient(135deg,#0d0e12,#111318)" }}>
               <span style={{ fontSize:32 }}>🎮</span>
               <span style={{ color:"rgba(255,255,255,.15)", fontSize:10, textAlign:"center", padding:"0 10px", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.3 }}>{game.title}</span>
@@ -899,7 +899,7 @@ const GameCard = ({ game, onClick, rank, userRating }) => {
       </div>
     </div>
   );
-};
+});
 
 /* ── FEATURED CARD ────────────────────────────────────────── */
 const FeaturedCard = ({ game, onClick }) => {
@@ -3543,6 +3543,20 @@ export default function JoystickLog() {
     [...topGames, ...trendingGames, ...gemGames, ...exploreGames].filter(g=>g.cover).map(g=>g.cover).slice(0,12),
     [topGames, trendingGames, gemGames, exploreGames]);
 
+  const profileFavs = useMemo(() =>
+    ratedGamesList
+      .filter(g => (userRatings[g.id]?.rating || 0) >= 8)
+      .sort((a,b) => (userRatings[b.id]?.rating||0) - (userRatings[a.id]?.rating||0)),
+    [ratedGamesList, userRatings]);
+
+  const ratingDistribution = useMemo(() => {
+    const counts = {};
+    for (let n = 1; n <= 10; n++) counts[n] = 0;
+    Object.values(userRatings).forEach(r => { if (r.rating >= 1 && r.rating <= 10) counts[r.rating]++; });
+    const maxC = Math.max(1, ...Object.values(counts));
+    return { counts, maxC };
+  }, [userRatings]);
+
   return (
     <div data-theme={theme} suppressHydrationWarning style={{ minHeight:"100vh", background:th.bg, color:th.text, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>
       <style>{CSS}</style>
@@ -4243,41 +4257,34 @@ export default function JoystickLog() {
                 <UsernameEdit user={user} profileUsername={profileUsername} setProfileUsername={setProfileUsername} t={t} />
 
                 {/* Coups de cœur — jeux notés 8+ */}
-                {(() => {
-                  const favs = ratedGamesList
-                    .filter(g => (userRatings[g.id]?.rating || 0) >= 8)
-                    .sort((a,b) => (userRatings[b.id]?.rating||0) - (userRatings[a.id]?.rating||0));
-                  if (favs.length === 0) return null;
-                  return (
-                    <div style={{ marginBottom:28 }}>
-                      <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:14 }}>
-                        <span style={{ fontSize:18 }}>❤️</span>
-                        <div style={{ fontSize:10, color:"rgba(239,68,68,.7)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", fontWeight:700 }}>Coups de cœur</div>
-                        <div style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>· {favs.length} jeu{favs.length>1?"x":""}</div>
-                      </div>
-                      <div style={{ display:"flex", gap:10, overflowX:"auto", paddingBottom:6 }}>
-                        {favs.map(g => {
-                          const r = userRatings[g.id]?.rating;
-                          const rCol = r >= 9 ? "#ffd166" : "#ff6b35";
-                          const cover = g.cover ? (g.cover.startsWith("http") ? g.cover : `https:${g.cover.replace("t_thumb","t_cover_big")}`) : null;
-                          return (
-                            <div key={g.id} onClick={() => setSelectedGame(g)} style={{ flexShrink:0, width:100, cursor:"pointer", position:"relative" }}>
-                              <div style={{ width:100, height:134, borderRadius:12, overflow:"hidden", background:"rgba(255,255,255,.06)", border:"1px solid rgba(255,255,255,.08)", position:"relative" }}>
-                                {cover
-                                  ? <img src={cover} alt={g.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
-                                  : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:28 }}>🎮</div>
-                                }
-                                {/* Score badge */}
-                                <div style={{ position:"absolute", bottom:6, right:6, background:rCol, borderRadius:7, padding:"2px 8px", fontFamily:"'Syne',sans-serif", fontWeight:900, fontSize:12, color: r >= 9 ? "#0d0e14" : "#fff", boxShadow:"0 2px 8px rgba(0,0,0,.5)" }}>{r}/10</div>
-                              </div>
-                              <div style={{ marginTop:7, fontSize:11, fontWeight:700, color:"rgba(255,255,255,.7)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2, textAlign:"center", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{g.title}</div>
-                            </div>
-                          );
-                        })}
-                      </div>
+                {profileFavs.length > 0 && (
+                  <div style={{ marginBottom:28 }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:14 }}>
+                      <span style={{ fontSize:18 }}>❤️</span>
+                      <div style={{ fontSize:10, color:"rgba(239,68,68,.7)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", fontWeight:700 }}>Coups de cœur</div>
+                      <div style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>· {profileFavs.length} jeu{profileFavs.length>1?"x":""}</div>
                     </div>
-                  );
-                })()}
+                    <div style={{ display:"flex", gap:10, overflowX:"auto", paddingBottom:6 }}>
+                      {profileFavs.map(g => {
+                        const r = userRatings[g.id]?.rating;
+                        const rCol = r >= 9 ? "#ffd166" : "#ff6b35";
+                        const cover = g.cover ? (g.cover.startsWith("http") ? g.cover : `https:${g.cover.replace("t_thumb","t_cover_big")}`) : null;
+                        return (
+                          <div key={g.id} onClick={() => setSelectedGame(g)} style={{ flexShrink:0, width:100, cursor:"pointer", position:"relative" }}>
+                            <div style={{ width:100, height:134, borderRadius:12, overflow:"hidden", background:"rgba(255,255,255,.06)", border:"1px solid rgba(255,255,255,.08)", position:"relative" }}>
+                              {cover
+                                ? <img src={cover} alt={g.title} loading="lazy" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+                                : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:28 }}>🎮</div>
+                              }
+                              <div style={{ position:"absolute", bottom:6, right:6, background:rCol, borderRadius:7, padding:"2px 8px", fontFamily:"'Syne',sans-serif", fontWeight:900, fontSize:12, color: r >= 9 ? "#0d0e14" : "#fff", boxShadow:"0 2px 8px rgba(0,0,0,.5)" }}>{r}/10</div>
+                            </div>
+                            <div style={{ marginTop:7, fontSize:11, fontWeight:700, color:"rgba(255,255,255,.7)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2, textAlign:"center", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{g.title}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
                 {/* Recommandations */}
                 {profileRecs.length > 0 && (
@@ -4315,8 +4322,8 @@ export default function JoystickLog() {
                     <div style={{ fontSize:10, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:2.5, textTransform:"uppercase", marginBottom:14 }}>{t("statsDistribution")}</div>
                     <div style={{ display:"flex", alignItems:"flex-end", gap:3, height:72 }}>
                       {[1,2,3,4,5,6,7,8,9,10].map(n => {
-                        const count = Object.values(userRatings).filter(r=>r.rating===n).length;
-                        const maxC = Math.max(1, ...[1,2,3,4,5,6,7,8,9,10].map(x=>Object.values(userRatings).filter(r=>r.rating===x).length));
+                        const count = ratingDistribution.counts[n];
+                        const { maxC } = ratingDistribution;
                         const pct = (count/maxC)*100;
                         const col = rc(n);
                         return (
