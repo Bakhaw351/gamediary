@@ -46,6 +46,9 @@ const RATING_LABELS = {
   9:"Chef-d'œuvre", 10:"Parfait ✦",
 };
 
+const BANNED_WORDS = ["connard","connasse","salope","pute","fdp","fils de pute","enculé","enculer","niquer","nique","tg","ta gueule","batard","bâtard","merde","putain de","espèce de","ordure","bitch","asshole","motherfucker","fucker","cunt","whore","nigger","faggot","retard","idiot","imbecile","moron","crétin","abruti","con ","conne ","gros con"];
+const REVIEW_EMOJIS = ["🔥","💯","😂","👏","😮","🎮"];
+
 const BADGES_DEF = [
   { id:"first",      icon:"🎮", label:{ fr:"Première note",   en:"First rating",     de:"Erste Wertung",    es:"Primera nota",    pt:"Primeira nota"    }, cond:(r,_)=>Object.keys(r).length>=1 },
   { id:"critic",     icon:"✍️", label:{ fr:"Critique",        en:"Critic",           de:"Kritiker",         es:"Crítico",         pt:"Crítico"          }, cond:(r,_)=>Object.values(r).filter(x=>x.comment?.length>10).length>=3 },
@@ -821,7 +824,7 @@ const HScrollSection = ({ games, onClick, accent = "#ff6b35", showDate = false }
             onMouseDown={ev=>{ if(ev.button===1){ ev.preventDefault(); window.open(`${window.location.origin}?game=${g.id}`,'_blank'); } }}>
             <div className="hcard-img">
               {g.cover
-                ? <img src={g.cover} alt={g.title} style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} />
+                ? <img src={g.cover} alt={g.title} loading="lazy" style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} />
                 : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:32 }}>🎮</div>
               }
               <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 55%)", pointerEvents:"none" }} />
@@ -909,7 +912,7 @@ const FeaturedCard = ({ game, onClick }) => {
       onMouseDown={ev => { if (ev.button === 1) { ev.preventDefault(); window.open(`${window.location.origin}?game=${game.id}`, '_blank'); } }}>
       <div style={{ position:"relative", height:400 }}>
         {game.cover && !e
-          ? <img src={game.cover} onError={() => setE(true)} alt={game.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+          ? <img src={game.cover} onError={() => setE(true)} alt={game.title} loading="lazy" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
           : <div style={{ height:"100%", background:"#111318", display:"flex", alignItems:"center", justifyContent:"center", fontSize:56 }}>🎮</div>}
 
         {/* Layered gradients for depth */}
@@ -983,7 +986,8 @@ const AuthModal = ({ onClose, onSuccess, t }) => {
         s.onload = render;
         document.head.appendChild(s);
       } else {
-        const t = setInterval(() => { if (window.turnstile) { clearInterval(t); render(); } }, 100);
+        const intervalId = setInterval(() => { if (window.turnstile) { clearInterval(intervalId); render(); } }, 100);
+        return () => { clearInterval(intervalId); if (turnstileIdRef.current && window.turnstile) { window.turnstile.remove(turnstileIdRef.current); turnstileIdRef.current = null; } };
       }
     } else { render(); }
     return () => { if (turnstileIdRef.current && window.turnstile) { window.turnstile.remove(turnstileIdRef.current); turnstileIdRef.current = null; } };
@@ -1194,7 +1198,7 @@ const ResetPasswordModal = ({ onClose, t }) => {
 };
 
 /* ── REVIEW CARD (with collapsible replies) ───────────────── */
-const ReviewCard = ({ rv, col, initials, rxCounts, myRx, rvReplies, isReplying, replyText, liked, likeCount, onUserClick, onLike, onReact, onReplyToggle, onReplyChange, onReplySubmit, onReplyCancel, onEditSave, user, onAuthRequired, EMOJIS, t }) => {
+const ReviewCard = ({ rv, col, initials, rxCounts, myRx, rvReplies, isReplying, replyText, liked, likeCount, onUserClick, onLike, onReact, onReplyToggle, onReplyChange, onReplySubmit, onReplyCancel, onEditSave, user, onAuthRequired, t }) => {
   const [showReplies, setShowReplies] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(rv.comment || "");
@@ -1269,7 +1273,7 @@ const ReviewCard = ({ rv, col, initials, rxCounts, myRx, rvReplies, isReplying, 
           {likeCount > 0 && <span style={{ fontSize:12 }}>{likeCount}</span>}
         </button>
         <div style={{ width:1, height:18, background:"rgba(255,255,255,.07)", flexShrink:0 }} />
-        {EMOJIS.map(emoji => {
+        {REVIEW_EMOJIS.map(emoji => {
           const count = rxCounts[emoji] || 0;
           const active = myRx.includes(emoji);
           return (
@@ -1418,7 +1422,6 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
     return () => ctrl.abort();
   }, [game.id, lang]);
 
-  const BANNED_WORDS = ["connard","connasse","salope","pute","fdp","fils de pute","enculé","enculer","niquer","nique","tg","ta gueule","batard","bâtard","merde","putain de","espèce de","ordure","bitch","asshole","motherfucker","fucker","cunt","whore","nigger","faggot","retard","idiot","imbecile","moron","crétin","abruti","con ","conne ","gros con"];
   const containsBanned = (text) => {
     const low = text.toLowerCase();
     return BANNED_WORDS.some(w => low.includes(w));
@@ -1459,7 +1462,6 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
     } catch(e) { console.error("editComment:", e); }
   };
 
-  const EMOJIS = ["🔥","💯","😂","👏","😮","🎮"];
 
   const fetchCommunity = async () => {
     const { data } = await supabase.from("ratings")
@@ -2188,7 +2190,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
                           onReplyCancel={()=>{ setReplyingTo(null); setReplyText(""); }}
                           onEditSave={editComment}
                           user={user} onAuthRequired={onAuthRequired}
-                          EMOJIS={EMOJIS} t={t} />
+                          t={t} />
                       );
                     })}
                   </div>
@@ -2620,7 +2622,7 @@ const SettingsModal = ({ user, profileUsername, setProfileUsername, profileAvata
     if (!user?.id) return;
     setSaving(true);
     try {
-      await supabase.from("game_ratings").delete().eq("user_id", user.id);
+      await supabase.from("ratings").delete().eq("user_id", user.id);
       await supabase.from("game_status").delete().eq("user_id", user.id);
       await supabase.from("profiles").delete().eq("id", user.id);
       await supabase.auth.signOut();
@@ -4314,7 +4316,7 @@ export default function JoystickLog() {
                         const rCol = r >= 9 ? "#ffd166" : "#ff6b35";
                         const cover = g.cover ? (g.cover.startsWith("http") ? g.cover : `https:${g.cover.replace("t_thumb","t_cover_big")}`) : null;
                         return (
-                          <div key={g.id} onClick={() => setSelectedGame(g)} style={{ flexShrink:0, width:100, cursor:"pointer", position:"relative" }}>
+                          <div key={g.id} onClick={() => setSelected(g)} style={{ flexShrink:0, width:100, cursor:"pointer", position:"relative" }}>
                             <div style={{ width:100, height:134, borderRadius:12, overflow:"hidden", background:"rgba(255,255,255,.06)", border:"1px solid rgba(255,255,255,.08)", position:"relative" }}>
                               {cover
                                 ? <img src={cover} alt={g.title} loading="lazy" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
@@ -4342,7 +4344,7 @@ export default function JoystickLog() {
                       {profileRecs.map(g => {
                         const cover = g.cover ? (g.cover.startsWith("http") ? g.cover : `https:${g.cover.replace("t_thumb","t_cover_big")}`) : null;
                         return (
-                          <div key={g.id} onClick={() => setSelectedGame(g)} style={{ flexShrink:0, width:100, cursor:"pointer" }}>
+                          <div key={g.id} onClick={() => setSelected(g)} style={{ flexShrink:0, width:100, cursor:"pointer" }}>
                             <div style={{ width:100, height:134, borderRadius:12, overflow:"hidden", background:"rgba(255,255,255,.06)", border:"1px solid rgba(167,139,250,.15)", position:"relative" }}>
                               {cover
                                 ? <img src={cover} alt={g.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />

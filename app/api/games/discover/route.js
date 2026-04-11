@@ -6,24 +6,30 @@
  * pagination and sort-by-rating work correctly across all pages.
  */
 
+// IGDB genre IDs: 5=Shooter, 8=Platform, 9=Puzzle, 10=Racing, 11=RTS, 12=RPG,
+// 13=Simulator, 14=Sport, 15=Strategy, 25=Hack&Slash, 29=Adventure, 31=Arcade,
+// 32=Visual Novel, 33=Card&Board
+// IGDB theme IDs: 1=Action, 17=Fantasy, 18=Sci-fi, 19=Horror, 20=Thriller,
+// 21=Survival, 23=Stealth, 27=Comedy, 31=Drama, 33=Sandbox, 38=Open world,
+// 39=Warfare, 43=Mystery
 const TAG_MAP = {
-  "Open World":   { genres: [31],   themes: [38],     game_modes: [],      kw: [] },
-  "RPG":          { genres: [12],   themes: [],       game_modes: [],      kw: [] },
-  "Action":       { genres: [25],   themes: [1],      game_modes: [],      kw: [] },
-  "Aventure":     { genres: [31],   themes: [],       game_modes: [],      kw: [] },
-  "Platformer":   { genres: [8],    themes: [],       game_modes: [],      kw: ["platformer"] },
-  "Roguelike":    { genres: [12],   themes: [],       game_modes: [],      kw: ["roguelike", "roguelite", "rogue-like"] },
-  "Souls-like":   { genres: [12],   themes: [1],      game_modes: [],      kw: ["souls-like", "soulslike", "soulsborne"] },
-  "Simulation":   { genres: [13],   themes: [33],     game_modes: [],      kw: [] },
-  "Rétro":        { genres: [8,32], themes: [],       game_modes: [],      kw: ["pixel art", "16-bit", "8-bit", "retro"] },
-  "Difficile":    { genres: [12,25],themes: [1],      game_modes: [],      kw: ["difficult", "challenging", "hardcore"] },
-  "Narratif":     { genres: [34,31],themes: [31, 43], game_modes: [],      kw: [] },
-  "Multijoueur":  { genres: [],     themes: [],       game_modes: [2,3,5], kw: [] },
-  "Indie":        { genres: [32],   themes: [],       game_modes: [],      kw: [] },
-  "Horreur":      { genres: [25],   themes: [19],     game_modes: [],      kw: [] },
-  "Sport":        { genres: [14],   themes: [],       game_modes: [],      kw: [] },
-  "FPS":          { genres: [5],    themes: [1],      game_modes: [],      kw: [] },
-  "Puzzle":       { genres: [9],    themes: [],       game_modes: [],      kw: [] },
+  "Open World":   { genres: [],     themes: [38, 33],  game_modes: [],      kw: ["open world"] },
+  "RPG":          { genres: [12],   themes: [17],      game_modes: [],      kw: [] },
+  "Action":       { genres: [25],   themes: [1],       game_modes: [],      kw: [] },
+  "Aventure":     { genres: [29],   themes: [],        game_modes: [],      kw: [] },
+  "Platformer":   { genres: [8],    themes: [],        game_modes: [],      kw: ["platformer"] },
+  "Roguelike":    { genres: [],     themes: [],        game_modes: [],      kw: ["roguelike", "roguelite", "rogue-like"] },
+  "Souls-like":   { genres: [],     themes: [],        game_modes: [],      kw: ["souls-like", "soulslike", "soulsborne"] },
+  "Simulation":   { genres: [13],   themes: [33],      game_modes: [],      kw: [] },
+  "Rétro":        { genres: [8, 31],themes: [],        game_modes: [],      kw: ["pixel art", "16-bit", "8-bit", "retro"] },
+  "Difficile":    { genres: [],     themes: [],        game_modes: [],      kw: ["difficult", "challenging", "hardcore", "permadeath"] },
+  "Narratif":     { genres: [29, 32],themes: [31, 43], game_modes: [],     kw: ["visual novel", "narrative", "story-driven"] },
+  "Multijoueur":  { genres: [],     themes: [],        game_modes: [2,3,5], kw: [] },
+  "Indie":        { genres: [],     themes: [],        game_modes: [],      kw: ["indie", "independent"] },
+  "Horreur":      { genres: [],     themes: [19, 20, 21], game_modes: [],  kw: ["horror", "survival horror"] },
+  "Sport":        { genres: [14],   themes: [],        game_modes: [],      kw: [] },
+  "FPS":          { genres: [5],    themes: [1, 39],   game_modes: [],      kw: ["first-person shooter", "fps"] },
+  "Puzzle":       { genres: [9],    themes: [],        game_modes: [],      kw: [] },
 };
 
 import { getIgdbToken } from '../igdb-token.js';
