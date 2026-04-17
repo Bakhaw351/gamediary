@@ -487,12 +487,23 @@ const CSS = `
     --c-card-a:#131020;--c-card-b:#0e0c18;--c-skel-a:#0f0d18;--c-skel-b:#1a1726;
   }
   [data-theme="light"]{
-    --c-bg:#f4f0e8;--c-nav:rgba(247,244,238,.96);--c-modal:#ffffff;
-    --c-input:rgba(0,0,0,.045);--c-el:rgba(0,0,0,.032);
-    --c-text:#1c1917;--c-text-2:rgba(28,25,23,.6);--c-text-3:rgba(28,25,23,.38);--c-text-4:rgba(28,25,23,.24);
-    --c-border:rgba(0,0,0,.09);--c-border-s:rgba(0,0,0,.065);
-    --c-card-a:#ffffff;--c-card-b:#f8f5f0;--c-skel-a:#e8e4dc;--c-skel-b:#f0ece3;
+    --c-bg:#ede8de;--c-nav:rgba(242,238,230,.97);--c-modal:#faf8f4;
+    --c-input:rgba(0,0,0,.06);--c-el:rgba(0,0,0,.055);
+    --c-text:#1c1917;--c-text-2:rgba(28,25,23,.62);--c-text-3:rgba(28,25,23,.42);--c-text-4:rgba(28,25,23,.26);
+    --c-border:rgba(0,0,0,.11);--c-border-s:rgba(0,0,0,.08);
+    --c-card-a:#ffffff;--c-card-b:#f5f1e8;--c-skel-a:#e4dfd6;--c-skel-b:#eee9e0;
   }
+  [data-theme="light"] .profile-banner{background:linear-gradient(135deg,rgba(255,107,53,.13) 0%,rgba(255,209,102,.09) 50%,rgba(167,139,250,.07) 100%);border:1px solid rgba(255,107,53,.22);box-shadow:0 4px 28px rgba(255,107,53,.08);}
+  [data-theme="light"] .grad-text{background:linear-gradient(135deg,#1c1917 0%,#ff6b35 40%,#d97706 75%,#b45309 100%);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  [data-theme="light"] .stat-card{background:rgba(255,255,255,.85);border:1px solid rgba(0,0,0,.1);box-shadow:0 2px 14px rgba(0,0,0,.06);}
+  [data-theme="light"] .stat-mini{background:rgba(255,255,255,.85);border:1px solid rgba(0,0,0,.1);box-shadow:0 2px 10px rgba(0,0,0,.05);}
+  [data-theme="light"] .glass-panel{background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.09);}
+  [data-theme="light"] .activity-item{background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.08);}
+  [data-theme="light"] .row{background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.08);}
+  [data-theme="light"] .chip{background:rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.12);}
+  [data-theme="light"] .tag{background:rgba(0,0,0,.05);border:1px solid rgba(0,0,0,.11);}
+  [data-theme="light"] .game-card{box-shadow:0 4px 18px rgba(0,0,0,.1);}
+  [data-theme="light"] .sect-h::before{box-shadow:0 0 10px rgba(255,107,53,.35);}
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
   body{background:var(--c-bg);color:var(--c-text);font-family:'Plus Jakarta Sans',sans-serif;}
