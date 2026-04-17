@@ -3104,6 +3104,7 @@ export default function JoystickLog() {
   const [selected, setSelected] = useState(null);
   const [user, setUser]         = useState(null);
   const [showAuth, setShowAuth] = useState(false);
+  const [showPlayingPrompt, setShowPlayingPrompt] = useState(false);
   const [userRatings, setUserRatings]     = useState({});
   const [userStatus, setUserStatus]       = useState({});
   const [ratedGamesList, setRatedGamesList] = useState([]);
@@ -3272,7 +3273,7 @@ export default function JoystickLog() {
         const r = {};
         const games = [];
         data.forEach(d => {
-          r[d.game_id] = { rating:d.rating, comment:d.comment };
+          r[d.game_id] = { rating:d.rating, comment:d.comment, updatedAt:d.updated_at };
           if (d.game_title) games.push({ id:d.game_id, title:d.game_title, cover:d.game_cover||null, platform:null, year:"—", genre:null, rating:null, reviews:0, tags:[], summary:"", videoId:null });
         });
         setUserRatings(r);
@@ -3288,6 +3289,8 @@ export default function JoystickLog() {
           id:d.game_id, title:d.game_title, cover:d.game_cover,
           platform:d.game_platform, year:d.game_year, genre:null, rating:null, reviews:0, tags:[], summary:"",
         })));
+        const hasPlaying = data.some(d => d.status === "playing");
+        if (!hasPlaying) setTimeout(() => setShowPlayingPrompt(true), 3000);
       }
     }).catch(e => console.error('loadStatus:', e));
   }, [user]);
@@ -3608,6 +3611,31 @@ export default function JoystickLog() {
     return { counts, maxC };
   }, [userRatings]);
 
+  const streak = useMemo(() => {
+    const DAY = 86400000;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const todayTs = today.getTime();
+    const days = [...new Set(
+      Object.values(userRatings)
+        .filter(r => r.updatedAt)
+        .map(r => { const d = new Date(r.updatedAt); d.setHours(0,0,0,0); return d.getTime(); })
+    )].sort((a,b) => b - a);
+    if (days.length === 0 || days[0] < todayTs - DAY) return 0;
+    let count = 1;
+    for (let i = 1; i < days.length; i++) {
+      if (days[i-1] - days[i] === DAY) count++;
+      else break;
+    }
+    return count;
+  }, [userRatings]);
+
+  const weeklyChallenge = useMemo(() => {
+    if (topGames.length === 0) return null;
+    const now = new Date();
+    const weekNum = Math.floor((now - new Date(now.getFullYear(), 0, 1)) / (7 * 86400000));
+    return topGames[weekNum % topGames.length] || topGames[0];
+  }, [topGames]);
+
   return (
     <div data-theme={theme} suppressHydrationWarning style={{ minHeight:"100vh", background:th.bg, color:th.text, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>
       <style>{CSS}</style>
@@ -3921,6 +3949,32 @@ export default function JoystickLog() {
               <div className="fu2" style={{ marginTop:11 }}>
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(152px,1fr))", gap:11 }}>
                   {topGames.slice(3,9).map((g,i)=><GameCard key={g.id} game={g} onClick={setSelected} rank={i+4} userRating={userRatings[g.id]?.rating}/>)}
+                </div>
+              </div>
+            )}
+
+            {/* ── CHALLENGE DE LA SEMAINE ── */}
+            {weeklyChallenge && (
+              <div style={{ marginTop:56 }}>
+                <div className="sect-divider" style={{ marginTop:0, marginBottom:40 }} />
+                <div style={{ display:"flex", gap:20, alignItems:"center", background:"rgba(255,209,102,.04)", border:"1px solid rgba(255,209,102,.18)", borderRadius:20, padding:"22px 26px", position:"relative", overflow:"hidden" }}>
+                  <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 60% 80% at 0% 50%,rgba(255,209,102,.08) 0%,transparent 70%)", pointerEvents:"none" }} />
+                  <div style={{ flexShrink:0, width:72, height:96, borderRadius:12, overflow:"hidden", border:"2px solid rgba(255,209,102,.3)", boxShadow:"0 0 24px rgba(255,209,102,.2)" }}>
+                    {weeklyChallenge.cover && <img src={weeklyChallenge.cover} alt={weeklyChallenge.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />}
+                  </div>
+                  <div style={{ flex:1, position:"relative", zIndex:1 }}>
+                    <div style={{ fontSize:10, color:"rgba(255,209,102,.7)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:6 }}>⚡ Challenge de la semaine</div>
+                    <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"#fff", marginBottom:8, letterSpacing:"-.3px" }}>{weeklyChallenge.title}</div>
+                    <div style={{ fontSize:12, color:"rgba(255,255,255,.4)", fontFamily:"'DM Sans',sans-serif", marginBottom:14 }}>
+                      {userRatings[weeklyChallenge.id] ? `✅ Tu l'as noté ${userRatings[weeklyChallenge.id].rating}/10 — bien joué !` : "Tu l'as joué ? C'est le moment de le noter !"}
+                    </div>
+                    <button onClick={() => setSelected(weeklyChallenge)} style={{ background:"rgba(255,209,102,.12)", border:"1px solid rgba(255,209,102,.3)", borderRadius:10, color:"#ffd166", cursor:"pointer", fontSize:13, padding:"8px 18px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, transition:"all .18s" }}
+                      onMouseEnter={e=>{e.currentTarget.style.background="rgba(255,209,102,.22)";}}
+                      onMouseLeave={e=>{e.currentTarget.style.background="rgba(255,209,102,.12)";}}>
+                      {userRatings[weeklyChallenge.id] ? "Voir ma note →" : "Voir le jeu →"}
+                    </button>
+                  </div>
+                  <div style={{ flexShrink:0, fontSize:48, opacity:.15, position:"absolute", right:24, top:"50%", transform:"translateY(-50%)" }}>🏆</div>
                 </div>
               </div>
             )}
@@ -4294,6 +4348,15 @@ export default function JoystickLog() {
                             </div>
                           </div>
                         ))}
+                        {streak > 0 && (
+                          <div style={{ background:"rgba(255,107,53,.1)", border:"1px solid rgba(255,107,53,.3)", borderRadius:12, padding:"10px 16px", display:"flex", alignItems:"center", gap:10, boxShadow:"0 0 18px rgba(255,107,53,.12)" }}>
+                            <span style={{ fontSize:18 }}>🔥</span>
+                            <div>
+                              <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:20, color:"#ff6b35", lineHeight:1 }}>{streak}j</div>
+                              <div style={{ color:"rgba(255,107,53,.6)", fontSize:10, fontFamily:"'Space Grotesk',sans-serif", marginTop:2, letterSpacing:.3, fontWeight:700 }}>STREAK</div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -4587,6 +4650,23 @@ export default function JoystickLog() {
           <span>{t("profile")}</span>
         </button>
       </nav>
+
+      {/* ── PLAYING PROMPT ── */}
+      {showPlayingPrompt && user && (
+        <div style={{ position:"fixed", bottom:80, left:"50%", transform:"translateX(-50%)", zIndex:500, animation:"scaleIn .3s cubic-bezier(.34,1.3,.64,1)" }}>
+          <div style={{ background:"#1a1025", border:"1px solid rgba(255,107,53,.35)", borderRadius:18, padding:"16px 20px", boxShadow:"0 24px 60px rgba(0,0,0,.7), 0 0 32px rgba(255,107,53,.12)", display:"flex", alignItems:"center", gap:14, maxWidth:340 }}>
+            <span style={{ fontSize:26, flexShrink:0 }}>🎮</span>
+            <div style={{ flex:1 }}>
+              <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:14, color:"#fff", marginBottom:3 }}>Qu'est-ce que tu joues en ce moment ?</div>
+              <div style={{ fontSize:11, color:"rgba(255,255,255,.35)", fontFamily:"'DM Sans',sans-serif" }}>Ajoute un jeu à ta liste "En cours"</div>
+            </div>
+            <div style={{ display:"flex", gap:6, flexShrink:0 }}>
+              <button onClick={()=>{ setTab("explore"); setShowPlayingPrompt(false); }} style={{ background:"rgba(255,107,53,.15)", border:"1px solid rgba(255,107,53,.3)", borderRadius:9, color:"#ff6b35", cursor:"pointer", fontSize:12, padding:"7px 13px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, whiteSpace:"nowrap" }}>Explorer →</button>
+              <button onClick={()=>setShowPlayingPrompt(false)} style={{ background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", borderRadius:9, color:"rgba(255,255,255,.3)", cursor:"pointer", fontSize:13, padding:"7px 10px" }}>✕</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showAuth && <AuthModal onClose={()=>setShowAuth(false)} onSuccess={u=>{ setUser(u); setShowAuth(false); }} t={t}/>}
       {showResetPw && <ResetPasswordModal onClose={()=>setShowResetPw(false)} t={t}/>}
