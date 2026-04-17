@@ -1640,6 +1640,23 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
         ←
       </button>
 
+      {/* Share button */}
+      <button onClick={async () => {
+        const shareUrl = `https://joystick-log.com?game=${game.id}`;
+        const shareData = { title: game.title, text: `Découvre ${game.title} sur JoystickLog !`, url: shareUrl };
+        try {
+          if (navigator.share && navigator.canShare?.(shareData)) { await navigator.share(shareData); }
+          else { await navigator.clipboard.writeText(shareUrl); alert("Lien copié !"); }
+        } catch {}
+      }} style={{ position:"fixed", top:20, left:72, zIndex:1001, background:"rgba(0,0,0,.65)", backdropFilter:"blur(10px)", border:"1px solid rgba(255,255,255,.12)", borderRadius:99, width:42, height:42, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", transition:"all .2s" }}
+        onMouseEnter={e => { e.currentTarget.style.background="rgba(255,255,255,.1)"; }}
+        onMouseLeave={e => { e.currentTarget.style.background="rgba(0,0,0,.65)"; }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+      </button>
+
       {/* Sticky mini header */}
       <div style={{ position:"fixed", top:0, left:0, right:0, zIndex:1000, height:62, display:"flex", alignItems:"center", padding:"0 80px", background: scrolled ? "rgba(6,7,8,.92)" : "transparent", backdropFilter: scrolled ? "blur(20px)" : "none", borderBottom: scrolled ? "1px solid rgba(255,255,255,.05)" : "none", transition:"all .3s" }}>
         {scrolled && (
