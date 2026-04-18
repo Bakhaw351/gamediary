@@ -504,6 +504,24 @@ const CSS = `
   [data-theme="light"] .tag{background:rgba(0,0,0,.05);border:1px solid rgba(0,0,0,.11);}
   [data-theme="light"] .game-card{box-shadow:0 4px 18px rgba(0,0,0,.1);}
   [data-theme="light"] .sect-h::before{box-shadow:0 0 10px rgba(255,107,53,.35);}
+
+  /* ── Profile content light mode overrides ── */
+  [data-theme="light"] .profile-content h2,[data-theme="light"] .profile-content h3{color:var(--c-text)!important;}
+  [data-theme="light"] .profile-banner h2{color:var(--c-text)!important;}
+  [data-theme="light"] .profile-content .prof-sub{color:var(--c-text-3)!important;}
+  [data-theme="light"] .profile-content .prof-muted{color:var(--c-text-4)!important;}
+  [data-theme="light"] .profile-content .prof-game-title{color:var(--c-text-2)!important;}
+  [data-theme="light"] .profile-content .prof-card-bg{background:rgba(255,255,255,.85)!important;border-color:rgba(0,0,0,.1)!important;}
+  [data-theme="light"] .profile-content .prof-stat-badge{background:rgba(0,0,0,.05)!important;border-color:rgba(0,0,0,.12)!important;}
+  [data-theme="light"] .profile-content .prof-stat-label{color:var(--c-text-3)!important;}
+  [data-theme="light"] .profile-content .prof-cover-ph{background:rgba(0,0,0,.08)!important;border-color:rgba(0,0,0,.12)!important;}
+  [data-theme="light"] .profile-content .prof-section-label{color:var(--c-text-3)!important;}
+  [data-theme="light"] .profile-content .prof-list-item{background:rgba(255,255,255,.85)!important;border-color:rgba(0,0,0,.1)!important;}
+  [data-theme="light"] .profile-content .prof-empty{color:var(--c-text-4)!important;background:rgba(0,0,0,.03)!important;border-color:rgba(0,0,0,.08)!important;}
+  [data-theme="light"] .profile-content .prof-row-meta{color:var(--c-text-4)!important;}
+  [data-theme="light"] .profile-content .prof-row-title{color:var(--c-text)!important;}
+  [data-theme="light"] .profile-content .prof-input{background:rgba(0,0,0,.05)!important;border-color:rgba(0,0,0,.12)!important;color:var(--c-text)!important;}
+  [data-theme="light"] .profile-content .prof-cancel-btn{background:rgba(0,0,0,.05)!important;border-color:rgba(0,0,0,.1)!important;color:var(--c-text-3)!important;}
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
   body{background:var(--c-bg);color:var(--c-text);font-family:'Plus Jakarta Sans',sans-serif;}
@@ -4350,7 +4368,7 @@ export default function JoystickLog() {
                 <button className="btn" onClick={()=>setShowAuth(true)} style={{ padding:"13px 36px", fontSize:15 }}>{t("loginArrow")}</button>
               </div>
             ) : (
-              <>
+              <div className="profile-content">
                 {/* Profile banner */}
                 <div className="profile-banner" style={{ marginBottom:28 }}>
                   <div style={{ position:"absolute", top:0, right:0, width:320, height:320, background:"radial-gradient(circle,rgba(255,107,53,.06) 0%,transparent 70%)", pointerEvents:"none" }} />
@@ -4368,11 +4386,11 @@ export default function JoystickLog() {
                       {/* Stat cards in row */}
                       <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
                         {profileStats.map(s=>(
-                          <div key={s.key} style={{ background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", borderRadius:12, padding:"10px 16px", display:"flex", alignItems:"center", gap:10 }}>
+                          <div key={s.key} className="prof-stat-badge" style={{ background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", borderRadius:12, padding:"10px 16px", display:"flex", alignItems:"center", gap:10 }}>
                             <span style={{ fontSize:16 }}>{s.icon}</span>
                             <div>
                               <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:20, color:"#ff6b35", lineHeight:1 }}>{s.v}</div>
-                              <div style={{ color:"rgba(255,255,255,.25)", fontSize:10, fontFamily:"'Space Grotesk',sans-serif", marginTop:2, letterSpacing:.3 }}>{s.l}</div>
+                              <div className="prof-stat-label" style={{ color:"rgba(255,255,255,.25)", fontSize:10, fontFamily:"'Space Grotesk',sans-serif", marginTop:2, letterSpacing:.3 }}>{s.l}</div>
                             </div>
                           </div>
                         ))}
@@ -4399,7 +4417,7 @@ export default function JoystickLog() {
                     <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:14 }}>
                       <span style={{ fontSize:18 }}>❤️</span>
                       <div style={{ fontSize:10, color:"rgba(239,68,68,.7)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", fontWeight:700 }}>Coups de cœur</div>
-                      <div style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>· {profileFavs.length} jeu{profileFavs.length>1?"x":""}</div>
+                      <div className="prof-muted" style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>· {profileFavs.length} jeu{profileFavs.length>1?"x":""}</div>
                     </div>
                     <div style={{ display:"flex", gap:10, overflowX:"auto", paddingBottom:6 }}>
                       {profileFavs.map(g => {
@@ -4408,14 +4426,14 @@ export default function JoystickLog() {
                         const cover = g.cover ? (g.cover.startsWith("http") ? g.cover : `https:${g.cover.replace("t_thumb","t_cover_big")}`) : null;
                         return (
                           <div key={g.id} onClick={() => setSelected(g)} style={{ flexShrink:0, width:100, cursor:"pointer", position:"relative" }}>
-                            <div style={{ width:100, height:134, borderRadius:12, overflow:"hidden", background:"rgba(255,255,255,.06)", border:"1px solid rgba(255,255,255,.08)", position:"relative" }}>
+                            <div className="prof-cover-ph" style={{ width:100, height:134, borderRadius:12, overflow:"hidden", background:"rgba(255,255,255,.06)", border:"1px solid rgba(255,255,255,.08)", position:"relative" }}>
                               {cover
                                 ? <img src={cover} alt={g.title} loading="lazy" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
                                 : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:28 }}>🎮</div>
                               }
                               <div style={{ position:"absolute", bottom:6, right:6, background:rCol, borderRadius:7, padding:"2px 8px", fontFamily:"'Syne',sans-serif", fontWeight:900, fontSize:12, color: r >= 9 ? "#0d0e14" : "#fff", boxShadow:"0 2px 8px rgba(0,0,0,.5)" }}>{r}/10</div>
                             </div>
-                            <div style={{ marginTop:7, fontSize:11, fontWeight:700, color:"rgba(255,255,255,.7)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2, textAlign:"center", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{g.title}</div>
+                            <div className="prof-game-title" style={{ marginTop:7, fontSize:11, fontWeight:700, color:"rgba(255,255,255,.7)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2, textAlign:"center", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{g.title}</div>
                           </div>
                         );
                       })}
@@ -4429,14 +4447,14 @@ export default function JoystickLog() {
                     <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:14 }}>
                       <span style={{ fontSize:18 }}>✨</span>
                       <div style={{ fontSize:10, color:"rgba(167,139,250,.8)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", fontWeight:700 }}>Recommandations</div>
-                      <div style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>basées sur tes goûts</div>
+                      <div className="prof-muted" style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'Space Grotesk',sans-serif" }}>basées sur tes goûts</div>
                     </div>
                     <div style={{ display:"flex", gap:10, overflowX:"auto", paddingBottom:6 }}>
                       {profileRecs.map(g => {
                         const cover = g.cover ? (g.cover.startsWith("http") ? g.cover : `https:${g.cover.replace("t_thumb","t_cover_big")}`) : null;
                         return (
                           <div key={g.id} onClick={() => setSelected(g)} style={{ flexShrink:0, width:100, cursor:"pointer" }}>
-                            <div style={{ width:100, height:134, borderRadius:12, overflow:"hidden", background:"rgba(255,255,255,.06)", border:"1px solid rgba(167,139,250,.15)", position:"relative" }}>
+                            <div className="prof-cover-ph" style={{ width:100, height:134, borderRadius:12, overflow:"hidden", background:"rgba(255,255,255,.06)", border:"1px solid rgba(167,139,250,.15)", position:"relative" }}>
                               {cover
                                 ? <img src={cover} alt={g.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
                                 : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:28 }}>🎮</div>
@@ -4445,7 +4463,7 @@ export default function JoystickLog() {
                                 <div style={{ position:"absolute", bottom:6, right:6, background:"rgba(167,139,250,.9)", borderRadius:7, padding:"2px 8px", fontFamily:"'Syne',sans-serif", fontWeight:900, fontSize:11, color:"#fff", boxShadow:"0 2px 8px rgba(0,0,0,.5)" }}>{g.rating}</div>
                               )}
                             </div>
-                            <div style={{ marginTop:7, fontSize:11, fontWeight:700, color:"rgba(255,255,255,.6)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2, textAlign:"center", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{g.title}</div>
+                            <div className="prof-game-title" style={{ marginTop:7, fontSize:11, fontWeight:700, color:"rgba(255,255,255,.6)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2, textAlign:"center", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{g.title}</div>
                           </div>
                         );
                       })}
@@ -4455,8 +4473,8 @@ export default function JoystickLog() {
 
                 {/* Rating distribution */}
                 {Object.keys(userRatings).length > 0 && (
-                  <div style={{ marginBottom:28, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.06)", borderRadius:14, padding:"18px 20px" }}>
-                    <div style={{ fontSize:10, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:2.5, textTransform:"uppercase", marginBottom:14 }}>{t("statsDistribution")}</div>
+                  <div className="prof-card-bg" style={{ marginBottom:28, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.06)", borderRadius:14, padding:"18px 20px" }}>
+                    <div className="prof-section-label" style={{ fontSize:10, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:2.5, textTransform:"uppercase", marginBottom:14 }}>{t("statsDistribution")}</div>
                     <div style={{ display:"flex", alignItems:"flex-end", gap:3, height:72 }}>
                       {[1,2,3,4,5,6,7,8,9,10].map(n => {
                         const count = ratingDistribution.counts[n];
@@ -4479,8 +4497,8 @@ export default function JoystickLog() {
 
                 {/* Status breakdown */}
                 {Object.keys(userStatus).length > 0 && (
-                  <div style={{ marginBottom:28, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.06)", borderRadius:14, padding:"18px 20px" }}>
-                    <div style={{ fontSize:10, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:2.5, textTransform:"uppercase", marginBottom:14 }}>{t("statsStatus")}</div>
+                  <div className="prof-card-bg" style={{ marginBottom:28, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.06)", borderRadius:14, padding:"18px 20px" }}>
+                    <div className="prof-section-label" style={{ fontSize:10, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:2.5, textTransform:"uppercase", marginBottom:14 }}>{t("statsStatus")}</div>
                     <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
                       {Object.entries(STATUS_CONFIG).map(([key, cfg]) => {
                         const count = Object.values(userStatus).filter(s=>s===key).length;
@@ -4506,8 +4524,8 @@ export default function JoystickLog() {
                 )}
 
                 {/* Badges */}
-                <div style={{ marginBottom:28, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.06)", borderRadius:14, padding:"18px 20px" }}>
-                  <div style={{ fontSize:10, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:2.5, textTransform:"uppercase", marginBottom:14 }}>{t("badgesTag")}</div>
+                <div className="prof-card-bg" style={{ marginBottom:28, background:"rgba(255,255,255,.02)", border:"1px solid rgba(255,255,255,.06)", borderRadius:14, padding:"18px 20px" }}>
+                  <div className="prof-section-label" style={{ fontSize:10, color:"rgba(255,255,255,.3)", fontFamily:"'Space Grotesk',sans-serif", letterSpacing:2.5, textTransform:"uppercase", marginBottom:14 }}>{t("badgesTag")}</div>
                   <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
                     {BADGES_DEF.map(b => {
                       const earned = b.cond(userRatings, userStatus);
@@ -4526,7 +4544,7 @@ export default function JoystickLog() {
                 <div style={{ marginBottom:28 }}>
                   <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
                     <div className="sect-h">
-                      <h3 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"rgba(255,255,255,.7)", letterSpacing:-.3 }}>{t("listsTitle")} <span style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {userLists.length}</span></h3>
+                      <h3 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"rgba(255,255,255,.7)", letterSpacing:-.3 }}>{t("listsTitle")} <span className="prof-muted" style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {userLists.length}</span></h3>
                     </div>
                     {!showCreateList && (
                       <button onClick={()=>setShowCreateList(true)} style={{ background:"rgba(255,107,53,.08)", border:"1px solid rgba(255,107,53,.22)", borderRadius:10, color:"rgba(255,107,53,.85)", cursor:"pointer", fontSize:12, padding:"7px 14px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>+ {t("createList")}</button>
@@ -4535,23 +4553,23 @@ export default function JoystickLog() {
                   {showCreateList && (
                     <div style={{ display:"flex", gap:8, marginBottom:12 }}>
                       <input value={newListName} onChange={e=>setNewListName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&createList()} placeholder={t("listNamePlaceholder")} autoFocus
-                        style={{ flex:1, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.1)", borderRadius:10, color:"#fff", padding:"9px 14px", fontSize:14, fontFamily:"'Space Grotesk',sans-serif", outline:"none" }}
+                        className="prof-input" style={{ flex:1, background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.1)", borderRadius:10, color:"#fff", padding:"9px 14px", fontSize:14, fontFamily:"'Space Grotesk',sans-serif", outline:"none" }}
                         onFocus={e=>{e.target.style.borderColor="rgba(255,107,53,.45)";}}
                         onBlur={e=>{e.target.style.borderColor="rgba(255,255,255,.1)";}}
                       />
                       <button onClick={createList} style={{ background:"rgba(255,107,53,.12)", border:"1px solid rgba(255,107,53,.28)", borderRadius:10, color:"#ff6b35", cursor:"pointer", fontSize:14, padding:"9px 16px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>+</button>
-                      <button onClick={()=>{setShowCreateList(false);setNewListName("");}} style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", borderRadius:10, color:"rgba(255,255,255,.4)", cursor:"pointer", fontSize:14, padding:"9px 14px", fontFamily:"'Space Grotesk',sans-serif" }}>✕</button>
+                      <button onClick={()=>{setShowCreateList(false);setNewListName("");}} className="prof-cancel-btn" style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.08)", borderRadius:10, color:"rgba(255,255,255,.4)", cursor:"pointer", fontSize:14, padding:"9px 14px", fontFamily:"'Space Grotesk',sans-serif" }}>✕</button>
                     </div>
                   )}
                   {userLists.length === 0 ? (
-                    <div style={{ color:"rgba(255,255,255,.2)", fontSize:13, fontFamily:"'DM Sans',sans-serif", textAlign:"center", padding:"20px 0", borderRadius:12, background:"rgba(255,255,255,.015)", border:"1px dashed rgba(255,255,255,.05)" }}>{t("noLists")}</div>
+                    <div className="prof-empty" style={{ color:"rgba(255,255,255,.2)", fontSize:13, fontFamily:"'DM Sans',sans-serif", textAlign:"center", padding:"20px 0", borderRadius:12, background:"rgba(255,255,255,.015)", border:"1px dashed rgba(255,255,255,.05)" }}>{t("noLists")}</div>
                   ) : (
                     <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
                       {userLists.map(list => (
-                        <div key={list.id} style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 16px", borderRadius:11, background:"rgba(255,255,255,.025)", border:"1px solid rgba(255,255,255,.055)" }}>
+                        <div key={list.id} className="prof-list-item" style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 16px", borderRadius:11, background:"rgba(255,255,255,.025)", border:"1px solid rgba(255,255,255,.055)" }}>
                           <span style={{ fontSize:16 }}>📋</span>
                           <span style={{ flex:1, fontSize:14, fontWeight:600, color:"rgba(255,255,255,.75)", fontFamily:"'Space Grotesk',sans-serif" }}>{list.name}</span>
-                          <span style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'DM Sans',sans-serif" }}>{new Date(list.created_at).toLocaleDateString()}</span>
+                          <span className="prof-muted" style={{ fontSize:11, color:"rgba(255,255,255,.2)", fontFamily:"'DM Sans',sans-serif" }}>{new Date(list.created_at).toLocaleDateString()}</span>
                         </div>
                       ))}
                     </div>
@@ -4563,7 +4581,7 @@ export default function JoystickLog() {
                   <div style={{ marginBottom:40 }}>
                     <div className="sect-h" style={{ marginBottom:18 }}>
                       <h3 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"rgba(255,255,255,.7)", letterSpacing:-.3 }}>
-                        {t("wishlistSection")} <span style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {wishlistGames.length}</span>
+                        {t("wishlistSection")} <span className="prof-muted" style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {wishlistGames.length}</span>
                       </h3>
                     </div>
                     <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))", gap:11 }}>
@@ -4575,12 +4593,12 @@ export default function JoystickLog() {
                 {/* Collection */}
                 <div className="sect-h" style={{ marginBottom:18 }}>
                   <h3 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"rgba(255,255,255,.7)", letterSpacing:-.3 }}>
-                    {t("collection")} <span style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {Object.keys(userRatings).length}</span>
+                    {t("collection")} <span className="prof-muted" style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {Object.keys(userRatings).length}</span>
                   </h3>
                 </div>
 
                 {Object.keys(userRatings).length===0 ? (
-                  <div style={{ textAlign:"center", padding:"60px 0", color:"rgba(255,255,255,.15)", borderRadius:18, background:"rgba(255,255,255,.015)", border:"1px dashed rgba(255,255,255,.06)" }}>
+                  <div className="prof-empty" style={{ textAlign:"center", padding:"60px 0", color:"rgba(255,255,255,.15)", borderRadius:18, background:"rgba(255,255,255,.015)", border:"1px dashed rgba(255,255,255,.06)" }}>
                     <div style={{ fontSize:48, marginBottom:14 }}>🎮</div>
                     <div style={{ fontFamily:"'Syne',sans-serif", fontSize:15, fontWeight:700, marginBottom:6 }}>{t("noRated")}</div>
                     <div style={{ fontSize:13, color:"rgba(255,255,255,.1)", marginBottom:20 }}>{t("startExplore")}</div>
@@ -4598,12 +4616,12 @@ export default function JoystickLog() {
                             {g.cover ? <img src={g.cover} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} onError={e=>e.target.style.opacity=0}/> : <div style={{ width:"100%", height:"100%", background:"#1a1208", display:"flex", alignItems:"center", justifyContent:"center" }}>🎮</div>}
                           </div>
                           <div style={{ flex:1, minWidth:0 }}>
-                            <div style={{ color:"rgba(255,255,255,.85)", fontWeight:700, fontSize:14, fontFamily:"'Syne',sans-serif", marginBottom:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{g.title}</div>
+                            <div className="prof-row-title" style={{ color:"rgba(255,255,255,.85)", fontWeight:700, fontSize:14, fontFamily:"'Syne',sans-serif", marginBottom:3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{g.title}</div>
                             <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
-                              <span style={{ color:"rgba(255,255,255,.22)", fontSize:11, fontFamily:"'DM Sans',sans-serif" }}>{g.platform?.split("(")[0].trim()} · {g.year}</span>
+                              <span className="prof-row-meta" style={{ color:"rgba(255,255,255,.22)", fontSize:11, fontFamily:"'DM Sans',sans-serif" }}>{g.platform?.split("(")[0].trim()} · {g.year}</span>
                               {st && <span style={{ color:STATUS_CONFIG[st]?.color, fontSize:11, background:`${STATUS_CONFIG[st]?.color}15`, border:`1px solid ${STATUS_CONFIG[st]?.color}30`, borderRadius:5, padding:"1px 8px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600 }}>{STATUS_CONFIG[st]?.icon} {t(`s_${st}`)}</span>}
                             </div>
-                            {rv.comment && <div style={{ color:"rgba(255,255,255,.22)", fontSize:12, marginTop:5, fontStyle:"italic", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>"{rv.comment.length>65?rv.comment.slice(0,65)+"…":rv.comment}"</div>}
+                            {rv.comment && <div className="prof-row-meta" style={{ color:"rgba(255,255,255,.22)", fontSize:12, marginTop:5, fontStyle:"italic", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>"{rv.comment.length>65?rv.comment.slice(0,65)+"…":rv.comment}"</div>}
                           </div>
                           {/* Rating pill */}
                           <div style={{ flexShrink:0, background:`${col}18`, border:`1px solid ${col}44`, borderRadius:10, padding:"6px 12px", textAlign:"center" }}>
@@ -4615,7 +4633,7 @@ export default function JoystickLog() {
                     })}
                   </div>
                 )}
-              </>
+              </div>
             )}
           </div>
         )}
