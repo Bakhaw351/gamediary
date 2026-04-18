@@ -3243,6 +3243,9 @@ export default function JoystickLog() {
   const [profileRecs, setProfileRecs]       = useState([]);
   const theme = "dark";
   const notifRef = useRef(null);
+  const profCollectionRef = useRef(null);
+  const profListRef = useRef(null);
+  const profWishRef = useRef(null);
 
   /* ── Theme tokens ─── */
   const th = theme === "light" ? {
@@ -4414,15 +4417,26 @@ export default function JoystickLog() {
                       <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:20, color:"#fff", marginBottom:2, letterSpacing:-.2 }}>{profileUsername || t("player")}</h2>
                       {/* Stat cards in row */}
                       <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
-                        {profileStats.map(s=>(
-                          <div key={s.key} className="prof-stat-badge" style={{ background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", borderRadius:12, padding:"10px 16px", display:"flex", alignItems:"center", gap:10 }}>
+                        {profileStats.map(s=>{
+                          const clickable = s.key !== "avg";
+                          const handleClick = () => {
+                            if (!clickable) return;
+                            const refMap = { rated: profCollectionRef, list: profListRef, wish: profWishRef };
+                            refMap[s.key]?.current?.scrollIntoView({ behavior:"smooth", block:"start" });
+                          };
+                          return (
+                          <div key={s.key} className="prof-stat-badge" onClick={handleClick}
+                            style={{ background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", borderRadius:12, padding:"10px 16px", display:"flex", alignItems:"center", gap:10, cursor: clickable ? "pointer" : "default", transition:"border-color .18s, background .18s" }}
+                            onMouseEnter={e=>{ if(clickable){ e.currentTarget.style.borderColor="rgba(255,107,53,.4)"; e.currentTarget.style.background="rgba(255,107,53,.07)"; }}}
+                            onMouseLeave={e=>{ if(clickable){ e.currentTarget.style.borderColor="rgba(255,255,255,.08)"; e.currentTarget.style.background="rgba(255,255,255,.05)"; }}}>
                             <span style={{ fontSize:16 }}>{s.icon}</span>
                             <div>
                               <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:20, color:"#ff6b35", lineHeight:1 }}>{s.v}</div>
                               <div className="prof-stat-label" style={{ color:"rgba(255,255,255,.25)", fontSize:10, fontFamily:"'Space Grotesk',sans-serif", marginTop:2, letterSpacing:.3 }}>{s.l}</div>
                             </div>
                           </div>
-                        ))}
+                        );
+                        })}
                         {streak > 0 && (
                           <div style={{ background:"rgba(255,107,53,.1)", border:"1px solid rgba(255,107,53,.3)", borderRadius:12, padding:"10px 16px", display:"flex", alignItems:"center", gap:10, boxShadow:"0 0 18px rgba(255,107,53,.12)" }}>
                             <span style={{ fontSize:18 }}>🔥</span>
@@ -4570,7 +4584,7 @@ export default function JoystickLog() {
                 </div>
 
                 {/* My Lists */}
-                <div style={{ marginBottom:28 }}>
+                <div ref={profListRef} style={{ marginBottom:28 }}>
                   <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
                     <div className="sect-h">
                       <h3 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"rgba(255,255,255,.7)", letterSpacing:-.3 }}>{t("listsTitle")} <span className="prof-muted" style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {userLists.length}</span></h3>
@@ -4635,7 +4649,7 @@ export default function JoystickLog() {
 
                 {/* Wishlist */}
                 {wishlistGames.length>0 && (
-                  <div style={{ marginBottom:40 }}>
+                  <div ref={profWishRef} style={{ marginBottom:40 }}>
                     <div className="sect-h" style={{ marginBottom:18 }}>
                       <h3 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"rgba(255,255,255,.7)", letterSpacing:-.3 }}>
                         {t("wishlistSection")} <span className="prof-muted" style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {wishlistGames.length}</span>
@@ -4648,7 +4662,7 @@ export default function JoystickLog() {
                 )}
 
                 {/* Collection */}
-                <div className="sect-h" style={{ marginBottom:18 }}>
+                <div ref={profCollectionRef} className="sect-h" style={{ marginBottom:18 }}>
                   <h3 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"rgba(255,255,255,.7)", letterSpacing:-.3 }}>
                     {t("collection")} <span className="prof-muted" style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {Object.keys(userRatings).length}</span>
                   </h3>
