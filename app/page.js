@@ -486,40 +486,6 @@ const CSS = `
     --c-border:rgba(255,255,255,.065);--c-border-s:rgba(255,255,255,.048);
     --c-card-a:#131020;--c-card-b:#0e0c18;--c-skel-a:#0f0d18;--c-skel-b:#1a1726;
   }
-  [data-theme="light"]{
-    --c-bg:#2a1f10;--c-nav:rgba(34,25,12,.96);--c-modal:#352818;
-    --c-input:rgba(255,210,120,.05);--c-el:rgba(255,200,100,.04);
-    --c-text:#f0e2c0;--c-text-2:rgba(240,226,192,.65);--c-text-3:rgba(240,226,192,.42);--c-text-4:rgba(240,226,192,.26);
-    --c-border:rgba(255,185,80,.1);--c-border-s:rgba(255,185,80,.07);
-    --c-card-a:#3a2d1a;--c-card-b:#2f2415;--c-skel-a:#3d3120;--c-skel-b:#483a26;
-  }
-  [data-theme="light"] .profile-banner{background:linear-gradient(135deg,rgba(255,107,53,.12) 0%,rgba(255,185,60,.07) 50%,rgba(167,139,250,.05) 100%);border:1px solid rgba(255,185,80,.2);}
-  [data-theme="light"] .grad-text{background:linear-gradient(135deg,#f0e2c0 0%,#ff6b35 38%,#ffd166 72%,#ffe5a0 100%);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-  [data-theme="light"] .stat-card{background:rgba(255,200,100,.06);border:1px solid rgba(255,185,80,.14);}
-  [data-theme="light"] .stat-mini{background:rgba(255,200,100,.06);border:1px solid rgba(255,185,80,.14);}
-  [data-theme="light"] .glass-panel{background:rgba(255,200,100,.05);border:1px solid rgba(255,185,80,.1);}
-  [data-theme="light"] .activity-item{background:rgba(255,200,100,.04);border:1px solid rgba(255,185,80,.1);}
-  [data-theme="light"] .row{background:rgba(255,200,100,.04);border:1px solid rgba(255,185,80,.1);}
-  [data-theme="light"] .chip{background:rgba(255,200,100,.07);border:1px solid rgba(255,185,80,.16);}
-  [data-theme="light"] .tag{background:rgba(255,200,100,.06);border:1px solid rgba(255,185,80,.14);}
-  [data-theme="light"] .game-card{box-shadow:0 8px 32px rgba(0,0,0,.5);}
-  [data-theme="light"] .sect-h::before{box-shadow:0 0 14px rgba(255,107,53,.55);}
-
-  /* ── Profile content caramel overrides ── */
-  [data-theme="light"] .profile-content h2,[data-theme="light"] .profile-content h3{color:var(--c-text)!important;}
-  [data-theme="light"] .profile-content .prof-muted{color:var(--c-text-4)!important;}
-  [data-theme="light"] .profile-content .prof-game-title{color:var(--c-text-2)!important;}
-  [data-theme="light"] .profile-content .prof-card-bg{background:rgba(255,200,100,.05)!important;border-color:rgba(255,185,80,.14)!important;}
-  [data-theme="light"] .profile-content .prof-stat-badge{background:rgba(255,200,100,.08)!important;border-color:rgba(255,185,80,.2)!important;}
-  [data-theme="light"] .profile-content .prof-stat-label{color:var(--c-text-3)!important;}
-  [data-theme="light"] .profile-content .prof-cover-ph{background:rgba(255,255,255,.06)!important;border-color:rgba(255,185,80,.18)!important;}
-  [data-theme="light"] .profile-content .prof-section-label{color:var(--c-text-3)!important;}
-  [data-theme="light"] .profile-content .prof-list-item{background:rgba(255,200,100,.05)!important;border-color:rgba(255,185,80,.14)!important;}
-  [data-theme="light"] .profile-content .prof-empty{color:var(--c-text-4)!important;background:rgba(255,200,100,.03)!important;border-color:rgba(255,185,80,.1)!important;}
-  [data-theme="light"] .profile-content .prof-row-meta{color:var(--c-text-4)!important;}
-  [data-theme="light"] .profile-content .prof-row-title{color:var(--c-text)!important;}
-  [data-theme="light"] .profile-content .prof-input{background:rgba(255,200,100,.06)!important;border-color:rgba(255,185,80,.2)!important;color:var(--c-text)!important;}
-  [data-theme="light"] .profile-content .prof-cancel-btn{background:rgba(255,200,100,.04)!important;border-color:rgba(255,185,80,.14)!important;color:var(--c-text-3)!important;}
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
   body{background:var(--c-bg);color:var(--c-text);font-family:'Plus Jakarta Sans',sans-serif;}
@@ -3210,7 +3176,7 @@ export default function JoystickLog() {
   const [topReviews, setTopReviews]         = useState([]);
   const [topReviewMyLikes, setTopReviewMyLikes] = useState(new Set());
   const [profileRecs, setProfileRecs]       = useState([]);
-  const [theme, setTheme]                   = useState("dark");
+  const theme = "dark";
   const notifRef = useRef(null);
 
   /* ── Theme tokens ─── */
@@ -3228,12 +3194,6 @@ export default function JoystickLog() {
     border:"rgba(255,255,255,.065)", borderS:"rgba(255,255,255,.048)",
   };
 
-  /* ── Theme persistence ── */
-  useEffect(() => {
-    const saved = localStorage.getItem("jl-theme");
-    if (saved === "light" || saved === "dark") setTheme(saved);
-  }, []);
-  useEffect(() => { localStorage.setItem("jl-theme", theme); }, [theme]);
 
   /* ── URL state: restore tab + game on load, sync on change ── */
   const openUserProfile = (uname) => {
@@ -3737,17 +3697,6 @@ export default function JoystickLog() {
 
         {/* Right side */}
         <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-          {/* 🌙/☀️ Theme toggle */}
-          <button onClick={() => setTheme(prev => prev === "dark" ? "light" : "dark")}
-            title={theme === "dark" ? "Mode jour" : "Mode nuit"}
-            style={{ width:36, height:36, borderRadius:10, background:th.bgEl, border:`1px solid ${th.borderS}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", transition:"all .18s", color:th.textMid, flexShrink:0 }}
-            onMouseEnter={e=>{ e.currentTarget.style.borderColor="rgba(255,107,53,.35)"; e.currentTarget.style.color="#ff6b35"; }}
-            onMouseLeave={e=>{ e.currentTarget.style.borderColor=th.borderS; e.currentTarget.style.color=th.textMid; }}>
-            {theme === "dark"
-              ? <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-              : <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            }
-          </button>
           {user ? (
             <>
               {/* 🔔 Notifications bell */}
