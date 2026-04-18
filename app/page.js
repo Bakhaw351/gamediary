@@ -1440,6 +1440,13 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
     if (!error) {
       setReplies(p => ({ ...p, [reviewerUserId]: [...(p[reviewerUserId]||[]), { user_id: user.id, user_display: display, content: clean, created_at: new Date().toISOString() }] }));
       setReplyingTo(null); setReplyText("");
+      if (reviewerUserId !== user.id) {
+        supabase.from("notifications").insert({
+          user_id: reviewerUserId, type: "reply",
+          from_user_id: user.id, from_user: display,
+          game_id: String(game.id), game_title: game.title, game_cover: game.cover || null,
+        }).then(() => {});
+      }
     }
   };
 
@@ -1524,6 +1531,15 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
       );
       setMyLikes(p => new Set([...p, reviewerUserId]));
       setLikes(p => ({ ...p, [reviewerUserId]: (p[reviewerUserId] || 0) + 1 }));
+      // Notification — don't notify yourself
+      if (reviewerUserId !== user.id) {
+        const fromDisplay = (username || user.user_metadata?.username || user.email?.split("@")[0] || "").slice(0,50);
+        supabase.from("notifications").insert({
+          user_id: reviewerUserId, type: "like",
+          from_user_id: user.id, from_user: fromDisplay,
+          game_id: String(game.id), game_title: game.title, game_cover: game.cover || null,
+        }).then(() => {});
+      }
     }
   };
 
@@ -2962,10 +2978,14 @@ const LegalModal = ({ type, onClose }) => {
 };
 
 /* ── PUBLIC PROFILE ───────────────────────────────────────── */
-const PublicProfile = ({ username, onClose, onGameClick, t }) => {
+const PublicProfile = ({ username, onClose, onGameClick, currentUser, currentUserDisplay, t }) => {
   const [ratings, setRatings] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [targetUid, setTargetUid] = useState(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
 
   useEffect(() => {
     if (!username) return;
@@ -2975,12 +2995,35 @@ const PublicProfile = ({ username, onClose, onGameClick, t }) => {
       .then(({ data: rData }) => {
         setRatings(rData || []);
         const uid = rData?.[0]?.user_id;
+        setTargetUid(uid || null);
         if (uid) {
           supabase.from('game_status').select('*').eq('user_id', uid)
             .then(({ data: sData }) => { setStatuses(sData || []); setLoading(false); });
+          supabase.from('follows').select('id', { count: 'exact' }).eq('following_id', uid)
+            .then(({ count }) => setFollowerCount(count || 0));
+          if (currentUser) {
+            supabase.from('follows').select('id').eq('follower_id', currentUser.id).eq('following_id', uid).maybeSingle()
+              .then(({ data }) => setIsFollowing(!!data));
+          }
         } else { setLoading(false); }
       }).catch(() => setLoading(false));
-  }, [username]);
+  }, [username, currentUser]);
+
+  const toggleFollow = async () => {
+    if (!currentUser || !targetUid || targetUid === currentUser.id) return;
+    setFollowLoading(true);
+    if (isFollowing) {
+      await supabase.from('follows').delete().eq('follower_id', currentUser.id).eq('following_id', targetUid);
+      setIsFollowing(false);
+      setFollowerCount(p => Math.max(0, p - 1));
+    } else {
+      await supabase.from('follows').insert({ follower_id: currentUser.id, following_id: targetUid, follower_display: currentUserDisplay, following_display: username });
+      setIsFollowing(true);
+      setFollowerCount(p => p + 1);
+      supabase.from('notifications').insert({ user_id: targetUid, type: 'follow', from_user_id: currentUser.id, from_user: currentUserDisplay }).then(() => {});
+    }
+    setFollowLoading(false);
+  };
 
   const initials = username ? username.slice(0,2).toUpperCase() : "??";
   const avgRating = ratings.length ? (ratings.reduce((s,r)=>s+r.rating,0)/ratings.length).toFixed(1) : "—";
@@ -3002,12 +3045,25 @@ const PublicProfile = ({ username, onClose, onGameClick, t }) => {
         </button>
 
         {/* Header */}
-        <div style={{ display:"flex", alignItems:"center", gap:24, marginBottom:36 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:24, marginBottom:36, flexWrap:"wrap" }}>
           <div style={{ width:72, height:72, borderRadius:20, background:`linear-gradient(135deg,${col},${col}88)`, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:26, color:"#fff", flexShrink:0, boxShadow:`0 0 32px ${col}44` }}>{initials}</div>
-          <div>
+          <div style={{ flex:1 }}>
             <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:28, color:"#fff", letterSpacing:"-.5px" }}>{username}</div>
-            <div style={{ fontSize:12, color:"rgba(255,255,255,.28)", fontFamily:"'Space Grotesk',sans-serif", marginTop:4 }}>{t("player")}</div>
+            <div style={{ display:"flex", alignItems:"center", gap:12, marginTop:4 }}>
+              <div style={{ fontSize:12, color:"rgba(255,255,255,.28)", fontFamily:"'Space Grotesk',sans-serif" }}>{t("player")}</div>
+              <div style={{ fontSize:12, color:"rgba(255,255,255,.35)", fontFamily:"'Space Grotesk',sans-serif" }}>· <span style={{ color:col, fontWeight:700 }}>{followerCount}</span> abonné{followerCount !== 1 ? "s" : ""}</div>
+            </div>
           </div>
+          {currentUser && targetUid && targetUid !== currentUser.id && (
+            <button onClick={toggleFollow} disabled={followLoading}
+              style={{ padding:"9px 22px", borderRadius:11, fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, cursor:"pointer", transition:"all .2s",
+                background: isFollowing ? "rgba(255,255,255,.06)" : "linear-gradient(135deg,#ff6b35,#ffd166)",
+                border: isFollowing ? "1px solid rgba(255,255,255,.12)" : "none",
+                color: isFollowing ? "rgba(255,255,255,.5)" : "#0a0600",
+                opacity: followLoading ? 0.6 : 1 }}>
+              {followLoading ? "…" : isFollowing ? "✓ Abonné" : "+ Suivre"}
+            </button>
+          )}
         </div>
 
         {/* Stats */}
@@ -3016,7 +3072,7 @@ const PublicProfile = ({ username, onClose, onGameClick, t }) => {
             { n: ratings.length, l: t("gamesRated") },
             { n: avgRating,      l: t("avgRating") },
             { n: completed,      l: t("s_completed") },
-            { n: playing,        l: t("s_playing") },
+            { n: followerCount,  l: "Abonnés" },
           ].map(s => (
             <div key={s.l} style={{ background:"rgba(255,255,255,.025)", border:"1px solid rgba(255,255,255,.07)", borderRadius:14, padding:"16px 18px", textAlign:"center" }}>
               <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:col, lineHeight:1, marginBottom:4 }}>{loading ? "…" : s.n}</div>
@@ -3329,13 +3385,30 @@ export default function JoystickLog() {
 
   /* Activity feed + popular on platform */
   useEffect(() => {
-    supabase.from("ratings")
-      .select("user_id, game_id, rating, comment, user_display, game_title, game_cover, updated_at")
-      .order("updated_at", { ascending: false })
-      .limit(20)
-      .then(({ data }) => { if (data) setActivityFeed(data.filter(d => d.game_title)); })
-      .catch(() => {});
-    supabase.from("ratings")
+    const loadFeed = async () => {
+      let feed = [];
+      if (user) {
+        // Load followed users' activity
+        const { data: follows } = await supabase.from("follows").select("following_id").eq("follower_id", user.id);
+        if (follows?.length > 0) {
+          const ids = follows.map(f => f.following_id);
+          const { data } = await supabase.from("ratings")
+            .select("user_id, game_id, rating, comment, user_display, game_title, game_cover, updated_at")
+            .in("user_id", ids).order("updated_at", { ascending: false }).limit(30);
+          if (data?.length) feed = data;
+        }
+      }
+      // Fallback to global community feed
+      if (feed.length === 0) {
+        const { data } = await supabase.from("ratings")
+          .select("user_id, game_id, rating, comment, user_display, game_title, game_cover, updated_at")
+          .order("updated_at", { ascending: false }).limit(20);
+        if (data) feed = data;
+      }
+      setActivityFeed(feed.filter(d => d.game_title));
+    };
+    loadFeed().catch(() => {});
+    void supabase.from("ratings")
       .select("game_id, game_title, game_cover, rating")
       .not("game_title", "is", null)
       .limit(300)
@@ -3354,7 +3427,7 @@ export default function JoystickLog() {
           .map(g => ({ ...g, avgRating: Math.round(g.ratings.reduce((a,r)=>a+r,0)/g.ratings.length), platform:null, year:"—", genre:null, tags:[], summary:"", videoId:null }));
         setPopularGames(popular);
       }).catch(() => {});
-  }, []);
+  }, [user]);
 
   /* Notifications */
   useEffect(() => {
@@ -3732,10 +3805,11 @@ export default function JoystickLog() {
                             onMouseLeave={e=>{e.currentTarget.style.background=n.read?"transparent":"rgba(255,107,53,.04)";}}>
                             {n.game_cover
                               ? <img src={n.game_cover} alt="" style={{ width:30, height:40, borderRadius:5, objectFit:"cover", flexShrink:0 }} />
-                              : <div style={{ width:30, height:40, borderRadius:5, background:"rgba(255,255,255,.06)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14 }}>❤️</div>}
+                              : <div style={{ width:30, height:40, borderRadius:5, background:"rgba(255,255,255,.06)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14 }}>{n.type==="follow"?"👤":n.type==="reply"?"💬":"❤️"}</div>}
                             <div style={{ flex:1, minWidth:0 }}>
                               <div style={{ fontSize:12, color:th.textMid, fontFamily:"'Space Grotesk',sans-serif", fontWeight:600, lineHeight:1.4 }}>
-                                <span style={{ color:"#ff6b35" }}>{n.from_user || "Quelqu'un"}</span> a liké ta critique
+                                <span style={{ color:"#ff6b35" }}>{n.from_user || "Quelqu'un"}</span>
+                                {n.type==="reply" ? " a répondu à ta critique" : n.type==="follow" ? " te suit maintenant" : " a liké ta critique"}
                               </div>
                               {n.game_title && <div style={{ fontSize:11, color:th.textLow, fontFamily:"'DM Sans',sans-serif", marginTop:2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{n.game_title}</div>}
                               <div style={{ fontSize:10, color:th.textFaint, fontFamily:"'DM Sans',sans-serif", marginTop:2 }}>{timeAgo(n.created_at)}</div>
@@ -4050,7 +4124,7 @@ export default function JoystickLog() {
                   <div className="sect-h">
                     <div>
                       <div style={{ fontSize:10, color:"rgba(255,107,53,.6)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3.5, textTransform:"uppercase", marginBottom:5 }}>{t("activityTag")}</div>
-                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:th.textHigh, letterSpacing:-.6, lineHeight:1 }}>{t("activityTitle")}</h2>
+                      <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:th.textHigh, letterSpacing:-.6, lineHeight:1 }}>{user ? "Mes abonnements" : t("activityTitle")}</h2>
                     </div>
                   </div>
                 </div>
@@ -4707,6 +4781,8 @@ export default function JoystickLog() {
           username={publicProfile}
           onClose={()=>{ setPublicProfile(null); const p=new URLSearchParams(window.location.search); p.delete('user'); window.history.replaceState({},'',`?${p.toString()}`); }}
           onGameClick={g=>{ setPublicProfile(null); setSelected(g); }}
+          currentUser={user}
+          currentUserDisplay={profileUsername}
           t={t}
         />
       )}
