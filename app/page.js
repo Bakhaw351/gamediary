@@ -1335,7 +1335,7 @@ const ReviewCard = ({ rv, col, initials, rxCounts, myRx, rvReplies, isReplying, 
 };
 
 /* ── CINEMATIC GAME PAGE ──────────────────────────────────── */
-const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired, username, userLists, lang, onUserClick, t }) => {
+const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings, userStatus, setUserStatus, onAuthRequired, username, userLists, lang, onUserClick, t, scrollToReview }) => {
   const [myR, setMyR] = useState(userRatings?.[game.id]?.rating || 0);
   const [hovR, setHovR] = useState(0);
   const [txt, setTxt] = useState(userRatings?.[game.id]?.comment || "");
@@ -1367,6 +1367,13 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
 
   const [fullGame, setFullGame] = useState(game);
   const g = fullGame;
+  const reviewRef = useRef(null);
+
+  useEffect(() => {
+    if (scrollToReview && reviewRef.current) {
+      setTimeout(() => reviewRef.current?.scrollIntoView({ behavior:"smooth", block:"center" }), 400);
+    }
+  }, [scrollToReview]);
 
   useEffect(() => {
     if (game.summary || game.videoId || (game.allPlatforms?.length > 0)) { setFullGame(game); return; }
@@ -1912,7 +1919,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
           <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
 
             {/* ── RATING CARD ── */}
-            <div style={{ background:"rgba(255,255,255,.022)", border:"1px solid rgba(255,255,255,.07)", borderRadius:20, overflow:"hidden" }}>
+            <div ref={reviewRef} style={{ background:"rgba(255,255,255,.022)", border:"1px solid rgba(255,255,255,.07)", borderRadius:20, overflow:"hidden" }}>
               {/* Card top accent */}
               <div style={{ height:2, background: saved ? `linear-gradient(90deg,${rc(myR)},${rc(myR)}88,transparent)` : "linear-gradient(90deg,rgba(255,255,255,.06),transparent)" }} />
               <div style={{ padding:"24px 26px 26px" }}>
@@ -3156,6 +3163,8 @@ export default function JoystickLog() {
   const discoOffsetRef      = useRef(0);
   const activeTagsRef       = useRef([]);
   const [wishlistGames, setWishlistGames] = useState([]);
+  const [playingGames, setPlayingGames]   = useState([]);
+  const [scrollToReview, setScrollToReview] = useState(false);
   const [profileUsername, setProfileUsername] = useState("");
   const [profileAvatar, setProfileAvatar]     = useState("");
   const [trendingGames, setTrendingGames] = useState([]);
@@ -3289,10 +3298,9 @@ export default function JoystickLog() {
         const s={};
         data.forEach(d => s[d.game_id]=d.status);
         setUserStatus(s);
-        setWishlistGames(data.filter(d => d.status==="wishlist").map(d => ({
-          id:d.game_id, title:d.game_title, cover:d.game_cover,
-          platform:d.game_platform, year:d.game_year, genre:null, rating:null, reviews:0, tags:[], summary:"",
-        })));
+        const mapGame = d => ({ id:d.game_id, title:d.game_title, cover:d.game_cover, platform:d.game_platform, year:d.game_year, genre:null, rating:null, reviews:0, tags:[], summary:"" });
+        setWishlistGames(data.filter(d => d.status==="wishlist").map(mapGame));
+        setPlayingGames(data.filter(d => d.status==="playing").map(mapGame));
         const hasPlaying = data.some(d => d.status === "playing");
         if (!hasPlaying) setTimeout(() => setShowPlayingPrompt(true), 3000);
       }
@@ -4523,6 +4531,34 @@ export default function JoystickLog() {
                   )}
                 </div>
 
+                {/* En cours de jeu */}
+                {playingGames.length>0 && (
+                  <div style={{ marginBottom:32 }}>
+                    <div className="sect-h" style={{ marginBottom:18 }}>
+                      <h3 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"rgba(255,255,255,.7)", letterSpacing:-.3 }}>
+                        🎮 En cours <span className="prof-muted" style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {playingGames.length}</span>
+                      </h3>
+                    </div>
+                    <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(120px,1fr))", gap:11 }}>
+                      {playingGames.map(g => {
+                        const cover = g.cover ? (g.cover.startsWith("http") ? g.cover : `https:${g.cover.replace("t_thumb","t_cover_big")}`) : null;
+                        return (
+                          <div key={g.id} onClick={()=>{ setScrollToReview(false); setSelected(g); }} style={{ cursor:"pointer", position:"relative" }}>
+                            <div style={{ aspectRatio:"2/3", borderRadius:12, overflow:"hidden", background:"rgba(255,255,255,.06)", border:"2px solid rgba(255,107,53,.35)", boxShadow:"0 0 18px rgba(255,107,53,.15)", position:"relative" }}>
+                              {cover
+                                ? <img src={cover} alt={g.title} loading="lazy" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+                                : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:32 }}>🎮</div>
+                              }
+                              <div style={{ position:"absolute", top:6, right:6, background:"#ff6b35", borderRadius:6, padding:"2px 7px", fontSize:9, fontWeight:800, fontFamily:"'Space Grotesk',sans-serif", color:"#fff", letterSpacing:.5 }}>EN COURS</div>
+                            </div>
+                            <div style={{ marginTop:7, fontSize:11, fontWeight:700, color:"rgba(255,255,255,.7)", fontFamily:"'Space Grotesk',sans-serif", lineHeight:1.2, textAlign:"center", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{g.title}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* Wishlist */}
                 {wishlistGames.length>0 && (
                   <div style={{ marginBottom:40 }}>
@@ -4558,7 +4594,7 @@ export default function JoystickLog() {
                       const st=userStatus[g.id];
                       const col=rc(rv.rating);
                       return (
-                        <div key={g.id} className="row" onClick={()=>setSelected(g)} style={{ padding:"14px 18px", display:"flex", gap:16, alignItems:"center" }}>
+                        <div key={g.id} className="row" onClick={()=>{ setScrollToReview(!!rv.comment); setSelected(g); }} style={{ padding:"14px 18px", display:"flex", gap:16, alignItems:"center" }}>
                           <div style={{ width:44, height:58, borderRadius:9, overflow:"hidden", flexShrink:0, border:"1px solid rgba(255,255,255,.07)", boxShadow:"0 4px 16px rgba(0,0,0,.4)" }}>
                             {g.cover ? <img src={g.cover} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} onError={e=>e.target.style.opacity=0}/> : <div style={{ width:"100%", height:"100%", background:"#1a1208", display:"flex", alignItems:"center", justifyContent:"center" }}>🎮</div>}
                           </div>
@@ -4590,8 +4626,9 @@ export default function JoystickLog() {
       {selected && (
         <GamePage
           game={selected}
-          onClose={()=>setSelected(null)}
-          onNavigate={g=>setSelected(formatGame(g))}
+          onClose={()=>{ setSelected(null); setScrollToReview(false); }}
+          onNavigate={g=>{ setScrollToReview(false); setSelected(formatGame(g)); }}
+          scrollToReview={scrollToReview}
           user={user}
           userRatings={userRatings}
           setUserRatings={setUserRatings}
