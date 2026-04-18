@@ -3246,6 +3246,7 @@ export default function JoystickLog() {
   const profCollectionRef = useRef(null);
   const profListRef = useRef(null);
   const profWishRef = useRef(null);
+  const profPlayingRef = useRef(null);
 
   /* ── Theme tokens ─── */
   const th = theme === "light" ? {
@@ -3678,12 +3679,13 @@ export default function JoystickLog() {
       ? (ratingVals.reduce((a, b) => a + b.rating, 0) / ratingVals.length).toFixed(1)
       : "—";
     return [
-      { key:"rated", v: Object.keys(userRatings).length, l: t("gamesRated"), icon:"⭐" },
-      { key:"list",  v: Object.keys(userStatus).length,  l: t("inMyList"),   icon:"📋" },
-      { key:"wish",  v: wishlistGames.length,            l: t("wantToPlay"), icon:"🔖" },
-      { key:"avg",   v: avg,                             l: t("avgRating"),  icon:"📊" },
+      { key:"rated",   v: Object.keys(userRatings).length, l: t("gamesRated"), icon:"⭐" },
+      { key:"list",    v: Object.keys(userStatus).length,  l: t("inMyList"),   icon:"📋" },
+      { key:"wish",    v: wishlistGames.length,            l: t("wantToPlay"), icon:"🔖" },
+      { key:"playing", v: playingGames.length,             l: t("s_playing"),  icon:"🎮" },
+      { key:"avg",     v: avg,                             l: t("avgRating"),  icon:"📊" },
     ];
-  }, [userRatings, userStatus, wishlistGames.length, t]);
+  }, [userRatings, userStatus, wishlistGames.length, playingGames.length, t]);
 
   const profileFavs = useMemo(() =>
     ratedGamesList
@@ -4418,10 +4420,10 @@ export default function JoystickLog() {
                       {/* Stat cards in row */}
                       <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
                         {profileStats.map(s=>{
-                          const clickable = s.key !== "avg";
+                          const clickable = s.key !== "avg" && !(s.key === "playing" && s.v === 0) && !(s.key === "wish" && s.v === 0);
                           const handleClick = () => {
                             if (!clickable) return;
-                            const refMap = { rated: profCollectionRef, list: profListRef, wish: profWishRef };
+                            const refMap = { rated: profCollectionRef, list: profListRef, wish: profWishRef, playing: profPlayingRef };
                             refMap[s.key]?.current?.scrollIntoView({ behavior:"smooth", block:"start" });
                           };
                           return (
@@ -4621,7 +4623,7 @@ export default function JoystickLog() {
 
                 {/* En cours de jeu */}
                 {playingGames.length>0 && (
-                  <div style={{ marginBottom:32 }}>
+                  <div ref={profPlayingRef} style={{ marginBottom:32 }}>
                     <div className="sect-h" style={{ marginBottom:18 }}>
                       <h3 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:18, color:"rgba(255,255,255,.7)", letterSpacing:-.3 }}>
                         🎮 En cours <span className="prof-muted" style={{ color:"rgba(255,255,255,.2)", fontWeight:600 }}>· {playingGames.length}</span>
