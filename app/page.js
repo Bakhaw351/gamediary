@@ -2986,6 +2986,8 @@ const PublicProfile = ({ username, onClose, onGameClick, currentUser, currentUse
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [bio, setBio] = useState("");
 
   useEffect(() => {
     if (!username) return;
@@ -3001,6 +3003,10 @@ const PublicProfile = ({ username, onClose, onGameClick, currentUser, currentUse
             .then(({ data: sData }) => { setStatuses(sData || []); setLoading(false); });
           supabase.from('follows').select('id', { count: 'exact' }).eq('following_id', uid)
             .then(({ count }) => setFollowerCount(count || 0));
+          supabase.from('follows').select('id', { count: 'exact' }).eq('follower_id', uid)
+            .then(({ count }) => setFollowingCount(count || 0));
+          supabase.from('profiles').select('bio').eq('id', uid).maybeSingle()
+            .then(({ data }) => setBio(data?.bio || ""));
           if (currentUser) {
             supabase.from('follows').select('id').eq('follower_id', currentUser.id).eq('following_id', uid).maybeSingle()
               .then(({ data }) => setIsFollowing(!!data));
@@ -3053,6 +3059,9 @@ const PublicProfile = ({ username, onClose, onGameClick, currentUser, currentUse
               <div style={{ fontSize:12, color:"rgba(255,255,255,.28)", fontFamily:"'Space Grotesk',sans-serif" }}>{t("player")}</div>
               <div style={{ fontSize:12, color:"rgba(255,255,255,.35)", fontFamily:"'Space Grotesk',sans-serif" }}>· <span style={{ color:col, fontWeight:700 }}>{followerCount}</span> abonné{followerCount !== 1 ? "s" : ""}</div>
             </div>
+            {bio && (
+              <div style={{ fontSize:13, color:"rgba(255,255,255,.45)", fontFamily:"'DM Sans',sans-serif", marginTop:8, lineHeight:1.6, maxWidth:420 }}>{bio}</div>
+            )}
           </div>
           {currentUser && targetUid && targetUid !== currentUser.id && (
             <button onClick={toggleFollow} disabled={followLoading}
@@ -3069,10 +3078,10 @@ const PublicProfile = ({ username, onClose, onGameClick, currentUser, currentUse
         {/* Stats */}
         <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:10, marginBottom:36 }}>
           {[
-            { n: ratings.length, l: t("gamesRated") },
-            { n: avgRating,      l: t("avgRating") },
-            { n: completed,      l: t("s_completed") },
-            { n: followerCount,  l: "Abonnés" },
+            { n: ratings.length,  l: t("gamesRated") },
+            { n: avgRating,       l: t("avgRating") },
+            { n: followerCount,   l: "Abonnés" },
+            { n: followingCount,  l: "Abonnements" },
           ].map(s => (
             <div key={s.l} style={{ background:"rgba(255,255,255,.025)", border:"1px solid rgba(255,255,255,.07)", borderRadius:14, padding:"16px 18px", textAlign:"center" }}>
               <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color:col, lineHeight:1, marginBottom:4 }}>{loading ? "…" : s.n}</div>
@@ -3080,6 +3089,22 @@ const PublicProfile = ({ username, onClose, onGameClick, currentUser, currentUse
             </div>
           ))}
         </div>
+
+        {/* Coups de cœur */}
+        {ratings.filter(r => r.rating >= 8).length > 0 && (
+          <div style={{ marginBottom:36 }}>
+            <div style={{ fontSize:10, color:"rgba(239,68,68,.7)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3, textTransform:"uppercase", marginBottom:14 }}>❤️ Coups de cœur</div>
+            <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
+              {ratings.filter(r => r.rating >= 8).slice(0,12).map(r => (
+                <div key={r.game_id} onClick={()=>{ if(r.game_cover) onGameClick({ id:r.game_id, title:r.game_title, cover:r.game_cover, platform:null, year:"—", genre:null, rating:null, reviews:0, tags:[], summary:"", allPlatforms:[], videoId:null }); }}
+                  style={{ width:58, height:78, borderRadius:10, overflow:"hidden", background:"rgba(255,255,255,.05)", cursor:r.game_cover?"pointer":"default", position:"relative", flexShrink:0, border:"2px solid rgba(255,107,53,.3)", boxShadow:"0 0 14px rgba(255,107,53,.12)" }}>
+                  {r.game_cover && <img src={r.game_cover} alt={r.game_title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />}
+                  <div style={{ position:"absolute", bottom:2, right:2, background:`${rc(r.rating)}cc`, borderRadius:4, padding:"1px 5px", fontSize:9, fontFamily:"'Syne',sans-serif", fontWeight:800, color:"#fff" }}>{r.rating}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Recent games grid */}
         {ratings.length > 0 && (
