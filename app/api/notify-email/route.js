@@ -3,8 +3,8 @@ import { Resend } from "resend";
 
 export const runtime = "nodejs";
 
-const FROM = "JoystickLog <notifications@joysticklog.fr>";
-const BASE_URL = "https://joysticklog.fr";
+const FROM = "JoystickLog <contact@joystick-log.com>";
+const BASE_URL = "https://joystick-log.com";
 
 function buildEmail(type, fromUser, gameTitle) {
   if (type === "like") {
