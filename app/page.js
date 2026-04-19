@@ -1446,6 +1446,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
           from_user_id: user.id, from_user: display,
           game_id: String(game.id), game_title: game.title, game_cover: game.cover || null,
         }).then(() => {});
+        sendEmailNotif({ type: "reply", to_user_id: reviewerUserId, from_user: display, game_title: game.title });
       }
     }
   };
@@ -1469,6 +1470,17 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
     } catch(e) { console.error("editComment:", e); }
   };
 
+
+  const sendEmailNotif = ({ type, to_user_id, from_user, game_title }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) return;
+      fetch("/api/notify-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ type, to_user_id, from_user, game_title }),
+      }).catch(() => {});
+    });
+  };
 
   const fetchCommunity = async () => {
     const { data } = await supabase.from("ratings")
@@ -1539,6 +1551,7 @@ const GamePage = ({ game, onClose, onNavigate, user, userRatings, setUserRatings
           from_user_id: user.id, from_user: fromDisplay,
           game_id: String(game.id), game_title: game.title, game_cover: game.cover || null,
         }).then(() => {});
+        sendEmailNotif({ type: "like", to_user_id: reviewerUserId, from_user: fromDisplay, game_title: game.title });
       }
     }
   };
@@ -3027,6 +3040,14 @@ const PublicProfile = ({ username, onClose, onGameClick, currentUser, currentUse
       setIsFollowing(true);
       setFollowerCount(p => p + 1);
       supabase.from('notifications').insert({ user_id: targetUid, type: 'follow', from_user_id: currentUser.id, from_user: currentUserDisplay }).then(() => {});
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!session) return;
+        fetch("/api/notify-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+          body: JSON.stringify({ type: "follow", to_user_id: targetUid, from_user: currentUserDisplay, game_title: "" }),
+        }).catch(() => {});
+      });
     }
     setFollowLoading(false);
   };
