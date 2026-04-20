@@ -510,6 +510,7 @@ const CSS = `
   @keyframes bounceY  {0%,100%{transform:translateX(-50%) translateY(0);}60%{transform:translateX(-50%) translateY(8px);}}
   @keyframes popIn    {from{transform:scale(0) rotate(-12deg);opacity:0;}to{transform:scale(1) rotate(0);opacity:1;}}
   @keyframes revealLine{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+  @keyframes gradientShift{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
   .jacket-item,.cover-bg-item{will-change:transform;transform:translateZ(0);}
   @media (prefers-reduced-motion: reduce) {
     .jacket-item,.cover-bg-item,.hf1,.hf2,.hf3{animation:none!important;}
@@ -4819,16 +4820,28 @@ export default function JoystickLog() {
 
       {/* ── PLAYING PROMPT ── */}
       {showPlayingPrompt && user && (
-        <div style={{ position:"fixed", bottom:80, left:"50%", transform:"translateX(-50%)", zIndex:500, animation:"scaleIn .3s cubic-bezier(.34,1.3,.64,1)" }}>
-          <div style={{ background:"#1a1025", border:"1px solid rgba(255,107,53,.35)", borderRadius:18, padding:"16px 20px", boxShadow:"0 24px 60px rgba(0,0,0,.7), 0 0 32px rgba(255,107,53,.12)", display:"flex", alignItems:"center", gap:14, maxWidth:340 }}>
-            <span style={{ fontSize:26, flexShrink:0 }}>🎮</span>
-            <div style={{ flex:1 }}>
-              <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:14, color:"#fff", marginBottom:3 }}>Qu'est-ce que tu joues en ce moment ?</div>
-              <div style={{ fontSize:11, color:"rgba(255,255,255,.35)", fontFamily:"'DM Sans',sans-serif" }}>Ajoute un jeu à ta liste "En cours"</div>
+        <div style={{ position:"fixed", bottom:88, left:"50%", transform:"translateX(-50%)", zIndex:500, animation:"scaleIn .35s cubic-bezier(.34,1.3,.64,1)" }}>
+          {/* Glow base */}
+          <div style={{ position:"absolute", inset:-1, borderRadius:22, background:"linear-gradient(135deg,#ff6b35,#a855f7,#ff6b35)", backgroundSize:"200% 200%", animation:"gradientShift 3s ease infinite", opacity:.6, filter:"blur(8px)", zIndex:-1 }} />
+          <div style={{ position:"relative", background:"linear-gradient(135deg,#0f0a1a 0%,#1a0f2e 50%,#0a0f1a 100%)", border:"1px solid rgba(168,85,247,.3)", borderRadius:22, padding:"18px 20px 18px 18px", boxShadow:"0 32px 80px rgba(0,0,0,.85), 0 0 0 1px rgba(255,107,53,.08) inset", display:"flex", alignItems:"center", gap:16, maxWidth:320, backdropFilter:"blur(20px)" }}>
+            {/* Icon */}
+            <div style={{ width:44, height:44, borderRadius:14, background:"linear-gradient(135deg,rgba(255,107,53,.15),rgba(168,85,247,.15))", border:"1px solid rgba(168,85,247,.2)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+              <span style={{ fontSize:22 }}>🎮</span>
             </div>
-            <div style={{ display:"flex", gap:6, flexShrink:0 }}>
-              <button onClick={()=>{ setTab("explore"); setShowPlayingPrompt(false); }} style={{ background:"rgba(255,107,53,.15)", border:"1px solid rgba(255,107,53,.3)", borderRadius:9, color:"#ff6b35", cursor:"pointer", fontSize:12, padding:"7px 13px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, whiteSpace:"nowrap" }}>Explorer →</button>
-              <button onClick={()=>setShowPlayingPrompt(false)} style={{ background:"rgba(255,255,255,.05)", border:"1px solid rgba(255,255,255,.08)", borderRadius:9, color:"rgba(255,255,255,.3)", cursor:"pointer", fontSize:13, padding:"7px 10px" }}>✕</button>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ fontSize:9, color:"rgba(255,107,53,.7)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", marginBottom:4 }}>En cours</div>
+              <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:13, color:"#fff", lineHeight:1.35, marginBottom:3 }}>Qu'est-ce que tu joues en ce moment ?</div>
+              <div style={{ fontSize:10, color:"rgba(255,255,255,.28)", fontFamily:"'DM Sans',sans-serif" }}>Ajoute un jeu à ta liste "En cours"</div>
+            </div>
+            <div style={{ display:"flex", flexDirection:"column", gap:6, flexShrink:0 }}>
+              <button onClick={()=>{ setTab("explore"); setShowPlayingPrompt(false); }}
+                style={{ background:"linear-gradient(135deg,#ff6b35,#ff8c42)", border:"none", borderRadius:10, color:"#fff", cursor:"pointer", fontSize:11, padding:"8px 14px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, whiteSpace:"nowrap", boxShadow:"0 4px 16px rgba(255,107,53,.4)", letterSpacing:.3 }}>
+                Explorer →
+              </button>
+              <button onClick={()=>setShowPlayingPrompt(false)}
+                style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.07)", borderRadius:10, color:"rgba(255,255,255,.25)", cursor:"pointer", fontSize:12, padding:"6px 10px", fontFamily:"'Space Grotesk',sans-serif", textAlign:"center" }}>
+                ✕
+              </button>
             </div>
           </div>
         </div>
