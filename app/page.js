@@ -2323,6 +2323,7 @@ const HAT_ENGINEER  = `<path d="M30 46 Q30 28 50 24 Q70 28 70 46 Z" fill="#3a3a0
 // locked hats
 const HAT_CROWN     = `<path d="M28 44 L34 26 L42 38 L50 20 L58 38 L66 26 L72 44 Z" fill="#ffd700" stroke="#cc9900" stroke-width="1"/><rect x="26" y="42" width="48" height="8" rx="3" fill="#cc9900"/><circle cx="50" cy="20" r="3" fill="#ff4444"/><circle cx="34" cy="26" r="2" fill="#4444ff"/><circle cx="66" cy="26" r="2" fill="#44ff44"/>`;
 const HAT_MEDAL     = `<path d="M32 44 Q32 28 50 24 Q68 28 68 44" fill="#888"/><rect x="28" y="42" width="44" height="7" rx="2" fill="#666"/><circle cx="50" cy="30" r="10" fill="#ffd700" stroke="#cc9900" stroke-width="1.5"/><text x="50" y="34" text-anchor="middle" font-size="10" fill="#8B6914" font-weight="bold">1</text>`;
+const HAT_MEDAL_5   = `<path d="M32 44 Q32 28 50 24 Q68 28 68 44" fill="#7a8a9a"/><rect x="28" y="42" width="44" height="7" rx="2" fill="#5a6a7a"/><circle cx="50" cy="30" r="10" fill="#c0d0ff" stroke="#8090cc" stroke-width="1.5"/><text x="50" y="34" text-anchor="middle" font-size="10" fill="#3040a0" font-weight="bold">5</text>`;
 const HAT_QUILL     = `<path d="M26 46 Q28 30 50 26 Q72 30 74 46 Z" fill="#2a1a3a"/><rect x="22" y="44" width="56" height="7" rx="3" fill="#1a0a2a"/><path d="M60 22 Q72 10 76 6 Q74 16 66 26 Q64 28 60 26 Z" fill="#ddeeff"/><path d="M62 24 Q70 14 72 10" stroke="#aabbcc" stroke-width="1" fill="none"/>`;
 const HAT_HEART     = `<path d="M30 46 Q30 28 50 24 Q70 28 70 46 Z" fill="#4a0020"/><rect x="26" y="44" width="48" height="7" rx="2" fill="#300010"/><path d="M50 36 Q44 28 38 30 Q34 32 36 38 Q38 44 50 50 Q62 44 64 38 Q66 32 62 30 Q56 28 50 36 Z" fill="#ff1a4a" transform="scale(0.45) translate(61, 12)"/>`;
 const HAT_BOOK      = `<path d="M30 46 Q30 28 50 24 Q70 28 70 46 Z" fill="#1a3a5a"/><rect x="26" y="44" width="48" height="7" rx="2" fill="#0a2a4a"/><rect x="36" y="26" width="28" height="20" rx="2" fill="#c8a060"/><rect x="49" y="26" width="2" height="20" fill="#8B6914"/><path d="M38 30 L48 30 M38 34 L48 34 M38 38 L48 38" stroke="#8B6914" stroke-width="1"/>`;
@@ -2365,7 +2366,7 @@ const AVATAR_SVGS = {
   viking:       mkSvg("#1a0a00","#2a1000", FACE_FIERCE,  HAT_VIKING),
   // locked
   rookie:       mkSvg("#001a10","#003020", FACE_CALM,    HAT_MEDAL),
-  scout:        mkSvg("#001a10","#003020", FACE_STERN,   HAT_MEDAL),
+  scout:        mkSvg("#000a1a","#001030", FACE_STERN,   HAT_MEDAL_5),
   veteran:      mkSvg("#1a1000","#2a2000", FACE_STERN,   HAT_MEDAL),
   legend:       mkSvg("#1a0a00","#2a1400", FACE_FIERCE,  HAT_CROWN),
   immortal:     mkSvg("#1a0030","#2a0050", FACE_FIERCE,  HAT_CROWN),
