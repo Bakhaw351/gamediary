@@ -511,6 +511,7 @@ const CSS = `
   @keyframes popIn    {from{transform:scale(0) rotate(-12deg);opacity:0;}to{transform:scale(1) rotate(0);opacity:1;}}
   @keyframes revealLine{from{transform:scaleX(0);}to{transform:scaleX(1);}}
   @keyframes gradientShift{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+  @keyframes joystickTilt{0%,100%{transform:rotate(0deg);}25%{transform:rotate(18deg);}75%{transform:rotate(-18deg);}}
   .jacket-item,.cover-bg-item{will-change:transform;transform:translateZ(0);}
   @media (prefers-reduced-motion: reduce) {
     .jacket-item,.cover-bg-item,.hf1,.hf2,.hf3{animation:none!important;}
@@ -4822,7 +4823,17 @@ export default function JoystickLog() {
       {showPlayingPrompt && user && (
         <div style={{ position:"fixed", bottom:86, left:"50%", transform:"translateX(-50%)", zIndex:500, animation:"fadeUp .4s cubic-bezier(.34,1.2,.64,1)" }}>
           <div style={{ display:"flex", alignItems:"center", gap:10, background:"rgba(14,11,22,.92)", border:"1px solid rgba(255,107,53,.2)", borderRadius:100, padding:"10px 10px 10px 14px", backdropFilter:"blur(24px)", boxShadow:"0 8px 40px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04) inset", whiteSpace:"nowrap" }}>
-            <span style={{ fontSize:15 }}>🎮</span>
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink:0 }}>
+              {/* Base */}
+              <rect x="2" y="12" width="14" height="4" rx="2" fill="rgba(255,107,53,.45)"/>
+              <rect x="5" y="13.5" width="8" height="1.5" rx=".75" fill="rgba(255,107,53,.25)"/>
+              {/* Animated stick */}
+              <g style={{ transformOrigin:"9px 12px", animation:"joystickTilt 1.4s ease-in-out infinite" }}>
+                <rect x="8" y="5" width="2" height="7" rx="1" fill="rgba(255,107,53,.85)"/>
+                <circle cx="9" cy="4.5" r="2.8" fill="#ff6b35"/>
+                <circle cx="8.2" cy="3.8" r=".9" fill="rgba(255,255,255,.35)"/>
+              </g>
+            </svg>
             <span style={{ fontSize:12, color:"rgba(255,255,255,.55)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600 }}>Tu joues à quoi en ce moment ?</span>
             <button onClick={()=>{ setTab("explore"); setShowPlayingPrompt(false); }}
               style={{ background:"rgba(255,107,53,.12)", border:"1px solid rgba(255,107,53,.25)", borderRadius:100, color:"#ff6b35", cursor:"pointer", fontSize:11, padding:"5px 14px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>
