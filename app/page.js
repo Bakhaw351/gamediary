@@ -4820,29 +4820,18 @@ export default function JoystickLog() {
 
       {/* ── PLAYING PROMPT ── */}
       {showPlayingPrompt && user && (
-        <div style={{ position:"fixed", bottom:88, left:"50%", transform:"translateX(-50%)", zIndex:500, animation:"scaleIn .35s cubic-bezier(.34,1.3,.64,1)" }}>
-          {/* Glow base */}
-          <div style={{ position:"absolute", inset:-1, borderRadius:22, background:"linear-gradient(135deg,#ff6b35,#a855f7,#ff6b35)", backgroundSize:"200% 200%", animation:"gradientShift 3s ease infinite", opacity:.6, filter:"blur(8px)", zIndex:-1 }} />
-          <div style={{ position:"relative", background:"linear-gradient(135deg,#0f0a1a 0%,#1a0f2e 50%,#0a0f1a 100%)", border:"1px solid rgba(168,85,247,.3)", borderRadius:22, padding:"18px 20px 18px 18px", boxShadow:"0 32px 80px rgba(0,0,0,.85), 0 0 0 1px rgba(255,107,53,.08) inset", display:"flex", alignItems:"center", gap:16, maxWidth:320, backdropFilter:"blur(20px)" }}>
-            {/* Icon */}
-            <div style={{ width:44, height:44, borderRadius:14, background:"linear-gradient(135deg,rgba(255,107,53,.15),rgba(168,85,247,.15))", border:"1px solid rgba(168,85,247,.2)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-              <span style={{ fontSize:22 }}>🎮</span>
-            </div>
-            <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontSize:9, color:"rgba(255,107,53,.7)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, letterSpacing:2.5, textTransform:"uppercase", marginBottom:4 }}>En cours</div>
-              <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:13, color:"#fff", lineHeight:1.35, marginBottom:3 }}>Qu'est-ce que tu joues en ce moment ?</div>
-              <div style={{ fontSize:10, color:"rgba(255,255,255,.28)", fontFamily:"'DM Sans',sans-serif" }}>Ajoute un jeu à ta liste "En cours"</div>
-            </div>
-            <div style={{ display:"flex", flexDirection:"column", gap:6, flexShrink:0 }}>
-              <button onClick={()=>{ setTab("explore"); setShowPlayingPrompt(false); }}
-                style={{ background:"linear-gradient(135deg,#ff6b35,#ff8c42)", border:"none", borderRadius:10, color:"#fff", cursor:"pointer", fontSize:11, padding:"8px 14px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:800, whiteSpace:"nowrap", boxShadow:"0 4px 16px rgba(255,107,53,.4)", letterSpacing:.3 }}>
-                Explorer →
-              </button>
-              <button onClick={()=>setShowPlayingPrompt(false)}
-                style={{ background:"rgba(255,255,255,.04)", border:"1px solid rgba(255,255,255,.07)", borderRadius:10, color:"rgba(255,255,255,.25)", cursor:"pointer", fontSize:12, padding:"6px 10px", fontFamily:"'Space Grotesk',sans-serif", textAlign:"center" }}>
-                ✕
-              </button>
-            </div>
+        <div style={{ position:"fixed", bottom:86, left:"50%", transform:"translateX(-50%)", zIndex:500, animation:"fadeUp .4s cubic-bezier(.34,1.2,.64,1)" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:10, background:"rgba(14,11,22,.92)", border:"1px solid rgba(255,107,53,.2)", borderRadius:100, padding:"10px 10px 10px 14px", backdropFilter:"blur(24px)", boxShadow:"0 8px 40px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04) inset", whiteSpace:"nowrap" }}>
+            <span style={{ fontSize:15 }}>🎮</span>
+            <span style={{ fontSize:12, color:"rgba(255,255,255,.55)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600 }}>Tu joues à quoi en ce moment ?</span>
+            <button onClick={()=>{ setTab("explore"); setShowPlayingPrompt(false); }}
+              style={{ background:"rgba(255,107,53,.12)", border:"1px solid rgba(255,107,53,.25)", borderRadius:100, color:"#ff6b35", cursor:"pointer", fontSize:11, padding:"5px 14px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700 }}>
+              Ajouter →
+            </button>
+            <button onClick={()=>setShowPlayingPrompt(false)}
+              style={{ background:"none", border:"none", color:"rgba(255,255,255,.2)", cursor:"pointer", fontSize:13, padding:"2px 6px", lineHeight:1 }}>
+              ✕
+            </button>
           </div>
         </div>
       )}
