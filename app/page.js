@@ -3277,6 +3277,7 @@ export default function JoystickLog() {
   const [newsItems, setNewsItems] = useState([]);
   const [newsLoading, setNewsLoading] = useState(true);
   const [newsIdx, setNewsIdx] = useState(0);
+  const [newsVisible, setNewsVisible] = useState(true);
   const newsScrollRef = useRef(null);
   const newsPausedRef = useRef(false);
   const [gemGames, setGemGames]           = useState([]);
@@ -3535,13 +3536,21 @@ export default function JoystickLog() {
       .catch(() => {})
       .finally(() => setNewsLoading(false));
   }, []);
+  const newsIdxRef = useRef(0);
+  const slideNews = useCallback((nextIdx) => {
+    setNewsVisible(false);
+    setTimeout(() => { newsIdxRef.current = nextIdx; setNewsIdx(nextIdx); setNewsVisible(true); }, 320);
+  }, []);
+
   useEffect(() => {
     if (newsItems.length === 0) return;
     const id = setInterval(() => {
       if (!newsPausedRef.current) {
-        setNewsIdx(i => (i + 3 >= newsItems.length ? 0 : i + 3));
+        const cur = newsIdxRef.current;
+        const next = cur + 3 >= newsItems.length ? 0 : cur + 3;
+        slideNews(next);
       }
-    }, 5000);
+    }, 7000);
     return () => clearInterval(id);
   }, [newsItems.length]);
 
@@ -4121,9 +4130,9 @@ export default function JoystickLog() {
                 </div>
                 {!newsLoading && newsItems.length > 0 && (
                   <div style={{ display:"flex", gap:8 }}>
-                    <button onClick={() => setNewsIdx(i => Math.max(0, i - 3))} disabled={newsIdx === 0}
+                    <button onClick={() => slideNews(Math.max(0, newsIdx - 3))} disabled={newsIdx === 0}
                       style={{ width:36, height:36, borderRadius:"50%", border:"1px solid rgba(255,255,255,.1)", background: newsIdx > 0 ? "rgba(255,107,53,.12)" : "rgba(255,255,255,.03)", color: newsIdx > 0 ? "#ff6b35" : "rgba(255,255,255,.2)", fontSize:18, cursor: newsIdx > 0 ? "pointer" : "default", display:"flex", alignItems:"center", justifyContent:"center", transition:"all .18s", outline:"none" }}>‹</button>
-                    <button onClick={() => setNewsIdx(i => Math.min(i + 3, newsItems.length - 3))} disabled={newsIdx + 3 >= newsItems.length}
+                    <button onClick={() => slideNews(Math.min(newsIdx + 3, newsItems.length - 3))} disabled={newsIdx + 3 >= newsItems.length}
                       style={{ width:36, height:36, borderRadius:"50%", border:"1px solid rgba(255,255,255,.1)", background: newsIdx + 3 < newsItems.length ? "rgba(255,107,53,.12)" : "rgba(255,255,255,.03)", color: newsIdx + 3 < newsItems.length ? "#ff6b35" : "rgba(255,255,255,.2)", fontSize:18, cursor: newsIdx + 3 < newsItems.length ? "pointer" : "default", display:"flex", alignItems:"center", justifyContent:"center", transition:"all .18s", outline:"none" }}>›</button>
                   </div>
                 )}
@@ -4136,7 +4145,7 @@ export default function JoystickLog() {
                 <div style={{ textAlign:"center", padding:"40px 0", color:"rgba(255,255,255,.18)", fontFamily:"'Space Grotesk',sans-serif", fontSize:13 }}>Actus indisponibles pour le moment</div>
               ) : (
                 <>
-                  <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:14 }}
+                  <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:14, opacity: newsVisible ? 1 : 0, transition:"opacity .3s ease" }}
                     onMouseEnter={() => { newsPausedRef.current = true; }}
                     onMouseLeave={() => { newsPausedRef.current = false; }}>
                     {newsItems.slice(newsIdx, newsIdx + 3).map((item, i) => {
@@ -4166,7 +4175,7 @@ export default function JoystickLog() {
                   </div>
                   <div style={{ display:"flex", justifyContent:"center", gap:6, marginTop:16 }}>
                     {Array.from({ length: Math.ceil(newsItems.length / 3) }).map((_, pi) => (
-                      <button key={pi} onClick={() => setNewsIdx(pi * 3)}
+                      <button key={pi} onClick={() => slideNews(pi * 3)}
                         style={{ width: pi === Math.floor(newsIdx / 3) ? 20 : 6, height:6, borderRadius:3, border:"none", background: pi === Math.floor(newsIdx / 3) ? "#ff6b35" : "rgba(255,255,255,.15)", padding:0, cursor:"pointer", transition:"all .25s", outline:"none" }} />
                     ))}
                   </div>

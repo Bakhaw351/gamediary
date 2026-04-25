@@ -7,6 +7,10 @@ const ALLOWED_HOSTS = [
   "sm.ign.com",
   "imageio.forbes.com",
   "images.ctfassets.net",
+  "kotaku.com",
+  "cdn.vox-cdn.com",
+  "www.pcgamer.com",
+  "cdn.mos.cms.futurecdn.net",
 ];
 
 export async function GET(request) {

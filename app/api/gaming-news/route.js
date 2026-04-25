@@ -15,10 +15,14 @@ function parseRSS(xml, source) {
       block.match(new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`))?.[1]?.trim() ||
       block.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`))?.[1]?.trim() || "";
 
-    const title = get("title").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&#039;/g,"'");
+    const decodeHtml = (s) => s
+      .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
+      .replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">")
+      .replace(/&quot;/g,'"').replace(/&apos;/g,"'").replace(/&#039;/g,"'");
+    const title = decodeHtml(get("title"));
     const link  = get("link") || get("guid");
     const date  = get("pubDate");
-    const desc  = get("description").replace(/<[^>]+>/g,"").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").slice(0,120);
+    const desc  = decodeHtml(get("description").replace(/<[^>]+>/g,"")).slice(0,120);
 
     const image =
       block.match(/media:content[^>]*url="([^"]+)"/)?.[1] ||
