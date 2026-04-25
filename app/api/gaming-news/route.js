@@ -62,6 +62,6 @@ export async function GET() {
     .slice(0, 24);
 
   return Response.json({ items }, {
-    headers: { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=300" },
+    headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60" },
   });
 }
