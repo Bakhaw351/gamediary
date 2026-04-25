@@ -14,8 +14,7 @@ export async function POST(request) {
       }),
     });
     const data = await res.json();
-    console.log("Turnstile response:", JSON.stringify(data));
-    return Response.json({ success: !!data.success, error_codes: data["error-codes"] });
+    return Response.json({ success: !!data.success });
   } catch {
     return Response.json({ success: false }, { status: 500 });
   }
