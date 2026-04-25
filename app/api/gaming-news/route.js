@@ -48,9 +48,12 @@ export async function GET() {
     })
   );
 
+  const proxy = (url) => url ? `/api/img-proxy?url=${encodeURIComponent(url)}` : null;
+
   const items = results
     .filter(r => r.status === "fulfilled")
     .flatMap(r => r.value)
+    .map(item => ({ ...item, image: proxy(item.image) }))
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 24);
 
