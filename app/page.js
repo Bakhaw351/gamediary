@@ -3274,6 +3274,11 @@ export default function JoystickLog() {
   const [profileAvatar, setProfileAvatar]     = useState("");
   const [trendingGames, setTrendingGames] = useState([]);
   const [upcomingGames, setUpcomingGames] = useState([]);
+  const [newsItems, setNewsItems] = useState([]);
+  const [newsLoading, setNewsLoading] = useState(true);
+  const [newsIdx, setNewsIdx] = useState(0);
+  const newsScrollRef = useRef(null);
+  const newsPausedRef = useRef(false);
   const [gemGames, setGemGames]           = useState([]);
   const [communityStats, setCommunityStats] = useState(null);
   const [activityFeed, setActivityFeed]     = useState([]);
@@ -3521,6 +3526,24 @@ export default function JoystickLog() {
         if (data) setTopReviewMyLikes(new Set(data.map(l => `${l.reviewer_id}_${l.game_id}`)));
       }).catch(() => {});
   }, [user, topReviews.length]);
+
+  /* Gaming news */
+  useEffect(() => {
+    fetch("/api/gaming-news")
+      .then(r => r.json())
+      .then(d => { if (d.items) setNewsItems(d.items); })
+      .catch(() => {})
+      .finally(() => setNewsLoading(false));
+  }, []);
+  useEffect(() => {
+    if (newsItems.length === 0) return;
+    const id = setInterval(() => {
+      if (!newsPausedRef.current) {
+        setNewsIdx(i => (i + 3 >= newsItems.length ? 0 : i + 3));
+      }
+    }, 5000);
+    return () => clearInterval(id);
+  }, [newsItems.length]);
 
   /* Profile recommendations — fetch genres from IGDB for top-rated games */
   useEffect(() => {
@@ -4088,6 +4111,69 @@ export default function JoystickLog() {
               </div>
             )}
 
+            {/* ── ACTUS GAMING ── */}
+            <div style={{ marginTop:56 }}>
+              <div className="sect-divider" style={{ marginTop:0, marginBottom:32 }} />
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:20 }}>
+                <div>
+                  <div style={{ fontSize:10, color:"rgba(255,107,53,.65)", fontWeight:700, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:3.5, textTransform:"uppercase", marginBottom:5 }}>Gaming</div>
+                  <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:24, color:th.textHigh, letterSpacing:-.6, lineHeight:1, margin:0 }}>Actus 🎮</h2>
+                </div>
+                {!newsLoading && newsItems.length > 0 && (
+                  <div style={{ display:"flex", gap:8 }}>
+                    <button onClick={() => setNewsIdx(i => Math.max(0, i - 3))} disabled={newsIdx === 0}
+                      style={{ width:36, height:36, borderRadius:"50%", border:"1px solid rgba(255,255,255,.1)", background: newsIdx > 0 ? "rgba(255,107,53,.12)" : "rgba(255,255,255,.03)", color: newsIdx > 0 ? "#ff6b35" : "rgba(255,255,255,.2)", fontSize:18, cursor: newsIdx > 0 ? "pointer" : "default", display:"flex", alignItems:"center", justifyContent:"center", transition:"all .18s", outline:"none" }}>‹</button>
+                    <button onClick={() => setNewsIdx(i => Math.min(i + 3, newsItems.length - 3))} disabled={newsIdx + 3 >= newsItems.length}
+                      style={{ width:36, height:36, borderRadius:"50%", border:"1px solid rgba(255,255,255,.1)", background: newsIdx + 3 < newsItems.length ? "rgba(255,107,53,.12)" : "rgba(255,255,255,.03)", color: newsIdx + 3 < newsItems.length ? "#ff6b35" : "rgba(255,255,255,.2)", fontSize:18, cursor: newsIdx + 3 < newsItems.length ? "pointer" : "default", display:"flex", alignItems:"center", justifyContent:"center", transition:"all .18s", outline:"none" }}>›</button>
+                  </div>
+                )}
+              </div>
+              {newsLoading ? (
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:14 }}>
+                  {[0,1,2].map(k => <div key={k} className="skel" style={{ height:210, borderRadius:16 }} />)}
+                </div>
+              ) : newsItems.length === 0 ? (
+                <div style={{ textAlign:"center", padding:"40px 0", color:"rgba(255,255,255,.18)", fontFamily:"'Space Grotesk',sans-serif", fontSize:13 }}>Actus indisponibles pour le moment</div>
+              ) : (
+                <>
+                  <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:14 }}
+                    onMouseEnter={() => { newsPausedRef.current = true; }}
+                    onMouseLeave={() => { newsPausedRef.current = false; }}>
+                    {newsItems.slice(newsIdx, newsIdx + 3).map((item, i) => {
+                      const d = item.date ? new Date(item.date) : null;
+                      const dateStr = d && !isNaN(d) ? d.toLocaleDateString("fr-FR", { day:"numeric", month:"short" }) : "";
+                      const sc = { JVC:"#cc0000", IGN:"#e50914", Eurogamer:"#006eff", Gamekult:"#ff6b00" }[item.source] || "#ff6b35";
+                      return (
+                        <a key={newsIdx + i} href={item.link} target="_blank" rel="noopener noreferrer"
+                          style={{ display:"block", textDecoration:"none", borderRadius:16, overflow:"hidden", border:"1px solid rgba(255,255,255,.07)", background:"rgba(255,255,255,.025)", transition:"transform .2s, border-color .2s" }}
+                          onMouseEnter={e => { e.currentTarget.style.transform="translateY(-3px)"; e.currentTarget.style.borderColor="rgba(255,107,53,.3)"; }}
+                          onMouseLeave={e => { e.currentTarget.style.transform="none"; e.currentTarget.style.borderColor="rgba(255,255,255,.07)"; }}>
+                          <div style={{ width:"100%", height:130, overflow:"hidden", position:"relative", background:"rgba(255,255,255,.04)" }}>
+                            {item.image
+                              ? <img src={item.image} alt="" loading="lazy" style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} />
+                              : <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:36, background:"linear-gradient(135deg,rgba(255,107,53,.07),rgba(255,209,102,.05))" }}>🎮</div>
+                            }
+                            <div style={{ position:"absolute", top:8, left:8, background:sc, color:"#fff", fontSize:9, fontWeight:800, fontFamily:"'Space Grotesk',sans-serif", letterSpacing:1.5, textTransform:"uppercase", padding:"3px 8px", borderRadius:6 }}>{item.source}</div>
+                          </div>
+                          <div style={{ padding:"12px 14px 14px" }}>
+                            <p style={{ margin:"0 0 5px", fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:13, color:"rgba(255,255,255,.9)", lineHeight:1.4, display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }}>{item.title}</p>
+                            {item.desc && <p style={{ margin:"0 0 8px", fontSize:11, color:"rgba(255,255,255,.3)", fontFamily:"'DM Sans',sans-serif", lineHeight:1.4, display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden" }}>{item.desc}</p>}
+                            {dateStr && <span style={{ fontSize:10, color:"rgba(255,107,53,.5)", fontFamily:"'Space Grotesk',sans-serif", fontWeight:600 }}>{dateStr}</span>}
+                          </div>
+                        </a>
+                      );
+                    })}
+                  </div>
+                  <div style={{ display:"flex", justifyContent:"center", gap:6, marginTop:16 }}>
+                    {Array.from({ length: Math.ceil(newsItems.length / 3) }).map((_, pi) => (
+                      <button key={pi} onClick={() => setNewsIdx(pi * 3)}
+                        style={{ width: pi === Math.floor(newsIdx / 3) ? 20 : 6, height:6, borderRadius:3, border:"none", background: pi === Math.floor(newsIdx / 3) ? "#ff6b35" : "rgba(255,255,255,.15)", padding:0, cursor:"pointer", transition:"all .25s", outline:"none" }} />
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
             {/* ── CHALLENGE DE LA SEMAINE ── */}
             {weeklyChallenge && (
               <div style={{ marginTop:56 }}>
@@ -4277,6 +4363,7 @@ export default function JoystickLog() {
                 </div>
               </div>
             )}
+
           </div>
         )}
 
