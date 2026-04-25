@@ -3894,6 +3894,12 @@ export default function JoystickLog() {
                 onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.08)";e.currentTarget.style.color="rgba(255,255,255,.3)";}}>
                 ⚙️
               </button>
+              <button onClick={logout} className="hide-m" title={t("logout")}
+                style={{ background:"none", border:"1px solid rgba(255,255,255,.08)", borderRadius:9, color:"rgba(255,255,255,.3)", cursor:"pointer", fontSize:14, width:34, height:34, display:"flex", alignItems:"center", justifyContent:"center", transition:"all .15s" }}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(239,68,68,.35)";e.currentTarget.style.color="#ef4444";}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,.08)";e.currentTarget.style.color="rgba(255,255,255,.3)";}}>
+                ↪
+              </button>
             </>
           ) : (
             <button className="btn" onClick={()=>setShowAuth(true)} style={{ padding:"8px 20px", fontSize:13 }}>{t("loginBtn")}</button>
